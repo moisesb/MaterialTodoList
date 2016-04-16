@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Material Todo List</string>
+    <string name="action_settings">Settings</string>
+    <string name="none_todo_item_found">There\'s no todo item in this list</string>
+    <string name="add_todo_item_activity">New Todo Item</string>
+    <string name="done_todo_item_text">Done</string>
+    <string name="delete_todo_item_text">Delete</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="urgent_task">Urgent Task</string>
+</resources>
