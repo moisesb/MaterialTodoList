@@ -63,7 +63,7 @@ public final class SqliteTodoitemRepository implements TodoItemRepository {
         contentValues.put(Columns.DESCRIPTION, todoItem.getDescription());
         contentValues.put(Columns.COMPLETED, todoItem.isCompleted());
         contentValues.put(Columns.PRIORITY, todoItem.getPriority().name());
-        contentValues.put(Columns.DATE, DateUtils.dateToString(todoItem.getDate()));
+        contentValues.put(Columns.DATE, DateUtils.dateToDbString(todoItem.getDate()));
         return contentValues;
     }
 
@@ -104,7 +104,7 @@ public final class SqliteTodoitemRepository implements TodoItemRepository {
         TodoItem todoItem = new TodoItem();
         todoItem.setId(cursor.getLong(cursor.getColumnIndex(Columns.ID)));
         todoItem.setCompleted(cursor.getInt(cursor.getColumnIndex(Columns.COMPLETED)) > 0);
-        todoItem.setDate(DateUtils.stringToDate(cursor.getString(cursor.getColumnIndex(Columns.DATE))));
+        todoItem.setDate(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DATE))));
         todoItem.setDescription(cursor.getString(cursor.getColumnIndex(Columns.DESCRIPTION)));
         todoItem.setPriority(Priority.valueOf(cursor.getString(cursor.getColumnIndex(Columns.PRIORITY))));
         todoItem.setTitle(cursor.getString(cursor.getColumnIndex(Columns.TITLE)));

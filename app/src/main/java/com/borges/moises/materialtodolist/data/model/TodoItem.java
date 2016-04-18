@@ -17,6 +17,13 @@ public class TodoItem {
         priority = Priority.NORMAL;
     }
 
+    public TodoItem(String title, String description, Date date, boolean isUrgent) {
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.priority = isUrgent? Priority.URGENT: Priority.NORMAL;
+    }
+
     public long getId() {
         return id;
     }

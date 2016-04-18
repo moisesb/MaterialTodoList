@@ -12,31 +12,34 @@ import java.util.Locale;
 public class DateUtils {
 
     private static final String PATTERN = "yyyy-MM-dd";
-    private static DateFormat DATE_FORMAT;
+    private static DateFormat DB_DATE_FORMAT = new SimpleDateFormat(PATTERN,Locale.getDefault());
+    private static DateFormat UI_DATE_FORMAT = SimpleDateFormat.getInstance();
 
-    public static String dateToString(Date date) {
-        initalizeDateFormat();
+    public static String dateToDbString(Date date) {
         try {
-            return DATE_FORMAT.format(date);
+            return DB_DATE_FORMAT.format(date);
         }catch (Exception e) {
             return null;
         }
     }
 
-    private static void initalizeDateFormat() {
-        if (DATE_FORMAT == null) {
-            DATE_FORMAT = new SimpleDateFormat(PATTERN, Locale.US);
-        }
-    }
-
-    public static Date stringToDate(String str) {
+    public static Date dbStringToDate(String str) {
         if (str == null) {
             return null;
         }
         try {
-            return DATE_FORMAT.parse(str);
+            return DB_DATE_FORMAT.parse(str);
         } catch (ParseException e) {
             return null;
         }
     }
+
+    public static String uiDateToString(Date date) {
+        try {
+            return UI_DATE_FORMAT.format(date).split(" ")[0];
+        }catch (Exception e) {
+            return null;
+        }
+    }
+
 }

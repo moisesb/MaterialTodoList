@@ -1,22 +1,34 @@
 package com.borges.moises.materialtodolist.todoitems;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.SpannableString;
+import android.text.style.StrikethroughSpan;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.addnewtodoitem.AddNewTodoItemActivity;
+import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.utils.DateUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -37,9 +49,35 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     @BindInt(R.integer.todo_items_columns)
     int mTodoItemsColumns;
 
-    FloatingActionButton mAddNoteFloatingActionButton;
+    private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
+        @Override
+        public void onClick(TodoItem todoItem, boolean done) {
+            mPresenterOps.doneTodoItem(todoItem,done);
+        }
+    };
+
+    private ItemTouchHelper.SimpleCallback mItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            Log.d("Test", "from " + viewHolder.getAdapterPosition() + "to " + target.getAdapterPosition());
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.LEFT) {
+                TodoItem todoItem = mTodoItemsAdpter.getTodoItem(viewHolder.getAdapterPosition());
+                mPresenterOps.deleteTodoItem(todoItem);
+            }
+        }
+    };
+
+    private TodoItemsAdpter mTodoItemsAdpter = new TodoItemsAdpter(new ArrayList<TodoItem>(0), mCheckBoxClickListener);
+
+    private FloatingActionButton mAddNoteFloatingActionButton;
 
     private TodoItemsContract.PresenterOps mPresenterOps;
+
 
     public TodoItemsFragment() {
     }
@@ -47,8 +85,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_todo_items,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_todo_items, container, false);
+        ButterKnife.bind(this, view);
 
         mAddNoteFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         mAddNoteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -85,19 +123,29 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     }
 
     private void setupRecyclerView() {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(mTodoItemsRecyclerView);
+
         mTodoItemsRecyclerView.setHasFixedSize(true);
-        mTodoItemsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mTodoItemsColumns));
+        mTodoItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mTodoItemsRecyclerView.setAdapter(mTodoItemsAdpter);
     }
 
     @Override
     public void showTodoItems(List<TodoItem> todoItems) {
         mMessageTextView.setVisibility(View.GONE);
         mTodoItemsRecyclerView.setVisibility(View.VISIBLE);
+        mTodoItemsAdpter.replaceData(todoItems);
+    }
+
+    @Override
+    public void removeTodoItem(TodoItem todoItem) {
+        mTodoItemsAdpter.deleteTodoItem(todoItem);
     }
 
     @Override
     public void showNewTodoItem() {
-        Intent intent = AddNewTodoItemActivity.newIntent(getContext());
+        Intent intent = AddTodoItemActivity.newIntent(getContext());
         startActivity(intent);
     }
 
@@ -105,5 +153,121 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     public void showNoTodoItemMessage() {
         mTodoItemsRecyclerView.setVisibility(View.GONE);
         mMessageTextView.setVisibility(View.VISIBLE);
+    }
+
+    public interface OnCheckBoxClickListener {
+        void onClick(TodoItem todoItem, boolean done);
+    }
+
+    public static class TodoItemsAdpter extends RecyclerView.Adapter<TodoItemsAdpter.ViewHolder> {
+
+        private List<TodoItem> mTodoItems;
+        private OnCheckBoxClickListener mOnCheckBoxClickListener;
+
+        public TodoItemsAdpter(List<TodoItem> todoItems,
+                               OnCheckBoxClickListener onCheckBoxClickListener) {
+            mTodoItems = todoItems;
+            mOnCheckBoxClickListener = onCheckBoxClickListener;
+        }
+
+        public void replaceData(List<TodoItem> todoItems) {
+            mTodoItems = todoItems;
+            notifyDataSetChanged();
+        }
+
+        public void deleteTodoItem(TodoItem todoItem) {
+            int position = getTodoItemPosition(todoItem);
+            mTodoItems.remove(position);
+            notifyItemRemoved(position);
+        }
+
+        public void updateTodoItem(TodoItem todoItem) {
+            int position = getTodoItemPosition(todoItem);
+            notifyItemChanged(position);
+        }
+
+        private int getTodoItemPosition(TodoItem todoItem) {
+            int position = mTodoItems.indexOf(todoItem);
+            if (position >= 0) {
+                return position;
+            } else {
+                throw new IllegalArgumentException("Todo item is not in the adapter");
+            }
+        }
+
+        public TodoItem getTodoItem(int position) {
+            return mTodoItems.size() > position ? mTodoItems.get(position) : null;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.cardview_todo_item, parent, false);
+
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            TodoItem todoItem = mTodoItems.get(position);
+            holder.bind(todoItem, mOnCheckBoxClickListener);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mTodoItems.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+
+            private final TextView mTitleTextView;
+            private final TextView mDateTextView;
+            private final CheckBox mDoneCheckBox;
+            private Context mContext;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                mContext = itemView.getContext();
+                mTitleTextView = (TextView) itemView.findViewById(R.id.todo_item_title);
+                mDateTextView = (TextView) itemView.findViewById(R.id.todo_item_date);
+                mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
+            }
+
+            public void bind(final TodoItem todoItem, final OnCheckBoxClickListener onCheckBoxClickListener) {
+                updateViewHolder(todoItem);
+                mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        onCheckBoxClickListener.onClick(todoItem, isChecked);
+                        updateViewHolder(todoItem);
+                    }
+                });
+            }
+
+            private void updateViewHolder(final TodoItem todoItem) {
+                if (todoItem.getDate() == null) {
+                    mDateTextView.setVisibility(View.GONE);
+                } else {
+                    mDateTextView.setText(DateUtils.uiDateToString(todoItem.getDate()));
+                    mDateTextView.setVisibility(View.VISIBLE);
+                }
+
+                if (todoItem.isCompleted()) {
+                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
+                    mDateTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
+                    SpannableString spanTitle = new SpannableString(todoItem.getTitle());
+                    spanTitle.setSpan(new StrikethroughSpan(),0,spanTitle.length(),0);
+                    mTitleTextView.setText(spanTitle);
+                }else {
+                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext,android.R.color.black));
+                    mDateTextView.setTextColor(ContextCompat.getColor(mContext,R.color.red));
+                    mTitleTextView.setText(todoItem.getTitle());
+                }
+
+                if (mDoneCheckBox.isChecked() != todoItem.isCompleted()) {
+                    mDoneCheckBox.setChecked(todoItem.isCompleted());
+                }
+            }
+        }
     }
 }

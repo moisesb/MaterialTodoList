@@ -1,11 +1,8 @@
-package com.borges.moises.materialtodolist.addnewtodoitem;
+package com.borges.moises.materialtodolist.addtodoitem;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseactivities.BaseActivity;
@@ -13,9 +10,9 @@ import com.borges.moises.materialtodolist.baseactivities.BaseActivity;
 /**
  * Created by Moisés on 14/04/2016.
  */
-public class AddNewTodoItemActivity extends BaseActivity {
+public class AddTodoItemActivity extends BaseActivity {
 
-    public AddNewTodoItemActivity() {
+    public AddTodoItemActivity() {
     }
 
     @Override
@@ -25,7 +22,7 @@ public class AddNewTodoItemActivity extends BaseActivity {
 
     @Override
     protected Fragment getFragment() {
-        return AddNewTodoItemFragment.newFragment();
+        return AddTodoItemFragment.newFragment();
     }
 
     @Override
@@ -37,6 +34,6 @@ public class AddNewTodoItemActivity extends BaseActivity {
     }
 
     public static Intent newIntent(Context context) {
-        return new Intent(context, AddNewTodoItemActivity.class);
+        return new Intent(context, AddTodoItemActivity.class);
     }
 }

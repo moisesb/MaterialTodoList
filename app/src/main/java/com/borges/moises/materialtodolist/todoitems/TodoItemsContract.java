@@ -11,12 +11,15 @@ public interface TodoItemsContract {
 
     interface View {
         void showTodoItems(List<TodoItem> todoItems);
+        void removeTodoItem(TodoItem todoItem);
         void showNewTodoItem();
         void showNoTodoItemMessage();
     }
 
     interface PresenterOps {
         void loadTodoItems();
+        void deleteTodoItem(TodoItem todoItem);
+        void doneTodoItem(TodoItem todoItem, boolean done);
         void addNewTodoItem();
         void onDestroy();
     }

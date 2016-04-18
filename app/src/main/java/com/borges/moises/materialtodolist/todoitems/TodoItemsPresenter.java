@@ -3,6 +3,8 @@ package com.borges.moises.materialtodolist.todoitems;
 import android.support.annotation.NonNull;
 
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.data.repository.SqliteTodoitemRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 
 import java.util.List;
 
@@ -13,15 +15,31 @@ public class TodoItemsPresenter implements TodoItemsContract.PresenterOps, TodoI
 
     private TodoItemsContract.View mView;
     private TodoItemsContract.Model mModel;
+    private TodoItemRepository mTodoItemRepository;
 
     public TodoItemsPresenter(@NonNull TodoItemsContract.View view) {
         mView = view;
         mModel = new TodoItemsModel(this);
+        mTodoItemRepository = SqliteTodoitemRepository.getInstance();
     }
 
     @Override
     public void loadTodoItems() {
         mModel.loadTodoItems();
+    }
+
+    @Override
+    public void deleteTodoItem(TodoItem todoItem) {
+        boolean removed = mTodoItemRepository.removeTodoItem(todoItem);
+        if (removed) {
+            mView.removeTodoItem(todoItem);
+        }
+    }
+
+    @Override
+    public void doneTodoItem(TodoItem todoItem, boolean done) {
+        todoItem.setCompleted(done);
+        mTodoItemRepository.updateTodoItem(todoItem);
     }
 
     @Override

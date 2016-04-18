@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name=".addnewtodoitem.AddNewTodoItemActivity"
+            android:name=".addtodoitem.AddTodoItemActivity"
             android:label="@string/add_todo_item_activity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
