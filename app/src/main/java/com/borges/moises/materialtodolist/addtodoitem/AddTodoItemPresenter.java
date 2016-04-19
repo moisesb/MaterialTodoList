@@ -2,9 +2,8 @@ package com.borges.moises.materialtodolist.addtodoitem;
 
 import android.support.annotation.NonNull;
 
-import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoitemRepository;
+import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.helpers.TodoItemHelper;
 import com.borges.moises.materialtodolist.helpers.TodoItemHelperImpl;
@@ -33,7 +32,7 @@ public class AddTodoItemPresenter implements AddTodoItemContract.PresenterOps {
 
     public AddTodoItemPresenter(@NonNull AddTodoItemContract.View view) {
         mView = view;
-        mTodoItemRepository = SqliteTodoitemRepository.getInstance();
+        mTodoItemRepository = SqliteTodoItemRepository.getInstance();
     }
 
     @Override

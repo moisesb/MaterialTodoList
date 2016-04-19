@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.data.scheme.TodoItemTable;
+import com.borges.moises.materialtodolist.data.scheme.TodoListTable;
+
 import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.*;
 
 /**
@@ -36,12 +40,14 @@ public class MaterialTodoItemsDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(Sql.CREATE_TABLE);
+        db.execSQL(TodoListTable.Sql.CREATE_TABLE);
+        db.execSQL(TodoItemTable.Sql.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(Sql.DROP_TABLE);
+        db.execSQL(TodoItemTable.Sql.DROP_TABLE);
+        db.execSQL(TodoListTable.Sql.DROP_TABLE);
         onCreate(db);
     }
 }

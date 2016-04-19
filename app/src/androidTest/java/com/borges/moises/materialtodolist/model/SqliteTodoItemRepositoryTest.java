@@ -4,9 +4,10 @@ import android.test.AndroidTestCase;
 
 import com.borges.moises.materialtodolist.data.MaterialTodoItemsDatabase;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoitemRepository;
+import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
+import com.borges.moises.materialtodolist.helpers.DatabaseHelper;
 
 import java.util.List;
 
@@ -22,28 +23,16 @@ public class SqliteTodoItemRepositoryTest extends AndroidTestCase {
         super.setUp();
 
         MaterialTodoItemsDatabase.init(mContext);
-        mTodoItemRepository = SqliteTodoitemRepository.getInstance();
-        beginTransaction();
+        mTodoItemRepository = SqliteTodoItemRepository.getInstance();
+        DatabaseHelper.beginTransaction();
         mTodoItem = new TodoItem();
         mTodoItem.setTitle("Some title");
         mTodoItem.setDescription("Do that");
     }
 
-    private void beginTransaction() {
-        rollbackTransaction();
-    }
-
-    private void rollbackTransaction() {
-        MaterialTodoItemsDatabase.getInstance().
-                getWritableDatabase()
-                .beginTransaction();
-    }
-
     @Override
     public void tearDown() throws Exception {
-        MaterialTodoItemsDatabase.getInstance()
-                .getWritableDatabase()
-                .endTransaction();
+        DatabaseHelper.rollbackTransaction();
         super.tearDown();
     }
 

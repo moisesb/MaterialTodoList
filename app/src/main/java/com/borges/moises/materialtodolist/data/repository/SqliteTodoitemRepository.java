@@ -23,21 +23,21 @@ import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.TABLE
 /**
  * Created by Moisés on 11/04/2016.
  */
-public final class SqliteTodoitemRepository implements TodoItemRepository {
+public final class SqliteTodoItemRepository implements TodoItemRepository {
 
     private SQLiteDatabase mDatabase;
 
-    private static SqliteTodoitemRepository INSTANCE;
+    private static SqliteTodoItemRepository INSTANCE;
     private static final String WHERE_CLAUSE = Columns.ID + " = ?";
 
-    private SqliteTodoitemRepository() {
+    private SqliteTodoItemRepository() {
         mDatabase = MaterialTodoItemsDatabase.getInstance()
                 .getWritableDatabase();
     }
 
     public static TodoItemRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new SqliteTodoitemRepository();
+            INSTANCE = new SqliteTodoItemRepository();
         }
 
         return INSTANCE;
