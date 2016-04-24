@@ -13,4 +13,9 @@
     <string name="action_add">Add</string>
     <string name="title_requied">Title is requied</string>
     <string name="invalid_date">Date is invalid</string>
+    <string name="location">Location</string>
+    <string name="notes">Notes</string>
+    <string name="todo_item_activity">Todo Item</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
 </resources>

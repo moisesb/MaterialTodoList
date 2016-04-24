@@ -3,6 +3,7 @@ package com.borges.moises.materialtodolist.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -34,12 +35,18 @@ public class DateUtils {
         }
     }
 
-    public static String uiDateToString(Date date) {
+    public static String dateToUiString(Date date) {
         try {
             return UI_DATE_FORMAT.format(date).split(" ")[0];
         }catch (Exception e) {
             return null;
         }
+    }
+
+    public static Date getDate(int year, int monthOfYear, int dayOfMonth) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(year,monthOfYear,dayOfMonth);
+        return calendar.getTime();
     }
 
 }

@@ -18,7 +18,7 @@ public class TodoListTable {
 
     public static class Sql {
         public static final String CREATE_TABLE = "create table if not exists " + TABLE_NAME + "(" +
-                Columns.ID + " integer primary key autoincrement ," +
+                Columns.ID + " integer primary key autoincrement" + "," +
                 Columns.NAME + " unique)";
 
         public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;

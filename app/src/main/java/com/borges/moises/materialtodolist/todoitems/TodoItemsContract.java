@@ -12,7 +12,8 @@ public interface TodoItemsContract {
     interface View {
         void showTodoItems(List<TodoItem> todoItems);
         void removeTodoItem(TodoItem todoItem);
-        void showNewTodoItem();
+        void openTodoItemDetails(long todoItemId);
+        void openNewTodoItem();
         void showNoTodoItemMessage();
     }
 
@@ -21,6 +22,7 @@ public interface TodoItemsContract {
         void deleteTodoItem(TodoItem todoItem);
         void doneTodoItem(TodoItem todoItem, boolean done);
         void addNewTodoItem();
+        void openTodoItem(TodoItem todoItem);
         void onDestroy();
     }
 

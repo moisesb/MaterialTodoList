@@ -33,7 +33,7 @@ public class AddTodoItemActivity extends BaseActivity {
         }
     }
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AddTodoItemActivity.class);
+    public static void start(Context context) {
+        context.startActivity(new Intent(context, AddTodoItemActivity.class));
     }
 }

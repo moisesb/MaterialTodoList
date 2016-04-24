@@ -44,7 +44,12 @@ public class TodoItemsPresenter implements TodoItemsContract.PresenterOps, TodoI
 
     @Override
     public void addNewTodoItem() {
-        mView.showNewTodoItem();
+        mView.openNewTodoItem();
+    }
+
+    @Override
+    public void openTodoItem(TodoItem todoItem) {
+        mView.openTodoItemDetails(todoItem.getId());
     }
 
     @Override

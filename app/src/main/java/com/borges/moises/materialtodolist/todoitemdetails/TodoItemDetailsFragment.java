@@ -1,10 +1,9 @@
-package com.borges.moises.materialtodolist.addtodoitem;
+package com.borges.moises.materialtodolist.todoitemdetails;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,45 +23,33 @@ import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
 
 /**
- * Created by Moisés on 14/04/2016.
+ * Created by Moisés on 24/04/2016.
  */
-public class AddTodoItemFragment extends Fragment implements AddTodoItemContract.View{
+public class TodoItemDetailsFragment extends Fragment implements TodoItemDetailsContract.View{
 
-    @BindString(R.string.title_requied)
-    String mTitleRequiedString;
-
-    @BindString(R.string.invalid_date)
-    String mDateInvalidString;
+    private static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsFragment.todoItemId";
+    private long mTodoItemId;
 
     @Bind(R.id.todo_item_title_edit_text)
     EditText mTitleEditText;
 
-    @Bind(R.id.todo_item_date_edit_text)
-    EditText mDateEditText;
-
     @Bind(R.id.todo_item_description_edit_text)
     EditText mDescriptionEditText;
+
+    @Bind(R.id.todo_item_date_edit_text)
+    EditText mDateEditText;
 
     @Bind(R.id.todo_item_time_edit_text)
     EditText mTimeEditText;
 
     @Bind(R.id.todo_item_urgent_checkbox)
-    CheckBox mUrgenteCheckBox;
+    CheckBox mUrgentCheckBox;
 
-    @Bind(R.id.todo_item_title_input_layout)
-    TextInputLayout mTitleInputLayout;
-
-    @Bind(R.id.todo_item_date_input_layout)
-    TextInputLayout mDateInputLayout;
-
-    private AddTodoItemContract.PresenterOps mPresenterOps;
-
+    private TodoItemDetailsContract.PresenterOps mPresenterOps;
     private Date mDate;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -82,12 +69,18 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
         }
     };
 
-    public AddTodoItemFragment() {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mTodoItemId = getArguments().getLong(ARG_TODO_ITEM_ID, -1);
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todo_item,container,false);
         ButterKnife.bind(this,view);
         setHasOptionsMenu(true);
@@ -97,31 +90,38 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenterOps = new AddTodoItemPresenter(this);
+        mPresenterOps = new TodoItemDetailsPresenter(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenterOps.openTodoItem(mTodoItemId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenterOps.onDestroy();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_add_todo_item,menu);
+        inflater.inflate(R.menu.menu_todo_item_details,menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add:
-                addTodoItem();
+            case R.id.action_delete:
+                deteleTodoItem();
+                return true;
+            case R.id.action_edit:
+                editTodoItem();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected(item);
         }
-    }
-
-    @OnTextChanged(R.id.todo_item_title_edit_text) void onTitleTextChanged(CharSequence text) {
-        mTitleInputLayout.setError(null);
-    }
-
-    @OnTextChanged(R.id.todo_item_date_edit_text) void onDateTextChanged(CharSequence text) {
-        mDateInputLayout.setError(null);
     }
 
     @OnClick(R.id.todo_item_date_edit_text) void onDateClick() {
@@ -141,26 +141,55 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
         dialog.show();
     }
 
-    public static Fragment newFragment() {
-        return new AddTodoItemFragment();
-    }
-
-    private void addTodoItem() {
+    private void editTodoItem() {
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
+        final boolean urgent = mUrgentCheckBox.isSelected();
         final String time = mTimeEditText.getText().toString();
-        final boolean isUrgent = mUrgenteCheckBox.isChecked();
-        mPresenterOps.addTodoItem(title,description,isUrgent,mDate,time);
+        mPresenterOps.editTodoItem(mTodoItemId, title, description, urgent, mDate, time);
+    }
+
+    private void deteleTodoItem() {
+        mPresenterOps.deleteTodoItem(mTodoItemId);
+    }
+
+    public static Fragment newFragment(long todoItemId) {
+        Fragment fragment = new TodoItemDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(ARG_TODO_ITEM_ID,todoItemId);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Override
+    public void showTitle(String title) {
+        mTitleEditText.setText(title);
+    }
+
+    @Override
+    public void showDescription(String description) {
+        mDescriptionEditText.setText(description);
+    }
+
+    @Override
+    public void showDate(Date date) {
+        mDate = date;
+        mDateEditText.setText(DateUtils.dateToUiString(date));
+    }
+
+    @Override
+    public void showUrgent(boolean urgent) {
+        mUrgentCheckBox.setSelected(urgent);
     }
 
     @Override
     public void showMissingTitle() {
-        mTitleInputLayout.setError(mTitleRequiedString);
+
     }
 
     @Override
     public void showDateInThePast() {
-        mDateInputLayout.setError(mDateInvalidString);
+
     }
 
     @Override

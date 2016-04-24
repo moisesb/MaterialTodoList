@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/location_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:src="@drawable/ic_map_black_24dp"
+            android:tint="@color/grey"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/icon_left_margin"
+            android:layout_marginStart="@dimen/icon_left_margin"/>
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/location"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/text_top_margin"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"/>
+
+        <TextView
+            android:id="@+id/location_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/location"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"
+            android:layout_marginBottom="@dimen/text_bottom_margin"
+            tools:text="Vila Valqueire - Rio de Janeiro"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/details_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_below="@+id/location_relative_layout">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:src="@drawable/ic_insert_comment_black_24dp"
+            android:tint="@color/grey"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/icon_left_margin"
+            android:layout_marginStart="@dimen/icon_left_margin"/>
+
+        <TextView
+            android:id="@+id/notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notes"
+            android:textSize="@dimen/text_main_title"
+            android:layout_marginTop="@dimen/text_top_margin"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"/>
+
+        <TextView
+            android:id="@+id/notes_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/notes"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"
+            android:layout_marginBottom="@dimen/text_bottom_margin"
+            tools:text="Lorem Lipsum"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/date_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_below="@+id/details_relative_layout">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:src="@drawable/ic_today_black_24dp"
+            android:tint="@color/grey"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/icon_left_margin"
+            android:layout_marginStart="@dimen/icon_left_margin"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date"
+            android:textSize="@dimen/text_main_title"
+            android:layout_marginTop="@dimen/text_top_margin"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"/>
+
+        <TextView
+            android:id="@+id/date_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/text_left_margin"
+            android:layout_marginStart="@dimen/text_left_margin"
+            android:layout_marginRight="@dimen/text_right_margin"
+            android:layout_marginEnd="@dimen/text_right_margin"
+            android:layout_marginBottom="@dimen/text_bottom_margin"
+            tools:text="12/12/2016"/>
+    </RelativeLayout>
+
+</RelativeLayout>

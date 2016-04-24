@@ -42,7 +42,7 @@ public class SqliteTodoListRepository implements TodoListRepository {
     public boolean addTodoList(TodoList todoList) {
         try {
             ContentValues contentValues = getContentValues(todoList);
-            long id = mDatabase.insert(TABLE_NAME,null, contentValues);
+            long id = mDatabase.insertOrThrow(TABLE_NAME,null, contentValues);
             todoList.setId(id);
             return true;
         }catch (SQLException e) {
@@ -52,7 +52,6 @@ public class SqliteTodoListRepository implements TodoListRepository {
 
     private ContentValues getContentValues(TodoList todoList) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Columns.ID, todoList.getId());
         contentValues.put(Columns.NAME, todoList.getName());
         return contentValues;
     }
@@ -103,18 +102,15 @@ public class SqliteTodoListRepository implements TodoListRepository {
         if (!(specification instanceof SqlSpecification)) {
             throw new IllegalArgumentException("Specification should be instance of SqlSpecification");
         }
-        try {
             SqlSpecification sqlSpecification = (SqlSpecification) specification;
             Cursor cursor = mDatabase.rawQuery(sqlSpecification.toSqlQuery(),sqlSpecification.getSelectionArgs());
             cursor.moveToFirst();
             List<TodoList> todoLists = new ArrayList<>();
             while (!cursor.isAfterLast()) {
-                todoLists.add(getTodoList(cursor));
+                TodoList todoList = getTodoList(cursor);
+                todoLists.add(todoList);
                 cursor.moveToNext();
             }
             return todoLists;
-        }catch (SQLException e) {
-            return new ArrayList<>();
-        }
     }
 }
