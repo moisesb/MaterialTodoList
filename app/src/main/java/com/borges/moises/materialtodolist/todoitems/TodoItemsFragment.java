@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.notifications.PendingTasksService;
+import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
@@ -113,7 +115,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     public void onResume() {
         super.onResume();
         mPresenterOps.loadTodoItems();
+        startServicesOnFirstRun();
     }
+
 
     @Override
     public void onDestroy() {
@@ -132,6 +136,24 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
         mTodoItemsRecyclerView.setHasFixedSize(true);
         mTodoItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mTodoItemsRecyclerView.setAdapter(mTodoItemsAdpter);
+    }
+
+    private void startServicesOnFirstRun() {
+        final String preference = "PREFERENCE";
+        final String appFirstRun = "appFirstRun";
+
+        final boolean isFirstRun = getActivity()
+                .getSharedPreferences(preference, Context.MODE_PRIVATE)
+                .getBoolean(appFirstRun, true);
+
+        if (isFirstRun) {
+            ServiceScheduler serviceScheduler = new ServiceScheduler();
+            serviceScheduler.setAlarm(getContext());
+
+            getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
+                    .edit().putBoolean(appFirstRun,false)
+                    .commit();
+        }
     }
 
     @Override
