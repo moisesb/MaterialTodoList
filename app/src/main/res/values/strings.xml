@@ -18,6 +18,8 @@
     <string name="todo_item_activity">Todo Item</string>
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
+    <string name="task_deleted">Task deleted</string>
+    <string name="undo">Undo</string>
 
     <plurals name="pending_task">
         <item quantity="one">You have one pending task for today</item>

@@ -1,10 +1,14 @@
 package com.borges.moises.materialtodolist.todoitems;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,8 +26,8 @@ import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
+import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.notifications.PendingTasksService;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
 import com.borges.moises.materialtodolist.utils.DateUtils;
@@ -44,6 +48,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
 
     @Bind(R.id.message_textview)
     TextView mMessageTextView;
+
+    CoordinatorLayout mCoordinatorLayout;
 
     private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
         @Override
@@ -92,6 +98,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todo_items, container, false);
         ButterKnife.bind(this, view);
+
+        mCoordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator_layout);
 
         mAddNoteFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         mAddNoteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +172,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     }
 
     @Override
+    public void showTodoItem(final TodoItem todoItem) {
+        mTodoItemsAdpter.addTodoItem(todoItem);
+    }
+
+    @Override
     public void removeTodoItem(TodoItem todoItem) {
         mTodoItemsAdpter.deleteTodoItem(todoItem);
     }
@@ -182,6 +195,19 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     public void showNoTodoItemMessage() {
         mTodoItemsRecyclerView.setVisibility(View.GONE);
         mMessageTextView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showUndoDeleteOption(final TodoItem todoItem) {
+        Snackbar.make(mCoordinatorLayout,R.string.task_deleted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mPresenterOps.undoDelete(todoItem);
+                    }
+                })
+                .show()
+        ;
     }
 
     public interface OnCheckBoxClickListener {
@@ -254,12 +280,21 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
             return mTodoItems.size();
         }
 
+        public void addTodoItem(TodoItem todoItem) {
+            mTodoItems.add(todoItem);
+            final int position = mTodoItems.indexOf(todoItem);
+            notifyItemInserted(position);
+        }
+
         public static class ViewHolder extends RecyclerView.ViewHolder {
+
+
 
             private final View mView;
             private final TextView mTitleTextView;
             private final TextView mDateTextView;
             private final CheckBox mDoneCheckBox;
+            private final View mPriorityStripeView;
             private Context mContext;
 
             public ViewHolder(View itemView) {
@@ -269,6 +304,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
                 mTitleTextView = (TextView) itemView.findViewById(R.id.todo_item_title);
                 mDateTextView = (TextView) itemView.findViewById(R.id.todo_item_date);
                 mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
+                mPriorityStripeView = itemView.findViewById(R.id.todo_item_priority);
+
+
             }
 
             public void bind(final TodoItem todoItem,
@@ -312,6 +350,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
 
                 if (mDoneCheckBox.isChecked() != todoItem.isCompleted()) {
                     mDoneCheckBox.setChecked(todoItem.isCompleted());
+                }
+
+                if (todoItem.getPriority() == Priority.URGENT) {
+                    setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.red));
+                }else {
+                    setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.green));
+                }
+            }
+
+            private void setPriorityStripBackground(Drawable drawable) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mPriorityStripeView.setBackground(drawable);
+                } else {
+                    mPriorityStripeView.setBackgroundDrawable(drawable);
                 }
             }
         }
