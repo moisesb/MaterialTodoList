@@ -47,7 +47,6 @@ public class PendingTasksService extends IntentService {
         }
 
         notifyPendingTasks(pendingItems);
-        stopSelf();
     }
 
     private void notifyPendingTasks(List<TodoItem> pendingItems) {

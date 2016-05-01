@@ -6,7 +6,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -15,13 +17,15 @@ import java.util.Calendar;
  */
 public class ServiceScheduler extends WakefulBroadcastReceiver {
 
+    public static final String BOOT_COMPLETED_EVENT = "android.intent.action.BOOT_COMPLETED";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        /*
-        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        Log.i("Action", intent.getAction() + "");
+        if (BOOT_COMPLETED_EVENT.equals(intent.getAction())) {
+            Log.i("Action", "set alarm");
             setAlarm(context);
         }
-        */
 
         PendingTasksService.start(context);
     }

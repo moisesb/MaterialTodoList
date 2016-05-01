@@ -154,14 +154,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
                 .getSharedPreferences(preference, Context.MODE_PRIVATE)
                 .getBoolean(appFirstRun, true);
 
-        if (isFirstRun) {
+        //if (isFirstRun) {
             ServiceScheduler serviceScheduler = new ServiceScheduler();
             serviceScheduler.setAlarm(getContext());
 
             getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
                     .edit().putBoolean(appFirstRun,false)
                     .commit();
-        }
+        //}
     }
 
     @Override
