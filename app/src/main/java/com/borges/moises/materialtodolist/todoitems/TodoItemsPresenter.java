@@ -39,6 +39,7 @@ public class TodoItemsPresenter implements TodoItemsContract.PresenterOps {
             mView.removeTodoItem(todoItem);
             mView.showUndoDeleteOption(todoItem);
         }
+        // TODO: 06/05/2016 if que list if empty, view should change
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,12 +11,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.borges.moises.materialtodolist.R;
+import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemPresenter;
+import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemPresenterImpl;
+import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemView;
+import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.dialogs.PriorityPickerDialog;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.Calendar;
@@ -32,7 +35,7 @@ import butterknife.OnTextChanged;
 /**
  * Created by Moisés on 14/04/2016.
  */
-public class AddTodoItemFragment extends Fragment implements AddTodoItemContract.View{
+public class AddTodoItemFragment extends Fragment implements AddTodoItemView, PriorityPickerDialog.OnPrioritySelectedListener {
 
     @BindString(R.string.title_requied)
     String mTitleRequiedString;
@@ -52,24 +55,25 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
     @Bind(R.id.todo_item_time_edit_text)
     EditText mTimeEditText;
 
-    @Bind(R.id.todo_item_urgent_checkbox)
-    CheckBox mUrgenteCheckBox;
+    @Bind(R.id.todo_item_location_edit_text)
+    EditText mLocationEditText;
 
-    @Bind(R.id.todo_item_title_input_layout)
-    TextInputLayout mTitleInputLayout;
+    @Bind(R.id.todo_item_priority_edit_text)
+    EditText mPriorityEditText;
 
-    @Bind(R.id.todo_item_date_input_layout)
-    TextInputLayout mDateInputLayout;
+    private int mYear = -1, mMonthOfYear = -1 , mDayOfMonth = -1, mHourOfDay = -1, mMinute = -1;
+    private Priority mPriority = null;
 
-    private AddTodoItemContract.PresenterOps mPresenterOps;
-
-    private Date mDate;
+    private AddTodoItemPresenter mPresenter;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mDate = DateUtils.getDate(year, monthOfYear, dayOfMonth);
-            mDateEditText.setText(DateUtils.dateToUiString(mDate));
+            final Date date = DateUtils.getDate(year, monthOfYear, dayOfMonth);
+            mYear = year;
+            mMonthOfYear = monthOfYear;
+            mDayOfMonth = dayOfMonth;
+            mDateEditText.setText(DateUtils.dateToUiString(date));
         }
     };
 
@@ -78,6 +82,8 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             final String time = hourOfDay + ":" + minute;
+            mHourOfDay = hourOfDay;
+            mMinute = minute;
             mTimeEditText.setText(time);
         }
     };
@@ -97,7 +103,8 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenterOps = new AddTodoItemPresenter(this);
+        mPresenter = new AddTodoItemPresenterImpl();
+        mPresenter.bindView(this);
     }
 
     @Override
@@ -116,12 +123,18 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
         }
     }
 
+    @Override
+    public void onDestroy() {
+        mPresenter.unbindView();
+        super.onDestroy();
+    }
+
     @OnTextChanged(R.id.todo_item_title_edit_text) void onTitleTextChanged(CharSequence text) {
-        mTitleInputLayout.setError(null);
+        //mTitleInputLayout.setError(null);
     }
 
     @OnTextChanged(R.id.todo_item_date_edit_text) void onDateTextChanged(CharSequence text) {
-        mDateInputLayout.setError(null);
+        //mDateInputLayout.setError(null);
     }
 
     @OnClick(R.id.todo_item_date_edit_text) void onDateClick() {
@@ -141,6 +154,10 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
         dialog.show();
     }
 
+    @OnClick(R.id.todo_item_priority_edit_text) void onPriorityClick() {
+        PriorityPickerDialog.show(getFragmentManager(),this);
+    }
+
     public static Fragment newFragment() {
         return new AddTodoItemFragment();
     }
@@ -148,23 +165,25 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemContract
     private void addTodoItem() {
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
-        final String time = mTimeEditText.getText().toString();
-        final boolean isUrgent = mUrgenteCheckBox.isChecked();
-        mPresenterOps.addTodoItem(title,description,isUrgent,mDate,time);
+        final String location = mLocationEditText.getText().toString();
+        mPresenter.addTodoItem(title,description,mPriority,location,mYear,mMonthOfYear,mDayOfMonth,mHourOfDay,mMinute);
     }
 
     @Override
     public void showMissingTitle() {
-        mTitleInputLayout.setError(mTitleRequiedString);
-    }
-
-    @Override
-    public void showDateInThePast() {
-        mDateInputLayout.setError(mDateInvalidString);
+        // TODO: 06/05/2016 Implement ASAP
     }
 
     @Override
     public void close() {
         getActivity().finish();
+    }
+
+
+    @Override
+    public void onPrioritySelected(Priority priority) {
+        mPriority = priority;
+        String priorityText = getResources().getString(priority.stringResId());
+        mPriorityEditText.setText(priorityText);
     }
 }

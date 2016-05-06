@@ -49,4 +49,19 @@ public class DateUtils {
         return calendar.getTime();
     }
 
+    public static Date getDate(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute) {
+        final Calendar calendar = Calendar.getInstance();
+        if (year < 0 || monthOfYear < 0 || dayOfMonth < 0) {
+            return null;
+        }
+
+        if (hourOfDay < 0 || minute < 0) {
+            calendar.set(year,monthOfYear,dayOfMonth);
+        }else {
+            calendar.set(year,monthOfYear,dayOfMonth,hourOfDay,minute);
+        }
+
+        return calendar.getTime();
+    }
+
 }

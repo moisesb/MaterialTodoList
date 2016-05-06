@@ -1,84 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               tools:context=".addtodoitem.AddTodoItemActivity">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/todo_item_title_input_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/todo_item_fields_margin"
-        android:layout_marginLeft="@dimen/todo_item_fields_margin"
-        android:layout_marginRight="@dimen/todo_item_fields_margin">
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_star_border_black_24px"
+            android:tint="@color/grey"/>
+
         <EditText
             android:id="@+id/todo_item_title_edit_text"
+            style="@style/FullWidthEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:hint="@string/title"/>
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="@string/title"
+            android:inputType="text"/>
+    </LinearLayout>
 
-    </android.support.design.widget.TextInputLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider"/>
 
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/todo_item_fields_margin"
-        android:layout_marginRight="@dimen/todo_item_fields_margin">
+        android:minHeight="48dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_insert_comment_black_24dp"
+            android:tint="@color/grey"/>
 
         <EditText
             android:id="@+id/todo_item_description_edit_text"
+            style="@style/FullWidthEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:hint="@string/description"/>
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="@string/description"
+            android:inputType="textMultiLine"/>
 
-    </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/todo_item_date_input_layout"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/todo_item_fields_margin"
-        android:layout_marginRight="@dimen/todo_item_fields_margin">
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_today_black_24dp"
+            android:tint="@color/grey"/>
 
         <EditText
             android:id="@+id/todo_item_date_edit_text"
+            style="@style/FullWidthEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:focusableInTouchMode="false"
-            android:inputType="datetime"
-            android:hint="@string/date"/>
+            android:hint="@string/date"
+            android:inputType="datetime"/>
 
-    </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/todo_item_fields_margin"
-        android:layout_marginRight="@dimen/todo_item_fields_margin">
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_access_time_black_24px"
+            android:tint="@color/grey"/>
 
         <EditText
             android:id="@+id/todo_item_time_edit_text"
+            style="@style/FullWidthEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:focusableInTouchMode="false"
-            android:inputType="time"
-            android:hint="@string/time"/>
+            android:hint="@string/time"
+            android:inputType="time"/>
+    </LinearLayout>
 
-    </android.support.design.widget.TextInputLayout>
-
-    <CheckBox
-        android:id="@+id/todo_item_urgent_checkbox"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/urgent_task"
+        android:layout_height="1dp"
         android:layout_marginTop="8dp"
-        android:layout_marginLeft="@dimen/todo_item_fields_margin"
-        android:layout_marginRight="@dimen/todo_item_fields_margin"/>
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_place_black_24px"
+            android:tint="@color/grey"/>
+
+        <EditText
+            android:id="@+id/todo_item_location_edit_text"
+            style="@style/FullWidthEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="@string/where"
+            android:inputType="text"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_priority_high_black_24px"
+            android:tint="@color/grey"/>
+
+        <EditText
+            android:id="@+id/todo_item_priority_edit_text"
+            style="@style/FullWidthEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:focusableInTouchMode="false"
+            android:hint="@string/priority"
+            android:inputType="text"/>
+
+        </LinearLayout>
+
+
 
 
 </LinearLayout>

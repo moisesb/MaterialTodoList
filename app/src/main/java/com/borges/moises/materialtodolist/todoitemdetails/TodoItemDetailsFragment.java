@@ -46,9 +46,6 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
     @Bind(R.id.todo_item_time_edit_text)
     EditText mTimeEditText;
 
-    @Bind(R.id.todo_item_urgent_checkbox)
-    CheckBox mUrgentCheckBox;
-
     private TodoItemDetailsContract.PresenterOps mPresenterOps;
     private Date mDate;
 
@@ -144,9 +141,9 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
     private void editTodoItem() {
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
-        final boolean urgent = mUrgentCheckBox.isSelected();
+        //final boolean urgent = mUrgentCheckBox.isSelected();
         final String time = mTimeEditText.getText().toString();
-        mPresenterOps.editTodoItem(mTodoItemId, title, description, urgent, mDate, time);
+        //mPresenterOps.editTodoItem(mTodoItemId, title, description, urgent, mDate, time);
     }
 
     private void deteleTodoItem() {
@@ -179,7 +176,7 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
 
     @Override
     public void showUrgent(boolean urgent) {
-        mUrgentCheckBox.setSelected(urgent);
+        //mUrgentCheckBox.setSelected(urgent);
     }
 
     @Override

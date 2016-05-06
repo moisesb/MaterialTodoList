@@ -352,7 +352,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
                     mDoneCheckBox.setChecked(todoItem.isCompleted());
                 }
 
-                if (todoItem.getPriority() == Priority.URGENT) {
+                if (todoItem.getPriority() == Priority.HIGH) {
                     setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.red));
                 }else {
                     setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.green));
