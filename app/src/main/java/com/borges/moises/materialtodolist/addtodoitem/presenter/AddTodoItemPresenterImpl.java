@@ -1,10 +1,17 @@
 package com.borges.moises.materialtodolist.addtodoitem.presenter;
 
+import android.util.Log;
+
 import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemView;
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
+import com.borges.moises.materialtodolist.data.services.TodoItemService;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Moisés on 14/04/2016.
@@ -12,10 +19,10 @@ import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 public class AddTodoItemPresenterImpl implements AddTodoItemPresenter {
 
     private AddTodoItemView mView;
-    private TodoItemRepository mTodoItemRepository;
+    private TodoItemService mService;
 
     public AddTodoItemPresenterImpl() {
-        mTodoItemRepository = SqliteTodoItemRepository.getInstance();
+        mService = new TodoItemService();
     }
 
     @Override
@@ -25,20 +32,19 @@ public class AddTodoItemPresenterImpl implements AddTodoItemPresenter {
             throw new IllegalStateException("should bind view first!");
         }
 
-        if (title == null || title.isEmpty()) {
-            mView.showMissingTitle();
-            return;
-        }
-
         TodoItem todoItem = new TodoItem();
         todoItem.setTitle(title);
         todoItem.setDescription(description);
         todoItem.setPriority(priority == null? Priority.NORMAL : priority);
         todoItem.setLocation(location);
 
-        mTodoItemRepository.addTodoItem(todoItem);
-        mView.close();
-
+        if (mService.isTodoItemValid(todoItem)) {
+            mService.addTodoItem(todoItem);
+            mView.showTodoItemAdded();
+            mView.close();
+        }else {
+            mView.showMissingTitle();
+        }
     }
 
 

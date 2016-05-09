@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemPresenter;
@@ -39,9 +42,6 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemView, Pr
 
     @BindString(R.string.title_requied)
     String mTitleRequiedString;
-
-    @BindString(R.string.invalid_date)
-    String mDateInvalidString;
 
     @Bind(R.id.todo_item_title_edit_text)
     EditText mTitleEditText;
@@ -129,14 +129,6 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemView, Pr
         super.onDestroy();
     }
 
-    @OnTextChanged(R.id.todo_item_title_edit_text) void onTitleTextChanged(CharSequence text) {
-        //mTitleInputLayout.setError(null);
-    }
-
-    @OnTextChanged(R.id.todo_item_date_edit_text) void onDateTextChanged(CharSequence text) {
-        //mDateInputLayout.setError(null);
-    }
-
     @OnClick(R.id.todo_item_date_edit_text) void onDateClick() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -171,7 +163,12 @@ public class AddTodoItemFragment extends Fragment implements AddTodoItemView, Pr
 
     @Override
     public void showMissingTitle() {
-        // TODO: 06/05/2016 Implement ASAP
+        mTitleEditText.setError(mTitleRequiedString);
+    }
+
+    @Override
+    public void showTodoItemAdded() {
+        Toast.makeText(getContext(),R.string.todo_item_added,Toast.LENGTH_SHORT).show();
     }
 
     @Override

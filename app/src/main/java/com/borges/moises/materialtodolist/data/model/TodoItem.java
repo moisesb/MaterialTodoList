@@ -13,6 +13,8 @@ public class TodoItem {
     private boolean completed;
     private Priority priority;
     private String location;
+    private boolean done;
+    private Date doneAt;
 
     public TodoItem() {
         priority = Priority.NORMAL;
@@ -72,5 +74,21 @@ public class TodoItem {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public Date getDoneAt() {
+        return doneAt;
+    }
+
+    public void setDoneAt(Date doneAt) {
+        this.doneAt = doneAt;
     }
 }

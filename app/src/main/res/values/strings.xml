@@ -27,6 +27,7 @@
     <string name="priority_high">High</string>
     <string name="priority_normal">Normal Priority</string>
     <string name="priority_low">Low Priority</string>
+    <string name="todo_item_added">Task added successfully</string>
 
     <plurals name="pending_task">
         <item quantity="one">You have one pending task for today</item>

@@ -7,5 +7,6 @@ import com.borges.moises.materialtodolist.mvp.View;
  */
 public interface AddTodoItemView extends View{
     void showMissingTitle();
+    void showTodoItemAdded();
     void close();
 }

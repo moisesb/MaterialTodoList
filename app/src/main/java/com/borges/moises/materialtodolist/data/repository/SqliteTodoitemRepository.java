@@ -48,9 +48,9 @@ public final class SqliteTodoItemRepository implements TodoItemRepository {
     public boolean addTodoItem(@NonNull TodoItem todoItem) {
         try {
             final ContentValues contentValues = getContentValues(todoItem);
-            long id = mDatabase.insertOrThrow(TABLE_NAME,null,contentValues);
+            long id = mDatabase.insertOrThrow(TABLE_NAME, null, contentValues);
             todoItem.setId(id);
-            return true;
+            return id >= 0;
         }catch (SQLiteException e) {
             return false;
         }
@@ -64,6 +64,9 @@ public final class SqliteTodoItemRepository implements TodoItemRepository {
         contentValues.put(Columns.COMPLETED, todoItem.isCompleted());
         contentValues.put(Columns.PRIORITY, todoItem.getPriority().name());
         contentValues.put(Columns.DATE, DateUtils.dateToDbString(todoItem.getDate()));
+        contentValues.put(Columns.LOCATION, todoItem.getLocation());
+        contentValues.put(Columns.DONE, todoItem.isDone());
+        contentValues.put(Columns.DONE_AT, DateUtils.dateToDbString(todoItem.getDoneAt()));
         return contentValues;
     }
 
@@ -108,6 +111,9 @@ public final class SqliteTodoItemRepository implements TodoItemRepository {
         todoItem.setDescription(cursor.getString(cursor.getColumnIndex(Columns.DESCRIPTION)));
         todoItem.setPriority(Priority.valueOf(cursor.getString(cursor.getColumnIndex(Columns.PRIORITY))));
         todoItem.setTitle(cursor.getString(cursor.getColumnIndex(Columns.TITLE)));
+        todoItem.setDone(cursor.getInt(cursor.getColumnIndex(Columns.DONE)) > 0);
+        todoItem.setLocation(cursor.getString(cursor.getColumnIndex(Columns.LOCATION)));
+        todoItem.setDoneAt(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DONE_AT))));
         return todoItem;
     }
 
