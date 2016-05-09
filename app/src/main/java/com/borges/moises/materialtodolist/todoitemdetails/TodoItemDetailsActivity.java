@@ -2,39 +2,80 @@ package com.borges.moises.materialtodolist.todoitemdetails;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.baseactivities.BaseActivity;
+
+import butterknife.Bind;
+import butterknife.BindString;
+import butterknife.ButterKnife;
 
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsActivity extends BaseActivity {
+public class TodoItemDetailsActivity extends AppCompatActivity {
 
     public static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.todoItemId";
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @Bind(R.id.activity_title_text_view)
+    TextView mTitleTextView;
+
+    @BindString(R.string.edit_task)
+    String mTitle;
+
+
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_todo_item);
+        ButterKnife.bind(this);
+        setupWindowAnimations();
+
+        setupToolbar();
+        initFragment();
+    }
+
+    private void setupWindowAnimations() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
+            Fade fade = new Fade();
+            fade.setDuration(1000);
+            getWindow().setEnterTransition(fade);
+        }
+    }
+
+
+    private void initFragment() {
+        final long todoItemId = getIntent().getLongExtra(ARG_TODO_ITEM_ID,-1);
+
+        if (todoItemId < 0) {
+            throw new IllegalArgumentException("todo item id invalid: " + todoItemId);
+        }
+
+        Fragment fragment = TodoItemDetailsFragment.newFragment(todoItemId);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.framelayout, fragment)
+                .commit();
+    }
+
     protected void setupToolbar() {
-        super.setupToolbar();
+        setSupportActionBar(mToolbar);
+        mTitleTextView.setText(mTitle);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_single_fragment;
-    }
-
-    @Override
-    protected Fragment getFragment() {
-        long todoItemId = getIntent().getLongExtra(ARG_TODO_ITEM_ID, -1);
-        return TodoItemDetailsFragment.newFragment(todoItemId);
-    }
-
     public static void start(Context context, long todoItemId) {
-        Intent intent = new Intent(context,TodoItemDetailsActivity.class);
+        Intent intent = new Intent(context, TodoItemDetailsActivity.class);
         intent.putExtra(ARG_TODO_ITEM_ID, todoItemId);
         context.startActivity(intent);
     }

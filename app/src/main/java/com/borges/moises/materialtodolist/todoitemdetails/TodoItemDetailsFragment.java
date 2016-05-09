@@ -1,70 +1,38 @@
 package com.borges.moises.materialtodolist.todoitemdetails;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.utils.DateUtils;
+import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
+import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsPresenter;
+import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsPresenterImpl;
+import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsView;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsFragment extends Fragment implements TodoItemDetailsContract.View{
+public class TodoItemDetailsFragment extends BaseTodoItemFragment implements TodoItemDetailsView {
 
     private static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsFragment.todoItemId";
     private long mTodoItemId;
 
-    @Bind(R.id.todo_item_title_edit_text)
-    EditText mTitleEditText;
-
-    @Bind(R.id.todo_item_description_edit_text)
-    EditText mDescriptionEditText;
-
-    @Bind(R.id.todo_item_date_edit_text)
-    EditText mDateEditText;
-
-    @Bind(R.id.todo_item_time_edit_text)
-    EditText mTimeEditText;
-
-    private TodoItemDetailsContract.PresenterOps mPresenterOps;
-    private Date mDate;
-
-    private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mDate = DateUtils.getDate(year, monthOfYear, dayOfMonth);
-            mDateEditText.setText(DateUtils.dateToUiString(mDate));
-        }
-    };
-
-
-    private final TimePickerDialog.OnTimeSetListener mOnTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            final String time = hourOfDay + ":" + minute;
-            mTimeEditText.setText(time);
-        }
-    };
+    private TodoItemDetailsPresenter mPresenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,31 +43,24 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_todo_item,container,false);
-        ButterKnife.bind(this,view);
-        setHasOptionsMenu(true);
-        return view;
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenterOps = new TodoItemDetailsPresenter(this);
+        mPresenter = new TodoItemDetailsPresenterImpl(this);
+        mPresenter.bindView(this);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenterOps.openTodoItem(mTodoItemId);
+        mPresenter.openTodoItem(mTodoItemId);
     }
 
     @Override
     public void onDestroy() {
+        mPresenter.unbindView();
         super.onDestroy();
-        mPresenterOps.onDestroy();
     }
 
     @Override
@@ -121,33 +82,15 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
         }
     }
 
-    @OnClick(R.id.todo_item_date_edit_text) void onDateClick() {
-        final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog dialog = new DatePickerDialog(getContext(),mOnDateSetListener, year,month,day);
-        dialog.show();
-    }
-
-    @OnClick(R.id.todo_item_time_edit_text) void onTimeClick() {
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        TimePickerDialog dialog = new TimePickerDialog(getContext(),mOnTimeSetListener,hour,minute,true);
-        dialog.show();
-    }
-
     private void editTodoItem() {
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
-        //final boolean urgent = mUrgentCheckBox.isSelected();
-        final String time = mTimeEditText.getText().toString();
-        //mPresenterOps.editTodoItem(mTodoItemId, title, description, urgent, mDate, time);
+        final String location = mLocationEditText.getText().toString();
+        mPresenter.editTodoItem(mTodoItemId, title, description, mPriority, location, mYear, mMonthOfYear, mDayOfMonth, mHourOfDay, mMinute);
     }
 
     private void deteleTodoItem() {
-        mPresenterOps.deleteTodoItem(mTodoItemId);
+        mPresenter.openDeleteConfirmationDialog();
     }
 
     public static Fragment newFragment(long todoItemId) {
@@ -170,27 +113,98 @@ public class TodoItemDetailsFragment extends Fragment implements TodoItemDetails
 
     @Override
     public void showDate(Date date) {
-        mDate = date;
-        mDateEditText.setText(DateUtils.dateToUiString(date));
+         if (date == null) {
+            return;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        mYear = calendar.get(Calendar.YEAR);
+        mMonthOfYear = calendar.get(Calendar.MONTH);
+        mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        mDateEditText.setText(getDate(mYear,mMonthOfYear,mDayOfMonth));
+
+        mHourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        mMinute = calendar.get(Calendar.MINUTE);
+        mTimeEditText.setText(getTime(mHourOfDay,mMinute));
+
     }
 
     @Override
-    public void showUrgent(boolean urgent) {
-        //mUrgentCheckBox.setSelected(urgent);
+    public void showPriority(Priority priority) {
+        String priorityStr = getResources().getString(priority.stringResId());
+        mPriorityEditText.setText(priorityStr);
+    }
+
+    @Override
+    public void showLocation(String location) {
+        mLocationEditText.setText(location);
     }
 
     @Override
     public void showMissingTitle() {
-
-    }
-
-    @Override
-    public void showDateInThePast() {
-
+        mTitleEditText.setError(mTitleRequiedString);
     }
 
     @Override
     public void close() {
         getActivity().finish();
+    }
+
+    @Override
+    public void showTodoItemEdited() {
+        Toast.makeText(getContext(),R.string.todo_item_edited,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showDeleteConfirmationDialog() {
+        ConfirmationDialog.show(getFragmentManager(), new ConfirmationDialog.OnDeleteClickListener() {
+            @Override
+            public void onClick() {
+                mPresenter.deleteTodoItem(mTodoItemId);
+            }
+        });
+    }
+
+    public static class ConfirmationDialog extends DialogFragment {
+
+        public static final String TAG = "ConfirmationDialog";
+        private OnDeleteClickListener mListener;
+
+        private void setListener(OnDeleteClickListener listener) {
+            mListener = listener;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.delete_confirmation_dialog_title)
+                    .setMessage(R.string.delete_confirmation_dialog_message)
+                    .setPositiveButton(R.string.action_delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mListener.onClick();
+                        }
+                    })
+                    .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .create();
+        }
+
+        public static void show(FragmentManager fragmentManager,
+                                @NonNull OnDeleteClickListener listener) {
+            ConfirmationDialog confirmationDialog = new ConfirmationDialog();
+            confirmationDialog.setListener(listener);
+            confirmationDialog.show(fragmentManager, TAG);
+        }
+
+        public interface OnDeleteClickListener {
+            void onClick();
+        }
     }
 }

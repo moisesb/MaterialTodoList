@@ -1,4 +1,4 @@
-package com.borges.moises.materialtodolist.baseactivities;
+package com.borges.moises.materialtodolist.baseui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

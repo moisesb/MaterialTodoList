@@ -8,6 +8,7 @@ import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
+import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,6 +38,7 @@ public class AddTodoItemPresenterImpl implements AddTodoItemPresenter {
         todoItem.setDescription(description);
         todoItem.setPriority(priority == null? Priority.NORMAL : priority);
         todoItem.setLocation(location);
+        todoItem.setDate(DateUtils.getDate(year, monthOfYear, dayOfMonth, hourOfDay, minute));
 
         if (mService.isTodoItemValid(todoItem)) {
             mService.addTodoItem(todoItem);

@@ -2,18 +2,17 @@ package com.borges.moises.materialtodolist.addtodoitem;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 
 import butterknife.Bind;
-import butterknife.BindDrawable;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 
 /**
@@ -23,6 +22,12 @@ public class AddTodoItemActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+
+    @Bind(R.id.activity_title_text_view)
+    TextView mTitleTextView;
+
+    @BindString(R.string.add_new_task)
+    String mTitle;
 
     public AddTodoItemActivity() {
     }
@@ -46,6 +51,7 @@ public class AddTodoItemActivity extends AppCompatActivity {
 
     protected void setupToolbar() {
         setSupportActionBar(mToolbar);
+        mTitleTextView.setText(mTitle);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

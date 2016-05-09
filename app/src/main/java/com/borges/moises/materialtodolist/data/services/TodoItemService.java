@@ -21,8 +21,23 @@ public class TodoItemService {
         }
     }
 
+    public void editTodoItem(TodoItem todoItem) {
+        if (!mRepository.updateTodoItem(todoItem)) {
+            throw new IllegalStateException("Todo item was not updated in the database");
+        }
+    }
+
+    public void deleteTodoItem(TodoItem todoItem) {
+        if (!mRepository.removeTodoItem(todoItem)) {
+            throw new IllegalStateException("Todo item was not deleted from database");
+        }
+    }
+
     public boolean isTodoItemValid(TodoItem todoItem) {
         return !(todoItem.getTitle() == null || todoItem.getTitle().isEmpty());
     }
 
+    public TodoItem getTodoItem(long todoItemId) {
+        return mRepository.getTodoItem(todoItemId);
+    }
 }

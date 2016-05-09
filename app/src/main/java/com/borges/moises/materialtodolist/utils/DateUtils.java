@@ -12,7 +12,7 @@ import java.util.Locale;
  */
 public class DateUtils {
 
-    private static final String PATTERN = "yyyy-MM-dd";
+    private static final String PATTERN = "yyyy-MM-dd HH:mm";
     private static DateFormat DB_DATE_FORMAT = new SimpleDateFormat(PATTERN,Locale.getDefault());
     private static DateFormat UI_DATE_FORMAT = SimpleDateFormat.getInstance();
 

@@ -15,7 +15,7 @@
     <string name="invalid_date">Date is invalid</string>
     <string name="location">Location</string>
     <string name="notes">Notes</string>
-    <string name="todo_item_activity">Todo Item</string>
+    <string name="todo_item_activity"></string>
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
     <string name="task_deleted">Task deleted</string>
@@ -28,6 +28,11 @@
     <string name="priority_normal">Normal Priority</string>
     <string name="priority_low">Low Priority</string>
     <string name="todo_item_added">Task added successfully</string>
+    <string name="todo_item_edited">Todo Item edited</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="delete_confirmation_dialog_title">Confirmation</string>
+    <string name="delete_confirmation_dialog_message">I will delete this task. Are you sure ?</string>
+    <string name="action_cancel">Cancel</string>
 
     <plurals name="pending_task">
         <item quantity="one">You have one pending task for today</item>
