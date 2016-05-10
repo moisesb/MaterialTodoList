@@ -26,10 +26,12 @@ import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
-import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
+import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsPresenter;
+import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsPresenterImpl;
+import com.borges.moises.materialtodolist.todoitems.view.TodoItemsView;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItemsFragment extends Fragment implements TodoItemsContract.View {
+public class TodoItemsFragment extends Fragment implements TodoItemsView {
 
     @Bind(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
@@ -54,14 +56,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
         @Override
         public void onClick(TodoItem todoItem, boolean done) {
-            mPresenterOps.doneTodoItem(todoItem,done);
+            mTodoItemsPresenter.doneTodoItem(todoItem,done);
         }
     };
 
     private OnTodoItemClickListener mTodoItemClickListener = new OnTodoItemClickListener() {
         @Override
         public void onClick(TodoItem todoItem) {
-            mPresenterOps.openTodoItem(todoItem);
+            mTodoItemsPresenter.openTodoItem(todoItem);
         }
     };
 
@@ -76,7 +78,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
                 TodoItem todoItem = mTodoItemsAdpter.getTodoItem(viewHolder.getAdapterPosition());
-                mPresenterOps.deleteTodoItem(todoItem);
+                mTodoItemsPresenter.deleteTodoItem(todoItem);
             }
         }
     };
@@ -87,7 +89,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
 
     private FloatingActionButton mAddNoteFloatingActionButton;
 
-    private TodoItemsContract.PresenterOps mPresenterOps;
+    private TodoItemsPresenter mTodoItemsPresenter;
 
 
     public TodoItemsFragment() {
@@ -105,7 +107,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
         mAddNoteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenterOps.addNewTodoItem();
+                mTodoItemsPresenter.addNewTodoItem();
             }
         });
 
@@ -116,20 +118,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenterOps = new TodoItemsPresenter(this);
+        mTodoItemsPresenter = new TodoItemsPresenterImpl(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenterOps.loadTodoItems();
+        mTodoItemsPresenter.loadTodoItems();
         startServicesOnFirstRun();
     }
 
 
     @Override
     public void onDestroy() {
-        mPresenterOps.onDestroy();
+        mTodoItemsPresenter.onDestroy();
         super.onDestroy();
     }
 
@@ -173,6 +175,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
 
     @Override
     public void showTodoItem(final TodoItem todoItem) {
+        mMessageTextView.setVisibility(View.GONE);
+        mTodoItemsRecyclerView.setVisibility(View.VISIBLE);
         mTodoItemsAdpter.addTodoItem(todoItem);
     }
 
@@ -203,7 +207,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
                 .setAction(R.string.undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mPresenterOps.undoDelete(todoItem);
+                        mTodoItemsPresenter.undoDelete(todoItem);
                     }
                 })
                 .show()
@@ -241,11 +245,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
             int position = getTodoItemPosition(todoItem);
             mTodoItems.remove(position);
             notifyItemRemoved(position);
-        }
-
-        public void updateTodoItem(TodoItem todoItem) {
-            int position = getTodoItemPosition(todoItem);
-            notifyItemChanged(position);
         }
 
         private int getTodoItemPosition(TodoItem todoItem) {
@@ -287,8 +286,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
-
-
 
             private final View mView;
             private final TextView mTitleTextView;
@@ -352,10 +349,16 @@ public class TodoItemsFragment extends Fragment implements TodoItemsContract.Vie
                     mDoneCheckBox.setChecked(todoItem.isCompleted());
                 }
 
-                if (todoItem.getPriority() == Priority.HIGH) {
-                    setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.red));
-                }else {
-                    setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.green));
+                switch (todoItem.getPriority()) {
+                    case HIGH:
+                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.red));
+                        break;
+                    case NORMAL:
+                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.blue));
+                        break;
+                    case LOW:
+                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.green));
+                        break;
                 }
             }
 

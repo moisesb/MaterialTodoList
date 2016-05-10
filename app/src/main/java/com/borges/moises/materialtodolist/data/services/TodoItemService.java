@@ -3,6 +3,12 @@ package com.borges.moises.materialtodolist.data.services;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
+import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
+
+import java.util.List;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by moises.anjos on 06/05/2016.
@@ -13,6 +19,11 @@ public class TodoItemService {
 
     public TodoItemService() {
         mRepository = SqliteTodoItemRepository.getInstance();
+    }
+
+    public Observable<List<TodoItem>> getTodoItems(){
+        return Observable.just(getTodoItemsFromDb())
+                .observeOn(Schedulers.computation());
     }
 
     public void addTodoItem(TodoItem todoItem) {
@@ -39,5 +50,10 @@ public class TodoItemService {
 
     public TodoItem getTodoItem(long todoItemId) {
         return mRepository.getTodoItem(todoItemId);
+    }
+
+    private List<TodoItem> getTodoItemsFromDb() {
+        List<TodoItem> todoItems = mRepository.query(new QueryAllTodoItemsSqlSpecification());
+        return todoItems;
     }
 }
