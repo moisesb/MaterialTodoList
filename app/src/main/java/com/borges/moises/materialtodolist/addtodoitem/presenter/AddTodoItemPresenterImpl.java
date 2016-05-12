@@ -30,7 +30,7 @@ public class AddTodoItemPresenterImpl implements AddTodoItemPresenter {
     public void addTodoItem(String title, String description, Priority priority, String location, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute) {
 
         if (mView == null) {
-            throw new IllegalStateException("should bind view first!");
+            throw new IllegalStateException("should bind LoginView first!");
         }
 
         TodoItem todoItem = new TodoItem();

@@ -33,6 +33,19 @@
     <string name="delete_confirmation_dialog_title">Confirmation</string>
     <string name="delete_confirmation_dialog_message">I will delete this task. Are you sure ?</string>
     <string name="action_cancel">Cancel</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="first_name">First Name</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="invalid_password">Password should be at least 3 characters long</string>
+    <string name="invalid_username">Name cannot be empty</string>
+    <string name="creating_account">Creating account...</string>
+    <string name="sign_in">Sign In</string>
+    <string name="signed_in">Login successful</string>
+    <string name="empty_email">Email should not be empty</string>
+    <string name="empty_password">Password should not be empty</string>
+    <string name="log_in">Log in...</string>
 
     <plurals name="pending_task">
         <item quantity="one">You have one pending task for today</item>

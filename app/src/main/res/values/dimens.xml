@@ -14,4 +14,5 @@
     <dimen name="text_main_title">16sp</dimen>
     <dimen name="text_subtitle">14sp</dimen>
     <dimen name="extended_toolbar_height">128dp</dimen>
+    <dimen name="login_size_margin">36dp</dimen>
 </resources>
