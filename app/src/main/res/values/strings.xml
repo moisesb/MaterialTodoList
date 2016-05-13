@@ -51,4 +51,9 @@
         <item quantity="one">You have one pending task for today</item>
         <item quantity="other">You have %d pending tasks for today</item>
     </plurals>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="closeDrawer">Close Drawer</string>
+    <string name="openDrawer">Open Drawer</string>
 </resources>

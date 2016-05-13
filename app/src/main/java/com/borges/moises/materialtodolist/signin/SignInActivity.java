@@ -1,6 +1,8 @@
 package com.borges.moises.materialtodolist.signin;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.signin.presenter.SignInPresenter;
 import com.borges.moises.materialtodolist.signin.presenter.SignInPresenterImpl;
 import com.borges.moises.materialtodolist.signin.view.SignInView;
+import com.borges.moises.materialtodolist.todoitems.TodoItemsActivity;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -144,5 +147,11 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
     @Override
     public void showEmptyPassword() {
         mPasswordEditText.setError(mEmptyPasswordStr);
+    }
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context,SignInActivity.class);
+        context.startActivity(intent);
+
     }
 }
