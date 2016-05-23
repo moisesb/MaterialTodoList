@@ -1,13 +1,13 @@
 package com.borges.moises.materialtodolist.todoitems.presenter;
 
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.mvp.Presenter;
-import com.borges.moises.materialtodolist.todoitems.view.TodoItemsView;
+import com.borges.moises.materialtodolist.mvp.MvpPresenter;
+import com.borges.moises.materialtodolist.todoitems.view.TodoItemsMvpView;
 
 /**
  * Created by moises.anjos on 10/05/2016.
  */
-public interface TodoItemsPresenter extends Presenter<TodoItemsView> {
+public interface TodoItemsMvpPresenter extends MvpPresenter<TodoItemsMvpView> {
     void loadTodoItems();
 
     void deleteTodoItem(TodoItem todoItem);

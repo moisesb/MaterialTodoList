@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
+import android.util.Patterns;
 
 import com.borges.moises.materialtodolist.data.model.User;
 import com.firebase.client.AuthData;
@@ -18,9 +19,6 @@ import java.util.regex.Pattern;
  * Created by moises.anjos on 11/05/2016.
  */
 public class UserService {
-
-    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     public static final int PASSWORD_MIN_LENGHT = 3;
 
     private static final String ENDPOINT = "https://material-todo-list.firebaseio.com/";
@@ -33,7 +31,6 @@ public class UserService {
         if (context == null) {
             throw new IllegalArgumentException("context cannot be null");
         }
-
         mSessionManager = SessionManager.getInstance();
         mContext = context;
     }
@@ -47,7 +44,7 @@ public class UserService {
     }
 
     public boolean isEmailValid(String email) {
-        return VALID_EMAIL_ADDRESS_REGEX.matcher(email).find();
+        return Patterns.EMAIL_ADDRESS.matcher(email).find();
     }
 
     @Nullable
@@ -114,7 +111,7 @@ public class UserService {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    public void signIn(final String email, final String password, final SignInListener listener) {
+    public void login(final String email, final String password, final SignInListener listener) {
         if (!hasInternetConnection()) {
             listener.onNetworkError();
             return;
@@ -166,6 +163,8 @@ public class UserService {
     }
 
     public void logout() {
+        final Firebase ref = new Firebase(ENDPOINT);
+        ref.unauth();
         mSessionManager.logout();
     }
 

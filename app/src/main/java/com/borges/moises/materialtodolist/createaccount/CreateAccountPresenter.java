@@ -1,28 +1,25 @@
-package com.borges.moises.materialtodolist.signup.presenter;
+package com.borges.moises.materialtodolist.createaccount;
 
 import android.content.Context;
 
 import com.borges.moises.materialtodolist.data.services.UserService;
-import com.borges.moises.materialtodolist.signup.view.LoginView;
 
 /**
  * Created by moises.anjos on 11/05/2016.
  */
-public class SignUpPresenterImpl implements SignUpPresenter {
+public class CreateAccountPresenter implements CreateAccountMvp.Presenter {
 
-    private LoginView mView;
+    private CreateAccountMvp.View mView;
     private UserService mUserService;
 
-    public SignUpPresenterImpl(Context context){
+    public CreateAccountPresenter(Context context){
         mUserService = new UserService(context);
     }
 
     @Override
-    public void signUp(String email, String password, String userName) {
+    public void createAccount(String email, String password, String userName) {
 
-        if (mView == null) {
-            throw new IllegalStateException("Should bind view first");
-        }
+        checkView();
 
         if (!mUserService.isUserNameValid(userName)) {
             mView.showInvalidUserName();
@@ -69,8 +66,20 @@ public class SignUpPresenterImpl implements SignUpPresenter {
         });
     }
 
+    private void checkView() {
+        if (mView == null) {
+            throw new IllegalStateException("Should bind view first");
+        }
+    }
+
     @Override
-    public void bindView(LoginView view) {
+    public void openLogin() {
+        checkView();
+        mView.openLogin();
+    }
+
+    @Override
+    public void bindView(CreateAccountMvp.View view) {
         mView = view;
     }
 

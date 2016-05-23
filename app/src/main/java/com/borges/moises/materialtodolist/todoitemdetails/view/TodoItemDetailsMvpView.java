@@ -1,14 +1,14 @@
 package com.borges.moises.materialtodolist.todoitemdetails.view;
 
 import com.borges.moises.materialtodolist.data.model.Priority;
-import com.borges.moises.materialtodolist.mvp.View;
+import com.borges.moises.materialtodolist.mvp.MvpView;
 
 import java.util.Date;
 
 /**
  * Created by moises.anjos on 09/05/2016.
  */
-public interface TodoItemDetailsView extends View {
+public interface TodoItemDetailsMvpView extends MvpView {
     void showTitle(String title);
 
     void showDescription(String description);

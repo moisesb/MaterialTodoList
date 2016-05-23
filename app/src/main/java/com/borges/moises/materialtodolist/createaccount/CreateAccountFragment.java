@@ -1,25 +1,31 @@
-package com.borges.moises.materialtodolist.signup;
+package com.borges.moises.materialtodolist.createaccount;
 
 import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
-import android.widget.Button;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.signup.presenter.SignUpPresenter;
-import com.borges.moises.materialtodolist.signup.presenter.SignUpPresenterImpl;
-import com.borges.moises.materialtodolist.signup.view.LoginView;
+import com.borges.moises.materialtodolist.signin.SignInActivity;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SignUpActivity extends AppCompatActivity  implements LoginView{
+/**
+ * Created by moises.anjos on 23/05/2016.
+ */
+public class CreateAccountFragment extends Fragment implements CreateAccountMvp.View{
 
     @BindString(R.string.creating_account)
     String mCreatingAccountStr;
@@ -42,46 +48,50 @@ public class SignUpActivity extends AppCompatActivity  implements LoginView{
     @Bind(R.id.name_edit_text)
     EditText mNameEditText;
 
-    @Bind(R.id.linear_layout)
+    @Bind(R.id.email_account_linear_layout)
     LinearLayout mLinearLayout;
 
     @Bind(R.id.sign_up_button)
-    Button mSignUpButton;
+    AppCompatButton mCreateAccountButton;
 
     private ProgressDialog mProgressDialog;
 
-    private SignUpPresenter mPresenter;
+    private CreateAccountMvp.Presenter mPresenter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
-        ButterKnife.bind(this);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_create_account, container, false);
+        ButterKnife.bind(this,view);
 
         initProgressDialog();
-
-        mPresenter = new SignUpPresenterImpl(this);
+        mPresenter = new CreateAccountPresenter(getContext());
         mPresenter.bindView(this);
+        return view;
+    }
 
+    @Override
+    public void onDestroy() {
+        mPresenter.unbindView();
+        super.onDestroy();
     }
 
     private void initProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setMessage(mCreatingAccountStr);
+        mProgressDialog.setCancelable(false);
     }
 
-    @OnClick(R.id.sign_up_button) void onSignUpClick(){
+    @OnClick(R.id.sign_up_button) void onCreateAccountClick(){
         final String email = mEmailEditText.getText().toString();
         final String password = mPasswordEditText.getText().toString();
         final String userName = mNameEditText.getText().toString();
-        mPresenter.signUp(email, password, userName);
+        mPresenter.createAccount(email, password, userName);
     }
 
-    @Override
-    protected void onDestroy() {
-        mPresenter.unbindView();
-        super.onDestroy();
+    @OnClick(R.id.sign_in_link_text_view) void onSignInLinkClick(){
+        mPresenter.openLogin();
     }
 
     @Override
@@ -106,7 +116,7 @@ public class SignUpActivity extends AppCompatActivity  implements LoginView{
 
     @Override
     public void showError() {
-        Log.d("Login", "could not login");
+        Log.d("Login", "could not createAccount");
     }
 
     @Override
@@ -143,7 +153,7 @@ public class SignUpActivity extends AppCompatActivity  implements LoginView{
     }
 
     private void enableChangeData(boolean enable) {
-        mSignUpButton.setEnabled(enable);
+        mCreateAccountButton.setEnabled(enable);
         mNameEditText.setEnabled(enable);
         mEmailEditText.setEnabled(enable);
         mPasswordEditText.setEnabled(enable);
@@ -151,11 +161,22 @@ public class SignUpActivity extends AppCompatActivity  implements LoginView{
 
     @Override
     public void close() {
-        finish();
+        getActivity().finish();
     }
 
     @Override
     public void showNoInternet() {
         Log.d("Login", "no internte connection!");
+    }
+
+    @Override
+    public void openLogin() {
+        SignInActivity.start(getContext());
+        close();
+    }
+
+    @NonNull
+    public static Fragment newInstace() {
+        return new CreateAccountFragment();
     }
 }

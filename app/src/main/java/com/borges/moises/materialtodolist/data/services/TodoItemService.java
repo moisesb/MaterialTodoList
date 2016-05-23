@@ -1,7 +1,7 @@
 package com.borges.moises.materialtodolist.data.services;
 
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemRepositoryImpl;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
 
@@ -18,7 +18,7 @@ public class TodoItemService {
     private TodoItemRepository mRepository;
 
     public TodoItemService() {
-        mRepository = SqliteTodoItemRepository.getInstance();
+        mRepository = TodoItemRepositoryImpl.getInstance();
     }
 
     public Observable<List<TodoItem>> getTodoItems(){

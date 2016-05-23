@@ -1,6 +1,5 @@
 package com.borges.moises.materialtodolist.todoitems;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -14,7 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.signin.SignInActivity;
+import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
+import com.borges.moises.materialtodolist.data.model.User;
+import com.borges.moises.materialtodolist.data.services.SessionManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,21 +43,34 @@ public class TodoItemsActivity extends AppCompatActivity {
 
         setupToolbar();
         initFragment();
-        setupDrawer();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupDrawer();
     }
 
     private void setupDrawer() {
+        showMenuOptions(SessionManager.getInstance().getSignedInUser());
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.sign_in_menu:
                         openSignIn();
-                        return true;
+                        break;
+                    case R.id.sign_out_menu:
+                        signOut();
+                        break;
                     default:
-                        return false;
+                        throw new IllegalStateException("Not implemented");
                 }
+
+                mDrawerLayout.closeDrawers();
+                return true;
+
             }
         });
 
@@ -72,8 +86,24 @@ public class TodoItemsActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    private void showMenuOptions(User user) {
+        mNavigationView.getMenu().clear();
+        if (user != null) {
+            mNavigationView.inflateMenu(R.menu.menu_drawer_logged_user);
+        }else {
+            mNavigationView.inflateMenu(R.menu.menu_drawer_no_logged_user);
+        }
+    }
+
+    private void signOut() {
+        final SessionManager sessionManager = SessionManager.getInstance();
+        sessionManager.logout();
+        mDrawerLayout.closeDrawers();
+        showMenuOptions(sessionManager.getSignedInUser());
+    }
+
     private void openSignIn() {
-        SignInActivity.start(this);
+        CreateAccountActivity.start(this);
     }
 
     private void initFragment() {

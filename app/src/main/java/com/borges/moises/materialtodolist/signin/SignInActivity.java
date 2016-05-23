@@ -13,17 +13,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.signin.presenter.SignInPresenter;
-import com.borges.moises.materialtodolist.signin.presenter.SignInPresenterImpl;
-import com.borges.moises.materialtodolist.signin.view.SignInView;
-import com.borges.moises.materialtodolist.todoitems.TodoItemsActivity;
+import com.borges.moises.materialtodolist.signin.presenter.SignInMvpPresenter;
+import com.borges.moises.materialtodolist.signin.presenter.SignInMvpPresenterImpl;
+import com.borges.moises.materialtodolist.signin.view.SignInMvpView;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SignInActivity extends AppCompatActivity implements SignInView{
+public class SignInActivity extends AppCompatActivity implements SignInMvpView {
 
     @BindString(R.string.log_in)
     String mLogInStr;
@@ -48,7 +47,7 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
 
     private ProgressDialog mProgressDialog;
 
-    private SignInPresenter mPresenter;
+    private SignInMvpPresenter mPresenter;
     ;
 
     @Override
@@ -59,7 +58,7 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
 
         initProgressDialog();
 
-        mPresenter = new SignInPresenterImpl(this);
+        mPresenter = new SignInMvpPresenterImpl(this);
         mPresenter.bindView(this);
     }
 

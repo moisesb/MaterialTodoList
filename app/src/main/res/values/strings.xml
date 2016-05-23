@@ -56,4 +56,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="closeDrawer">Close Drawer</string>
     <string name="openDrawer">Open Drawer</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in_link">Already have a account ? Sign in</string>
+    <string name="create_account">Create Account</string>
 </resources>

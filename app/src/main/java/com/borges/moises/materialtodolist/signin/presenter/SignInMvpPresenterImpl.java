@@ -3,17 +3,17 @@ package com.borges.moises.materialtodolist.signin.presenter;
 import android.content.Context;
 
 import com.borges.moises.materialtodolist.data.services.UserService;
-import com.borges.moises.materialtodolist.signin.view.SignInView;
+import com.borges.moises.materialtodolist.signin.view.SignInMvpView;
 
 /**
  * Created by moises.anjos on 12/05/2016.
  */
-public class SignInPresenterImpl implements SignInPresenter {
+public class SignInMvpPresenterImpl implements SignInMvpPresenter {
 
     private UserService mService;
-    private SignInView mView;
+    private SignInMvpView mView;
 
-    public SignInPresenterImpl(Context context) {
+    public SignInMvpPresenterImpl(Context context) {
         mService = new UserService(context);
     }
 
@@ -36,7 +36,7 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         mView.showProgress(true);
 
-        mService.signIn(email, password, new UserService.SignInListener() {
+        mService.login(email, password, new UserService.SignInListener() {
             @Override
             public void onSuccess() {
                 mView.showProgress(false);
@@ -64,7 +64,7 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     @Override
-    public void bindView(SignInView view) {
+    public void bindView(SignInMvpView view) {
         mView = view;
     }
 

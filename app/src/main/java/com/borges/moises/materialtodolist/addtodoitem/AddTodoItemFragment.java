@@ -9,17 +9,17 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemPresenter;
-import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemPresenterImpl;
-import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemView;
+import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemMvpPresenter;
+import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemMvpPresenterImpl;
+import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemMvpView;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 
 /**
  * Created by Moisés on 14/04/2016.
  */
-public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodoItemView {
+public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodoItemMvpView {
 
-    protected AddTodoItemPresenter mPresenter;
+    protected AddTodoItemMvpPresenter mPresenter;
 
     public AddTodoItemFragment() {
     }
@@ -27,7 +27,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenter = new AddTodoItemPresenterImpl();
+        mPresenter = new AddTodoItemMvpPresenterImpl();
         mPresenter.bindView(this);
     }
 

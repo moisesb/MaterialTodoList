@@ -4,21 +4,19 @@ import android.support.annotation.NonNull;
 
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
-import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
-import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsView;
+import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsMvpView;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsPresenterImpl implements TodoItemDetailsPresenter{
+public class TodoItemDetailsMvpPresenterImpl implements TodoItemDetailsMvpPresenter {
 
-    private TodoItemDetailsView mView;
+    private TodoItemDetailsMvpView mView;
     private TodoItemService mService;
 
-    public TodoItemDetailsPresenterImpl(TodoItemDetailsView view) {
+    public TodoItemDetailsMvpPresenterImpl(TodoItemDetailsMvpView view) {
         mView = view;
         mService = new TodoItemService();
     }
@@ -77,7 +75,7 @@ public class TodoItemDetailsPresenterImpl implements TodoItemDetailsPresenter{
 
 
     @Override
-    public void bindView(@NonNull TodoItemDetailsView view) {
+    public void bindView(@NonNull TodoItemDetailsMvpView view) {
         mView = view;
     }
 

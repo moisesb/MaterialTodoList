@@ -3,27 +3,23 @@ package com.borges.moises.materialtodolist.todoitems.presenter;
 import android.support.annotation.NonNull;
 
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
-import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
-import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
-import com.borges.moises.materialtodolist.todoitems.view.TodoItemsView;
+import com.borges.moises.materialtodolist.todoitems.view.TodoItemsMvpView;
 
 import java.util.List;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Moisés on 13/04/2016.
  */
-public class TodoItemsPresenterImpl implements TodoItemsPresenter {
+public class TodoItemsMvpPresenterImpl implements TodoItemsMvpPresenter {
 
-    private TodoItemsView mView;
+    private TodoItemsMvpView mView;
     private TodoItemService mService;
 
-    public TodoItemsPresenterImpl(@NonNull TodoItemsView view) {
+    public TodoItemsMvpPresenterImpl(@NonNull TodoItemsMvpView view) {
         mView = view;
         mService = new TodoItemService();
     }
@@ -111,7 +107,7 @@ public class TodoItemsPresenterImpl implements TodoItemsPresenter {
     }
 
     @Override
-    public void bindView(TodoItemsView view) {
+    public void bindView(TodoItemsMvpView view) {
 
     }
 

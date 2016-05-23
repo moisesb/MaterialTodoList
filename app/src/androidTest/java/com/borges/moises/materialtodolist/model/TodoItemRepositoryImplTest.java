@@ -4,7 +4,7 @@ import android.test.AndroidTestCase;
 
 import com.borges.moises.materialtodolist.data.MaterialTodoItemsDatabase;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemRepositoryImpl;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
 import com.borges.moises.materialtodolist.helpers.DatabaseHelper;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Moisés on 12/04/2016.
  */
-public class SqliteTodoItemRepositoryTest extends AndroidTestCase {
+public class TodoItemRepositoryImplTest extends AndroidTestCase {
 
     private TodoItem mTodoItem;
     private TodoItemRepository mTodoItemRepository;
@@ -23,7 +23,7 @@ public class SqliteTodoItemRepositoryTest extends AndroidTestCase {
         super.setUp();
 
         MaterialTodoItemsDatabase.init(mContext);
-        mTodoItemRepository = SqliteTodoItemRepository.getInstance();
+        mTodoItemRepository = TodoItemRepositoryImpl.getInstance();
         DatabaseHelper.beginTransaction();
         mTodoItem = new TodoItem();
         mTodoItem.setTitle("Some title");

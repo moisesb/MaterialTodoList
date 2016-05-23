@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemRepositoryImpl;
 import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpecification;
 import com.borges.moises.materialtodolist.todoitems.TodoItemsActivity;
@@ -34,7 +34,7 @@ public class PendingTasksService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        TodoItemRepository todoItemRepository = SqliteTodoItemRepository.getInstance();
+        TodoItemRepository todoItemRepository = TodoItemRepositoryImpl.getInstance();
         List<TodoItem> todoItems = todoItemRepository.query(new QueryAllTodoItemsSqlSpecification());
 
         Calendar calendar = Calendar.getInstance();

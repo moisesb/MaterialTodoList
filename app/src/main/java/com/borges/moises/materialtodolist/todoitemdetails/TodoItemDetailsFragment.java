@@ -17,9 +17,9 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Priority;
-import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsPresenter;
-import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsPresenterImpl;
-import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsView;
+import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsMvpPresenter;
+import com.borges.moises.materialtodolist.todoitemdetails.presenter.TodoItemDetailsMvpPresenterImpl;
+import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsMvpView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,12 +27,12 @@ import java.util.Date;
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsFragment extends BaseTodoItemFragment implements TodoItemDetailsView {
+public class TodoItemDetailsFragment extends BaseTodoItemFragment implements TodoItemDetailsMvpView {
 
     private static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsFragment.todoItemId";
     private long mTodoItemId;
 
-    private TodoItemDetailsPresenter mPresenter;
+    private TodoItemDetailsMvpPresenter mPresenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class TodoItemDetailsFragment extends BaseTodoItemFragment implements Tod
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenter = new TodoItemDetailsPresenterImpl(this);
+        mPresenter = new TodoItemDetailsMvpPresenterImpl(this);
         mPresenter.bindView(this);
 
     }

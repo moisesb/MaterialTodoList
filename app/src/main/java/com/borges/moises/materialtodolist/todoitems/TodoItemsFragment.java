@@ -29,9 +29,9 @@ import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
-import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsPresenter;
-import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsPresenterImpl;
-import com.borges.moises.materialtodolist.todoitems.view.TodoItemsView;
+import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsMvpPresenter;
+import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsMvpPresenterImpl;
+import com.borges.moises.materialtodolist.todoitems.view.TodoItemsMvpView;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItemsFragment extends Fragment implements TodoItemsView {
+public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
 
     @Bind(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
@@ -89,7 +89,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsView {
 
     private FloatingActionButton mAddNoteFloatingActionButton;
 
-    private TodoItemsPresenter mTodoItemsPresenter;
+    private TodoItemsMvpPresenter mTodoItemsPresenter;
 
 
     public TodoItemsFragment() {
@@ -118,7 +118,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mTodoItemsPresenter = new TodoItemsPresenterImpl(this);
+        mTodoItemsPresenter = new TodoItemsMvpPresenterImpl(this);
     }
 
     @Override
