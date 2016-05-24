@@ -16,7 +16,8 @@ public class SessionManager {
     private static final String IS_LOGGED_IN = "is_logged_in";
     private static final String USER_NAME = "user_name";
     private static final String USER_UID = "uid";
-    public static final String USER_PICURE_URL = "user_picure_url";
+    private static final String USER_PICTURE_URL = "user_picture_url";
+    private static final String ACCOUNT_CREATED = "account_created";
     private SharedPreferences mSharedPreferences;
 
     private static SessionManager INSTANCE;
@@ -44,7 +45,7 @@ public class SessionManager {
     }
 
     @Nullable
-    public User getSignedInUser() {
+    User getLoggedUser() {
         if (!isUserSignedIn()) {
             return null;
         }
@@ -52,25 +53,33 @@ public class SessionManager {
         User user = new User();
         user.setUserName(mSharedPreferences.getString(USER_NAME, null));
         user.setEmail(mSharedPreferences.getString(USER_UID, null));
-        user.setImageUrl(mSharedPreferences.getString(USER_PICURE_URL,null));
+        user.setImageUrl(mSharedPreferences.getString(USER_PICTURE_URL,null));
         return user;
     }
 
-    public void signInUser(@NonNull User user){
+    void signInUser(@NonNull User user){
         mSharedPreferences.edit()
                 .putBoolean(IS_LOGGED_IN,true)
                 .putString(USER_NAME,user.getUserName())
                 .putString(USER_UID, user.getEmail())
-                .putString(USER_PICURE_URL, user.getImageUrl())
+                .putString(USER_PICTURE_URL, user.getImageUrl())
+                .apply();
+
+        mSharedPreferences.edit()
+                .putBoolean(ACCOUNT_CREATED,true)
                 .apply();
     }
 
-    public void logout() {
+    void logout() {
         mSharedPreferences.edit()
                 .putBoolean(IS_LOGGED_IN,false)
                 .putString(USER_NAME, null)
                 .putString(USER_UID,null)
-                .putString(USER_PICURE_URL,null)
+                .putString(USER_PICTURE_URL,null)
                 .apply();
+    }
+
+    boolean hasCreatedAccount(){
+        return  mSharedPreferences.getBoolean(ACCOUNT_CREATED,false);
     }
 }

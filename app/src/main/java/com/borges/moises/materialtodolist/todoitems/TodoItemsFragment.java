@@ -29,9 +29,6 @@ import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
-import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsMvpPresenter;
-import com.borges.moises.materialtodolist.todoitems.presenter.TodoItemsMvpPresenterImpl;
-import com.borges.moises.materialtodolist.todoitems.view.TodoItemsMvpView;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -43,7 +40,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
+public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     @Bind(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
@@ -56,14 +53,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
     private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
         @Override
         public void onClick(TodoItem todoItem, boolean done) {
-            mTodoItemsPresenter.doneTodoItem(todoItem,done);
+            mPresenter.doneTodoItem(todoItem,done);
         }
     };
 
     private OnTodoItemClickListener mTodoItemClickListener = new OnTodoItemClickListener() {
         @Override
         public void onClick(TodoItem todoItem) {
-            mTodoItemsPresenter.openTodoItem(todoItem);
+            mPresenter.openTodoItem(todoItem);
         }
     };
 
@@ -78,7 +75,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
                 TodoItem todoItem = mTodoItemsAdpter.getTodoItem(viewHolder.getAdapterPosition());
-                mTodoItemsPresenter.deleteTodoItem(todoItem);
+                mPresenter.deleteTodoItem(todoItem);
             }
         }
     };
@@ -87,9 +84,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
             mCheckBoxClickListener,
             mTodoItemClickListener);
 
-    private FloatingActionButton mAddNoteFloatingActionButton;
-
-    private TodoItemsMvpPresenter mTodoItemsPresenter;
+    private TodoItemsMvp.Presenter mPresenter;
 
 
     public TodoItemsFragment() {
@@ -103,11 +98,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
 
         mCoordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator_layout);
 
-        mAddNoteFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        final FloatingActionButton mAddNoteFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         mAddNoteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTodoItemsPresenter.addNewTodoItem();
+                mPresenter.addNewTodoItem();
             }
         });
 
@@ -118,20 +113,21 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mTodoItemsPresenter = new TodoItemsMvpPresenterImpl(this);
+        mPresenter = new TodoItemsPresenter();
+        mPresenter.bindView(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mTodoItemsPresenter.loadTodoItems();
+        mPresenter.loadTodoItems();
         startServicesOnFirstRun();
     }
 
 
     @Override
     public void onDestroy() {
-        mTodoItemsPresenter.onDestroy();
+        mPresenter.onDestroy();
         super.onDestroy();
     }
 
@@ -207,7 +203,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvpView {
                 .setAction(R.string.undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mTodoItemsPresenter.undoDelete(todoItem);
+                        mPresenter.undoDelete(todoItem);
                     }
                 })
                 .show()

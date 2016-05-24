@@ -55,8 +55,10 @@
     <string name="closeDrawer">Close Drawer</string>
     <string name="openDrawer">Open Drawer</string>
     <string name="sign_out">Sign out</string>
-    <string name="sign_in_link">Already have a account ? Sign in</string>
+    <string name="sign_in_link">Already have a account ? <a href="">Sign in</a></string>
     <string name="create_account">Create Account</string>
 
     <string name="facebook_app_id">815432791890253</string>
+    <string name="sign_up_link">Don\'t have an Account ? <a href="">Sign up</a></string>
+    <string name="greetings">Hello</string>
 </resources>

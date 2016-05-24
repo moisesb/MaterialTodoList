@@ -13,7 +13,7 @@ public class CreateAccountPresenter implements CreateAccountMvp.Presenter {
     private CreateAccountMvp.View mView;
     private UserService mUserService;
 
-    private final UserService.SignUpListener mListener = new UserService.SignUpListener() {
+    private final UserService.CreateAccountListener mListener = new UserService.CreateAccountListener() {
         @Override
         public void onSuccess() {
             mView.showProgress(false);

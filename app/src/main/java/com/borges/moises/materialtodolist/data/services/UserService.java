@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Patterns;
 
 import com.borges.moises.materialtodolist.data.model.User;
+import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -21,6 +22,7 @@ public class UserService {
 
     private static final String ENDPOINT = "https://material-todo-list.firebaseio.com/";
     private static final String USERS = "users";
+    public static final String FACEBOOK_PROVIDER = "facebook";
 
     private final Firebase ref = new Firebase(ENDPOINT);
 
@@ -49,10 +51,10 @@ public class UserService {
 
     @Nullable
     public User getSignedInUser() {
-        return mSessionManager.getSignedInUser();
+        return mSessionManager.getLoggedUser();
     }
 
-    public void createUser(final String email, final String password, final String userName, final SignUpListener listener) {
+    public void createUser(final String email, final String password, final String userName, final CreateAccountListener listener) {
 
         if (!hasInternetConnection()) {
             listener.onNetworkError();
@@ -84,7 +86,7 @@ public class UserService {
         });
     }
 
-    private void handleFirebaseError(FirebaseError firebaseError, SignUpListener listener) {
+    private void handleFirebaseError(FirebaseError firebaseError, CreateAccountListener listener) {
         switch (firebaseError.getCode()) {
             case FirebaseError.EMAIL_TAKEN:
                 listener.onEmailTaken();
@@ -100,7 +102,7 @@ public class UserService {
         }
     }
 
-    private void createUserOnServer(final String uid, String userName, String email, String imageURL, final SignUpListener listener) {
+    private void createUserOnServer(final String uid, String userName, String email, String imageURL, final CreateAccountListener listener) {
         final User user = new User();
         user.setUserName(userName);
         user.setEmail(email);
@@ -110,11 +112,11 @@ public class UserService {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue() == null){
+                        if (dataSnapshot.getValue() == null) {
                             ref.child(USERS).child(uid).setValue(user);
                             mSessionManager.signInUser(user);
                             listener.onSuccess();
-                        }else {
+                        } else {
                             listener.onEmailTaken();
                         }
                     }
@@ -127,7 +129,7 @@ public class UserService {
 
     }
 
-    public void createUser(String authToken, final SignUpListener listener) {
+    public void createUser(String authToken, final CreateAccountListener listener) {
         if (!hasInternetConnection()) {
             listener.onNetworkError();
             return;
@@ -159,7 +161,7 @@ public class UserService {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    public void login(final String email, final String password, final SignInListener listener) {
+    public void login(final String email, final String password, final LoginListener listener) {
         if (!hasInternetConnection()) {
             listener.onNetworkError();
             return;
@@ -168,33 +170,7 @@ public class UserService {
         ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                ref.child(USERS).child(authData.getUid()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot == null) {
-                            listener.onError();
-                        }
-
-                        String email = (String) dataSnapshot.child("email").getValue();
-                        String userName = (String) dataSnapshot.child("userName").getValue();
-                        User user = new User();
-                        user.setEmail(email);
-                        user.setUserName(userName);
-                        mSessionManager.signInUser(user);
-                        listener.onSuccess();
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        switch (firebaseError.getCode()) {
-                            case FirebaseError.NETWORK_ERROR:
-                                listener.onNetworkError();
-                                break;
-                            default:
-                                listener.onError();
-                        }
-                    }
-                });
+                handleAuthentication(authData, listener);
             }
 
             @Override
@@ -209,12 +185,80 @@ public class UserService {
         });
     }
 
+    private void handleLogin(DataSnapshot dataSnapshot, LoginListener listener) {
+        if (dataSnapshot == null) {
+            listener.onError();
+        }
+
+        final String email = (String) dataSnapshot.child("email").getValue();
+        final String userName = (String) dataSnapshot.child("userName").getValue();
+        final String pictureUrl = (String) dataSnapshot.child("pictureUrl").getValue();
+        User user = new User();
+        user.setEmail(email);
+        user.setUserName(userName);
+        user.setImageUrl(pictureUrl);
+        mSessionManager.signInUser(user);
+        listener.onSuccess();
+    }
+
+    private void handleError(FirebaseError firebaseError, LoginListener listener) {
+        switch (firebaseError.getCode()) {
+            case FirebaseError.NETWORK_ERROR:
+                listener.onNetworkError();
+                break;
+            default:
+                listener.onError();
+        }
+    }
+
+    public void loginWithFacebook(final String authToken, final LoginListener listener) {
+        if (!hasInternetConnection()) {
+            listener.onNetworkError();
+            return;
+        }
+
+        ref.authWithOAuthToken(FACEBOOK_PROVIDER, authToken, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                handleAuthentication(authData, listener);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                handleError(firebaseError,listener);
+            }
+        });
+    }
+
+    private void handleAuthentication(AuthData authData, final LoginListener listener) {
+        ref.child(USERS).child(authData.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                handleLogin(dataSnapshot, listener);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                handleError(firebaseError, listener);
+            }
+        });
+    }
+
     public void logout() {
         ref.unauth();
+        LoginManager.getInstance().logOut();
         mSessionManager.logout();
     }
 
-    public interface SignUpListener {
+    public User getLoggedUser() {
+        return mSessionManager.getLoggedUser();
+    }
+
+    public boolean hasCreatedAccount() {
+        return mSessionManager.hasCreatedAccount();
+    }
+
+    public interface CreateAccountListener {
         void onSuccess();
 
         void onEmailTaken();
@@ -224,7 +268,7 @@ public class UserService {
         void onNetworkError();
     }
 
-    public interface SignInListener {
+    public interface LoginListener {
         void onSuccess();
 
         void onError();

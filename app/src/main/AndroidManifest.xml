@@ -55,7 +55,7 @@
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
-            android:name=".signin.SignInActivity"
+            android:name=".login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
         </activity>

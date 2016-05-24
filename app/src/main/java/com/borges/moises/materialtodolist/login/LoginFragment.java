@@ -1,22 +1,22 @@
-package com.borges.moises.materialtodolist.createaccount;
+package com.borges.moises.materialtodolist.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.login.LoginActivity;
+import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -30,65 +30,70 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by moises.anjos on 23/05/2016.
+ * Created by moises.anjos on 24/05/2016.
  */
-public class CreateAccountFragment extends Fragment implements CreateAccountMvp.View{
+public class LoginFragment extends Fragment implements LoginMvp.View{
 
-    @BindString(R.string.creating_account)
-    String mCreatingAccountStr;
+    @BindString(R.string.log_in)
+    String mLogInStr;
 
-    @BindString(R.string.invalid_email)
-    String mInvalidEmailStr;
+    @BindString(R.string.empty_email)
+    String mEmptyEmailStr;
 
-    @BindString(R.string.invalid_password)
-    String mInvalidPasswordStr;
-
-    @BindString(R.string.invalid_username)
-    String mInvalidUserNameStr;
-
-    @Bind(R.id.password_edit_text)
-    EditText mPasswordEditText;
+    @BindString(R.string.empty_password)
+    String mEmptyPasswordStr;
 
     @Bind(R.id.email_edit_text)
     EditText mEmailEditText;
 
-    @Bind(R.id.name_edit_text)
-    EditText mNameEditText;
+    @Bind(R.id.password_edit_text)
+    EditText mPasswordEditText;
 
-    @Bind(R.id.email_account_linear_layout)
+    @Bind(R.id.login_linear_layout)
     LinearLayout mLinearLayout;
 
-    @Bind(R.id.sign_up_button)
-    AppCompatButton mCreateAccountButton;
+    @Bind(R.id.sign_in_button)
+    Button mSignInButton;
 
     @Bind(R.id.facebook_login_button)
     LoginButton mFacebookLoginButton;
 
-    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
-
     private ProgressDialog mProgressDialog;
 
-    private CreateAccountMvp.Presenter mPresenter;
+    private LoginMvp.Presenter mPresenter;
+
+    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
+
+    public LoginFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_account, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this,view);
 
-        initFacebookButton();
         initProgressDialog();
-        mPresenter = new CreateAccountPresenter(getContext());
+        initFacebookButton();
+
+        mPresenter = new LoginPresenter(getContext());
         mPresenter.bindView(this);
+
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (FacebookSdk.isFacebookRequestCode(requestCode)) {
+        if (FacebookSdk.isFacebookRequestCode(requestCode)){
             mCallbackManager.onActivityResult(requestCode,resultCode,data);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        mPresenter.unbindView();
+        super.onDestroy();
     }
 
     private void initFacebookButton() {
@@ -99,9 +104,9 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
             public void onSuccess(LoginResult loginResult) {
                 if(loginResult.getAccessToken() != null){
                     final String authToken = loginResult.getAccessToken().getToken();
-                    mPresenter.createAccountWithFacebook(authToken);
+                    mPresenter.loginWithFacebook(authToken);
                 }else {
-                    mPresenter.createAccountWithFacebook(null);
+                    mPresenter.loginWithFacebook(null);
                 }
             }
 
@@ -117,53 +122,21 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
         });
     }
 
-    @Override
-    public void onDestroy() {
-        mPresenter.unbindView();
-        super.onDestroy();
-    }
-
     private void initProgressDialog() {
         mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setMessage(mCreatingAccountStr);
+        mProgressDialog.setMessage(mLogInStr);
         mProgressDialog.setCancelable(false);
     }
 
-    @OnClick(R.id.sign_up_button) void onCreateAccountClick(){
+    @OnClick(R.id.sign_in_button) void onSignInClick() {
         final String email = mEmailEditText.getText().toString();
         final String password = mPasswordEditText.getText().toString();
-        final String userName = mNameEditText.getText().toString();
-        mPresenter.createAccount(email, password, userName);
+        mPresenter.login(email, password);
     }
 
-    @OnClick(R.id.sign_up_link_text_view) void onSignInLinkClick(){
-        mPresenter.openLogin();
-    }
-
-    @Override
-    public void showAccountCreated() {
-        Log.d("Login", "Account created");
-    }
-
-    @Override
-    public void showInvalidEmail() {
-        mEmailEditText.setError(mInvalidEmailStr);
-    }
-
-    @Override
-    public void showInvalidPassword() {
-        mPasswordEditText.setError(mInvalidPasswordStr);
-    }
-
-    @Override
-    public void showInvalidUserName() {
-        mNameEditText.setError(mInvalidUserNameStr);
-    }
-
-    @Override
-    public void showError() {
-        Log.d("Login", "could not createAccount");
+    @OnClick(R.id.sign_up_link_text_view) void onSignUpLinkClick(){
+        mPresenter.openCreateAccount();
     }
 
     @Override
@@ -195,15 +168,30 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
         if (visible) {
             mProgressDialog.show();
         }else {
-            mProgressDialog.dismiss();
+            mProgressDialog.hide();
         }
     }
 
-    private void enableChangeData(boolean enable) {
-        mCreateAccountButton.setEnabled(enable);
-        mNameEditText.setEnabled(enable);
-        mEmailEditText.setEnabled(enable);
-        mPasswordEditText.setEnabled(enable);
+    private void enableChangeData(boolean enabled) {
+        mEmailEditText.setEnabled(enabled);
+        mPasswordEditText.setEnabled(enabled);
+        mSignInButton.setEnabled(enabled);
+    }
+
+    @Override
+    public void showUserSignedIn() {
+        Toast.makeText(getContext(),R.string.signed_in, Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    public void showInvalidEmailAndPassword() {
+        Log.d("SignIn", "invalid email and password");
+    }
+
+    @Override
+    public void showNoInternetConnection() {
+        Log.d("SignIn", "no internet connection");
     }
 
     @Override
@@ -212,18 +200,22 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     }
 
     @Override
-    public void showNoInternet() {
-        Log.d("Login", "no internte connection!");
+    public void openCreateAccount() {
+        CreateAccountActivity.start(getContext());
+        getActivity().finish();
     }
 
     @Override
-    public void openLogin() {
-        LoginActivity.start(getContext());
-        close();
+    public void showEmptyEmail() {
+        mEmailEditText.setError(mEmptyEmailStr);
     }
 
-    @NonNull
-    public static Fragment newInstace() {
-        return new CreateAccountFragment();
+    @Override
+    public void showEmptyPassword() {
+        mPasswordEditText.setError(mEmptyPasswordStr);
+    }
+
+    public static Fragment newInstance(){
+        return new LoginFragment();
     }
 }
