@@ -16,6 +16,7 @@ public class SessionManager {
     private static final String IS_LOGGED_IN = "is_logged_in";
     private static final String USER_NAME = "user_name";
     private static final String USER_UID = "uid";
+    public static final String USER_PICURE_URL = "user_picure_url";
     private SharedPreferences mSharedPreferences;
 
     private static SessionManager INSTANCE;
@@ -51,6 +52,7 @@ public class SessionManager {
         User user = new User();
         user.setUserName(mSharedPreferences.getString(USER_NAME, null));
         user.setEmail(mSharedPreferences.getString(USER_UID, null));
+        user.setImageUrl(mSharedPreferences.getString(USER_PICURE_URL,null));
         return user;
     }
 
@@ -59,6 +61,7 @@ public class SessionManager {
                 .putBoolean(IS_LOGGED_IN,true)
                 .putString(USER_NAME,user.getUserName())
                 .putString(USER_UID, user.getEmail())
+                .putString(USER_PICURE_URL, user.getImageUrl())
                 .apply();
     }
 
@@ -67,6 +70,7 @@ public class SessionManager {
                 .putBoolean(IS_LOGGED_IN,false)
                 .putString(USER_NAME, null)
                 .putString(USER_UID,null)
+                .putString(USER_PICURE_URL,null)
                 .apply();
     }
 }

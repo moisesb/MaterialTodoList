@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.borges.moises.materialtodolist.data.MaterialTodoItemsDatabase;
 import com.borges.moises.materialtodolist.data.services.SessionManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
 
 /**
@@ -15,6 +17,12 @@ public class MaterialTodoList extends Application {
     public void onCreate() {
         super.onCreate();
 
+        setupApplication();
+    }
+
+    private void setupApplication() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         SessionManager.init(getApplicationContext());
         Firebase.setAndroidContext(getApplicationContext());
         MaterialTodoItemsDatabase.init(getApplicationContext());

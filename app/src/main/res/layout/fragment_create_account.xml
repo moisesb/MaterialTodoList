@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fb="http://schemas.android.com/apk/res-auto"
     tools:context=".createaccount.CreateAccountActivity">
 
     <LinearLayout
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="128dp">
+        android:paddingTop="56dp">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -76,10 +77,23 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/login_size_margin"
             android:layout_marginRight="@dimen/login_size_margin"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="48dp"
             android:background="@color/accent"
             android:text="@string/create_account"
             android:textColor="@color/white"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebook_login_button"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="@dimen/login_size_margin"
+            android:layout_marginRight="@dimen/login_size_margin"
+            android:textSize="16sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            />
 
     </LinearLayout>
 </FrameLayout>

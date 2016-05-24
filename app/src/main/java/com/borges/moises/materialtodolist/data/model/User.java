@@ -7,6 +7,7 @@ public class User {
 
     private String userName;
     private String email;
+    private String imageUrl;
 
     public String getUserName() {
         return userName;
@@ -22,5 +23,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

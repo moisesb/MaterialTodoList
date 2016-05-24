@@ -13,8 +13,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by moises.anjos on 11/05/2016.
  */
@@ -23,6 +21,8 @@ public class UserService {
 
     private static final String ENDPOINT = "https://material-todo-list.firebaseio.com/";
     private static final String USERS = "users";
+
+    private final Firebase ref = new Firebase(ENDPOINT);
 
     private Context mContext;
     private SessionManager mSessionManager;
@@ -59,21 +59,14 @@ public class UserService {
             return;
         }
 
-        final Firebase ref = new Firebase(ENDPOINT);
+
         ref.createUser(email, password, new Firebase.ResultHandler() {
             @Override
             public void onSuccess() {
                 ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        User user = new User();
-                        user.setUserName(userName);
-                        user.setEmail(email);
-                        ref.child(USERS).child(authData.getUid()).setValue(user);
-
-                        mSessionManager.signInUser(user);
-
-                        listener.onSuccess();
+                        createUserOnServer(authData.getUid(), userName, email, null, listener);
                     }
 
                     @Override
@@ -85,22 +78,77 @@ public class UserService {
 
             @Override
             public void onError(FirebaseError firebaseError) {
-                switch (firebaseError.getCode()) {
-                    case FirebaseError.EMAIL_TAKEN:
-                        listener.onEmailTaken();
-                        break;
-                    case FirebaseError.NETWORK_ERROR:
-                        listener.onNetworkError();
-                        break;
-                    case FirebaseError.INVALID_EMAIL:
-                        listener.onEmailInvalid();
-                        break;
-                    default:
-                        listener.onNetworkError();
-                }
+                handleFirebaseError(firebaseError, listener);
 
             }
         });
+    }
+
+    private void handleFirebaseError(FirebaseError firebaseError, SignUpListener listener) {
+        switch (firebaseError.getCode()) {
+            case FirebaseError.EMAIL_TAKEN:
+                listener.onEmailTaken();
+                break;
+            case FirebaseError.NETWORK_ERROR:
+                listener.onNetworkError();
+                break;
+            case FirebaseError.INVALID_EMAIL:
+                listener.onEmailInvalid();
+                break;
+            default:
+                listener.onNetworkError();
+        }
+    }
+
+    private void createUserOnServer(final String uid, String userName, String email, String imageURL, final SignUpListener listener) {
+        final User user = new User();
+        user.setUserName(userName);
+        user.setEmail(email);
+        user.setImageUrl(imageURL);
+        ref.child(USERS).orderByKey()
+                .equalTo(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() == null){
+                            ref.child(USERS).child(uid).setValue(user);
+                            mSessionManager.signInUser(user);
+                            listener.onSuccess();
+                        }else {
+                            listener.onEmailTaken();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        handleFirebaseError(firebaseError, listener);
+                    }
+                });
+
+    }
+
+    public void createUser(String authToken, final SignUpListener listener) {
+        if (!hasInternetConnection()) {
+            listener.onNetworkError();
+            return;
+        }
+
+        ref.authWithOAuthToken("facebook", authToken, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                final String uid = authData.getUid();
+                final String email = (String) authData.getProviderData().get("email");
+                final String name = (String) authData.getProviderData().get("displayName");
+                final String imageURL = (String) authData.getProviderData().get("profileImageURL");
+                createUserOnServer(uid, name, email, imageURL, listener);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                handleFirebaseError(firebaseError, listener);
+            }
+        });
+
     }
 
     private boolean hasInternetConnection() {
@@ -117,7 +165,6 @@ public class UserService {
             return;
         }
 
-        final Firebase ref = new Firebase(ENDPOINT);
         ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
@@ -163,7 +210,6 @@ public class UserService {
     }
 
     public void logout() {
-        final Firebase ref = new Firebase(ENDPOINT);
         ref.unauth();
         mSessionManager.logout();
     }

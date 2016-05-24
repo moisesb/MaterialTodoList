@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.createaccount;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.borges.moises.materialtodolist.data.services.UserService;
 
@@ -11,6 +12,33 @@ public class CreateAccountPresenter implements CreateAccountMvp.Presenter {
 
     private CreateAccountMvp.View mView;
     private UserService mUserService;
+
+    private final UserService.SignUpListener mListener = new UserService.SignUpListener() {
+        @Override
+        public void onSuccess() {
+            mView.showProgress(false);
+            mView.showAccountCreated();
+            mView.close();
+        }
+
+        @Override
+        public void onEmailTaken() {
+            mView.showProgress(false);
+            mView.showError();
+        }
+
+        @Override
+        public void onEmailInvalid() {
+            mView.showProgress(false);
+            mView.showInvalidEmail();
+        }
+
+        @Override
+        public void onNetworkError() {
+            mView.showProgress(false);
+            mView.showNoInternet();
+        }
+    };
 
     public CreateAccountPresenter(Context context){
         mUserService = new UserService(context);
@@ -38,32 +66,17 @@ public class CreateAccountPresenter implements CreateAccountMvp.Presenter {
 
         mView.showProgress(true);
 
-        mUserService.createUser(email, password, userName, new UserService.SignUpListener() {
-            @Override
-            public void onSuccess() {
-                mView.showProgress(false);
-                mView.showAccountCreated();
-                mView.close();
-            }
+        mUserService.createUser(email, password, userName, mListener);
+    }
 
-            @Override
-            public void onEmailTaken() {
-                mView.showProgress(false);
-                mView.showError();
-            }
+    @Override
+    public void createAccountWithFacebook(String authToken) {
+        Log.d("CreateAccount", "create account for token " + authToken);
+        checkView();
 
-            @Override
-            public void onEmailInvalid() {
-                mView.showProgress(false);
-                mView.showInvalidEmail();
-            }
+        mView.showProgress(true);
 
-            @Override
-            public void onNetworkError() {
-                mView.showProgress(false);
-                mView.showNoInternet();
-            }
-        });
+        mUserService.createUser(authToken, mListener);
     }
 
     private void checkView() {

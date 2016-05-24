@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.createaccount;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,12 @@ import android.widget.LinearLayout;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.signin.SignInActivity;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -54,6 +61,11 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     @Bind(R.id.sign_up_button)
     AppCompatButton mCreateAccountButton;
 
+    @Bind(R.id.facebook_login_button)
+    LoginButton mFacebookLoginButton;
+
+    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
+
     private ProgressDialog mProgressDialog;
 
     private CreateAccountMvp.Presenter mPresenter;
@@ -64,10 +76,45 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
         ButterKnife.bind(this,view);
 
+        initFacebookButton();
         initProgressDialog();
         mPresenter = new CreateAccountPresenter(getContext());
         mPresenter.bindView(this);
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (FacebookSdk.isFacebookRequestCode(requestCode)) {
+            mCallbackManager.onActivityResult(requestCode,resultCode,data);
+        }
+    }
+
+    private void initFacebookButton() {
+        mFacebookLoginButton.setReadPermissions("email");
+        mFacebookLoginButton.setFragment(this);
+        mFacebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                if(loginResult.getAccessToken() != null){
+                    final String authToken = loginResult.getAccessToken().getToken();
+                    mPresenter.createAccountWithFacebook(authToken);
+                }else {
+                    mPresenter.createAccountWithFacebook(null);
+                }
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
     }
 
     @Override

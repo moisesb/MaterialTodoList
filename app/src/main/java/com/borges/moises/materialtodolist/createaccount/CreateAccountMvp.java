@@ -32,6 +32,8 @@ public interface CreateAccountMvp {
 
         void createAccount(String email, String password, String userName);
 
+        void createAccountWithFacebook(String authToken);
+
         void openLogin();
     }
 }
