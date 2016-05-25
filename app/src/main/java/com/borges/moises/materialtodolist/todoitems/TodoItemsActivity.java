@@ -1,5 +1,11 @@
 package com.borges.moises.materialtodolist.todoitems;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SyncRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -27,7 +33,11 @@ import butterknife.ButterKnife;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View{
+public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View {
+
+    public static final String AUTHORITY = "com.borges.moises.materialtodolist.provider";
+    public static final String ACCOUNT_TYPE = "com.borges.moises.materialtodolist";
+    public static final String ACCOUNT = "default_account";
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
@@ -50,6 +60,34 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         mPresenter.bindView(this);
         setupToolbar();
         initFragment();
+        initSyncAdapter();
+    }
+
+    private void initSyncAdapter() {
+        final Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        final Account account = createSyncAccount(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            SyncRequest.Builder builder = (new SyncRequest.Builder()).syncOnce();
+            builder.setSyncAdapter(account,AUTHORITY);
+            builder.setExtras(settingsBundle);
+            ContentResolver.requestSync(builder.build());
+        } else {
+            ContentResolver.requestSync(account, AUTHORITY, settingsBundle);
+        }
+
+    }
+
+    public static Account createSyncAccount(Context context) {
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            return newAccount;
+        } else {
+            return newAccount;
+        }
     }
 
     @Override
@@ -88,7 +126,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         });
 
         ActionBarDrawerToggle actionBarDrawerToggle =
-                new ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.openDrawer, R.string.closeDrawer) {
+                new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.openDrawer, R.string.closeDrawer) {
                     @Override
                     public void onDrawerOpened(View drawerView) {
                         super.onDrawerOpened(drawerView);
@@ -102,7 +140,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     private void initFragment() {
         Fragment contentFragment = TodoItemsFragment.newInstace();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.framelayout,contentFragment)
+                .replace(R.id.framelayout, contentFragment)
                 .commit();
     }
 

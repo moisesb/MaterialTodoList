@@ -81,8 +81,7 @@ public class TodoItemService {
     }
 
     private List<TodoItem> getTodoItemsFromDb() {
-        List<TodoItem> todoItems = mRepository.query(new QueryAllTodoItemsSqlSpec());
-        return todoItems;
+        return mRepository.query(new QueryAllTodoItemsSqlSpec());
     }
 
     private Date getCurrentTime(){
