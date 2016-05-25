@@ -17,6 +17,9 @@ public class TodoItemTable {
         public static final String LOCATION = "location";
         public static final String DONE = "done";
         public static final String DONE_AT = "done_at";
+        public static final String CREATED_AT = "create_at";
+        public static final String UPDATED_AT = "update_at";
+        public static final String DELETED = "deleted";
 
         private Columns() {
 
@@ -24,16 +27,17 @@ public class TodoItemTable {
     }
 
     public static class Sql {
-        // TODO: 18/04/2016 TodoItem Table should have a foreign key to TodoList Table
         public static final String CREATE_TABLE = "create table if not exists " + TABLE_NAME + " (" +
                 Columns.ID + " integer primary key autoincrement " + "," +
                 Columns.TITLE + "," +
                 Columns.DESCRIPTION + "," +
                 Columns.DATE + "," +
-                Columns.COMPLETED + "," +
                 Columns.PRIORITY + "," +
+                Columns.DELETED + "," +
                 Columns.DONE + "," +
                 Columns.DONE_AT + "," +
+                Columns.CREATED_AT + "," +
+                Columns.UPDATED_AT + "," +
                 Columns.LOCATION + ")";
 
         public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;

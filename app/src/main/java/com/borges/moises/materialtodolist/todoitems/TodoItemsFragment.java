@@ -329,7 +329,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                     mDateTextView.setVisibility(View.VISIBLE);
                 }
 
-                if (todoItem.isCompleted()) {
+                if (todoItem.isDone()) {
                     mTitleTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
                     mDateTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
                     SpannableString spanTitle = new SpannableString(todoItem.getTitle());
@@ -341,8 +341,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                     mTitleTextView.setText(todoItem.getTitle());
                 }
 
-                if (mDoneCheckBox.isChecked() != todoItem.isCompleted()) {
-                    mDoneCheckBox.setChecked(todoItem.isCompleted());
+                if (mDoneCheckBox.isChecked() != todoItem.isDone()) {
+                    mDoneCheckBox.setChecked(todoItem.isDone());
                 }
 
                 switch (todoItem.getPriority()) {

@@ -10,14 +10,17 @@ public class TodoItem {
     private String title;
     private String description;
     private Date date;
-    private boolean completed;
     private Priority priority;
     private String location;
     private boolean done;
+    private boolean deleted;
     private Date doneAt;
+    private Date createAt;
+    private Date updateAt;
 
     public TodoItem() {
         priority = Priority.NORMAL;
+        deleted = false;
     }
 
     public long getId() {
@@ -52,14 +55,6 @@ public class TodoItem {
         this.date = date;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
     public Priority getPriority() {
         return priority;
     }
@@ -90,5 +85,29 @@ public class TodoItem {
 
     public void setDoneAt(Date doneAt) {
         this.doneAt = doneAt;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

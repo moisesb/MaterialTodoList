@@ -15,6 +15,7 @@ import com.borges.moises.materialtodolist.data.repository.specification.SqlSpeci
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.Columns;
@@ -23,21 +24,21 @@ import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.TABLE
 /**
  * Created by Moisés on 11/04/2016.
  */
-public final class TodoItemRepositoryImpl implements TodoItemRepository {
+public final class SqliteTodoItemRepository implements TodoItemRepository {
 
     private SQLiteDatabase mDatabase;
 
-    private static TodoItemRepositoryImpl INSTANCE;
+    private static SqliteTodoItemRepository INSTANCE;
     private static final String WHERE_CLAUSE = Columns.ID + " = ?";
 
-    private TodoItemRepositoryImpl() {
+    private SqliteTodoItemRepository() {
         mDatabase = MaterialTodoItemsDatabase.getInstance()
                 .getWritableDatabase();
     }
 
     public static TodoItemRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TodoItemRepositoryImpl();
+            INSTANCE = new SqliteTodoItemRepository();
         }
 
         return INSTANCE;
@@ -61,12 +62,14 @@ public final class TodoItemRepositoryImpl implements TodoItemRepository {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Columns.TITLE, todoItem.getTitle());
         contentValues.put(Columns.DESCRIPTION, todoItem.getDescription());
-        contentValues.put(Columns.COMPLETED, todoItem.isCompleted());
         contentValues.put(Columns.PRIORITY, todoItem.getPriority().name());
         contentValues.put(Columns.DATE, DateUtils.dateToDbString(todoItem.getDate()));
         contentValues.put(Columns.LOCATION, todoItem.getLocation());
+        contentValues.put(Columns.DELETED, todoItem.isDeleted());
         contentValues.put(Columns.DONE, todoItem.isDone());
         contentValues.put(Columns.DONE_AT, DateUtils.dateToDbString(todoItem.getDoneAt()));
+        contentValues.put(Columns.CREATED_AT, todoItem.getCreateAt().getTime());
+        contentValues.put(Columns.UPDATED_AT, todoItem.getUpdateAt().getTime());
         return contentValues;
     }
 
@@ -106,14 +109,16 @@ public final class TodoItemRepositoryImpl implements TodoItemRepository {
         }
         TodoItem todoItem = new TodoItem();
         todoItem.setId(cursor.getLong(cursor.getColumnIndex(Columns.ID)));
-        todoItem.setCompleted(cursor.getInt(cursor.getColumnIndex(Columns.COMPLETED)) > 0);
         todoItem.setDate(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DATE))));
         todoItem.setDescription(cursor.getString(cursor.getColumnIndex(Columns.DESCRIPTION)));
         todoItem.setPriority(Priority.valueOf(cursor.getString(cursor.getColumnIndex(Columns.PRIORITY))));
         todoItem.setTitle(cursor.getString(cursor.getColumnIndex(Columns.TITLE)));
+        todoItem.setDeleted(cursor.getInt(cursor.getColumnIndex(Columns.DELETED)) > 0);
         todoItem.setDone(cursor.getInt(cursor.getColumnIndex(Columns.DONE)) > 0);
         todoItem.setLocation(cursor.getString(cursor.getColumnIndex(Columns.LOCATION)));
         todoItem.setDoneAt(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DONE_AT))));
+        todoItem.setCreateAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.CREATED_AT))));
+        todoItem.setUpdateAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.UPDATED_AT))));
         return todoItem;
     }
 
