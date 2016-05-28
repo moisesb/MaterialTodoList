@@ -13,13 +13,15 @@ public class TodoItemTable {
         public static final String DESCRIPTION = "description";
         public static final String DATE = "date";
         public static final String PRIORITY = "priority";
-        public static final String COMPLETED = "completed";
         public static final String LOCATION = "location";
         public static final String DONE = "done";
         public static final String DONE_AT = "done_at";
-        public static final String CREATED_AT = "create_at";
-        public static final String UPDATED_AT = "update_at";
+        public static final String CREATED_AT = "created_at";
+        public static final String UPDATED_AT = "updated_at";
         public static final String DELETED = "deleted";
+        public static final String DIRTY = "dirty";
+        public static final String VERSION = "version";
+        public static final String SERVER_ID = "server_id";
 
         private Columns() {
 
@@ -36,6 +38,9 @@ public class TodoItemTable {
                 Columns.DELETED + "," +
                 Columns.DONE + "," +
                 Columns.DONE_AT + "," +
+                Columns.DIRTY + "," +
+                Columns.VERSION + "," +
+                Columns.SERVER_ID + "," +
                 Columns.CREATED_AT + "," +
                 Columns.UPDATED_AT + "," +
                 Columns.LOCATION + ")";

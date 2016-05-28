@@ -1,5 +1,7 @@
 package com.borges.moises.materialtodolist.todoitems;
 
+import android.util.Log;
+
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 
@@ -28,7 +30,6 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
     @Override
     public void loadTodoItems() {
-
         mTodoItemsSubscription = mService.getTodoItems()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -61,6 +62,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
                     @Override
                     public void onNext(TodoItem todoItem) {
+                        Log.d("TodoItemsPresenter", "showing " + todoItem.getTitle());
                         hasTodoItems = true;
                         mView.showTodoItem(todoItem);
                     }

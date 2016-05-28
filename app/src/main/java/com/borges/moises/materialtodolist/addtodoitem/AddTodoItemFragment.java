@@ -9,17 +9,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemMvpPresenter;
-import com.borges.moises.materialtodolist.addtodoitem.presenter.AddTodoItemMvpPresenterImpl;
-import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemMvpView;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 
 /**
  * Created by Moisés on 14/04/2016.
  */
-public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodoItemMvpView {
+public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodoItemMvp.View {
 
-    protected AddTodoItemMvpPresenter mPresenter;
+    protected AddTodoItemMvp.Presenter mPresenter;
 
     public AddTodoItemFragment() {
     }
@@ -27,7 +24,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenter = new AddTodoItemMvpPresenterImpl();
+        mPresenter = new AddTodoItemPresenter();
         mPresenter.bindView(this);
     }
 
@@ -53,7 +50,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         super.onDestroy();
     }
 
-    public static Fragment newFragment() {
+    public static Fragment newInstance() {
         return new AddTodoItemFragment();
     }
 

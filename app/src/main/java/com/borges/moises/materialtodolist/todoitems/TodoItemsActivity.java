@@ -1,11 +1,5 @@
 package com.borges.moises.materialtodolist.todoitems;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SyncRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -20,8 +14,6 @@ import android.view.View;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
-import com.borges.moises.materialtodolist.data.model.User;
-import com.borges.moises.materialtodolist.data.services.SessionManager;
 import com.borges.moises.materialtodolist.data.services.UserService;
 import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
@@ -60,34 +52,6 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         mPresenter.bindView(this);
         setupToolbar();
         initFragment();
-        initSyncAdapter();
-    }
-
-    private void initSyncAdapter() {
-        final Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        final Account account = createSyncAccount(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            SyncRequest.Builder builder = (new SyncRequest.Builder()).syncOnce();
-            builder.setSyncAdapter(account,AUTHORITY);
-            builder.setExtras(settingsBundle);
-            ContentResolver.requestSync(builder.build());
-        } else {
-            ContentResolver.requestSync(account, AUTHORITY, settingsBundle);
-        }
-
-    }
-
-    public static Account createSyncAccount(Context context) {
-        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
-        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-            return newAccount;
-        } else {
-            return newAccount;
-        }
     }
 
     @Override

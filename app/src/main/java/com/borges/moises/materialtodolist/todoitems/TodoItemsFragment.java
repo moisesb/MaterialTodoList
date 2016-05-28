@@ -28,7 +28,8 @@ import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
-import com.borges.moises.materialtodolist.todoitemdetails.TodoItemDetailsActivity;
+import com.borges.moises.materialtodolist.sync.SyncService;
+import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -153,6 +154,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 .getBoolean(appFirstRun, true);
 
         //if (isFirstRun) {
+            SyncService.start(getContext());
+
             ServiceScheduler serviceScheduler = new ServiceScheduler();
             serviceScheduler.setAlarm(getContext());
 
@@ -160,13 +163,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                     .edit().putBoolean(appFirstRun,false)
                     .commit();
         //}
-    }
-
-    @Override
-    public void showTodoItems(List<TodoItem> todoItems) {
-        mMessageTextView.setVisibility(View.GONE);
-        mTodoItemsRecyclerView.setVisibility(View.VISIBLE);
-        mTodoItemsAdpter.replaceData(todoItems);
     }
 
     @Override
@@ -181,14 +177,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdpter.deleteTodoItem(todoItem);
     }
 
+    public void cleanTodoItems() {
+        mTodoItemsAdpter.cleanTodoItems();
+    }
+
     @Override
     public void openTodoItemDetails(long todoItemId) {
-        TodoItemDetailsActivity.start(getContext(),todoItemId);
+        EditTodoItemActivity.start(getContext(),todoItemId);
+        cleanTodoItems();
     }
 
     @Override
     public void openNewTodoItem() {
         AddTodoItemActivity.start(getContext());
+        cleanTodoItems();
     }
 
     @Override
@@ -279,6 +281,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             mTodoItems.add(todoItem);
             final int position = mTodoItems.indexOf(todoItem);
             notifyItemInserted(position);
+        }
+
+        public void cleanTodoItems() {
+            mTodoItems.clear();
+            notifyDataSetChanged();
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {

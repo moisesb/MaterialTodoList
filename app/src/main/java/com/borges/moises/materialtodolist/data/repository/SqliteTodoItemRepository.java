@@ -66,10 +66,13 @@ public final class SqliteTodoItemRepository implements TodoItemRepository {
         contentValues.put(Columns.DATE, DateUtils.dateToDbString(todoItem.getDate()));
         contentValues.put(Columns.LOCATION, todoItem.getLocation());
         contentValues.put(Columns.DELETED, todoItem.isDeleted());
+        contentValues.put(Columns.VERSION, todoItem.getVersion());
+        contentValues.put(Columns.DIRTY, todoItem.isDirty());
+        contentValues.put(Columns.SERVER_ID, todoItem.getServerId());
         contentValues.put(Columns.DONE, todoItem.isDone());
         contentValues.put(Columns.DONE_AT, DateUtils.dateToDbString(todoItem.getDoneAt()));
-        contentValues.put(Columns.CREATED_AT, todoItem.getCreateAt().getTime());
-        contentValues.put(Columns.UPDATED_AT, todoItem.getUpdateAt().getTime());
+        contentValues.put(Columns.CREATED_AT, todoItem.getCreatedAt().getTime());
+        contentValues.put(Columns.UPDATED_AT, todoItem.getUpdatedAt().getTime());
         return contentValues;
     }
 
@@ -114,11 +117,14 @@ public final class SqliteTodoItemRepository implements TodoItemRepository {
         todoItem.setPriority(Priority.valueOf(cursor.getString(cursor.getColumnIndex(Columns.PRIORITY))));
         todoItem.setTitle(cursor.getString(cursor.getColumnIndex(Columns.TITLE)));
         todoItem.setDeleted(cursor.getInt(cursor.getColumnIndex(Columns.DELETED)) > 0);
+        todoItem.setVersion(cursor.getInt(cursor.getColumnIndex(Columns.VERSION)));
+        todoItem.setDirty(cursor.getInt(cursor.getColumnIndex(Columns.DIRTY)) > 0);
+        todoItem.setServerId(cursor.getString(cursor.getColumnIndex(Columns.SERVER_ID)));
         todoItem.setDone(cursor.getInt(cursor.getColumnIndex(Columns.DONE)) > 0);
         todoItem.setLocation(cursor.getString(cursor.getColumnIndex(Columns.LOCATION)));
         todoItem.setDoneAt(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DONE_AT))));
-        todoItem.setCreateAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.CREATED_AT))));
-        todoItem.setUpdateAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.UPDATED_AT))));
+        todoItem.setCreatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.CREATED_AT))));
+        todoItem.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.UPDATED_AT))));
         return todoItem;
     }
 

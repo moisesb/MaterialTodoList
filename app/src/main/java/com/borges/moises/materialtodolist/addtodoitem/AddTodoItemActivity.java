@@ -43,7 +43,7 @@ public class AddTodoItemActivity extends AppCompatActivity {
     }
 
     private void initFragment() {
-        Fragment fragment = AddTodoItemFragment.newFragment();
+        Fragment fragment = AddTodoItemFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.framelayout,fragment)
                 .commit();

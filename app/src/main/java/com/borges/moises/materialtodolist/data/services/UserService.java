@@ -104,6 +104,7 @@ public class UserService {
 
     private void createUserOnServer(final String uid, String userName, String email, String imageURL, final CreateAccountListener listener) {
         final User user = new User();
+        user.setUid(uid);
         user.setUserName(userName);
         user.setEmail(email);
         user.setImageUrl(imageURL);
@@ -188,12 +189,14 @@ public class UserService {
     private void handleLogin(DataSnapshot dataSnapshot, LoginListener listener) {
         if (dataSnapshot == null) {
             listener.onError();
+            return;
         }
 
         final String email = (String) dataSnapshot.child("email").getValue();
         final String userName = (String) dataSnapshot.child("userName").getValue();
         final String pictureUrl = (String) dataSnapshot.child("pictureUrl").getValue();
         User user = new User();
+        user.setUid(dataSnapshot.getKey());
         user.setEmail(email);
         user.setUserName(userName);
         user.setImageUrl(pictureUrl);

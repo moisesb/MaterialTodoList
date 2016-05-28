@@ -1,6 +1,5 @@
-package com.borges.moises.materialtodolist.addtodoitem.presenter;
+package com.borges.moises.materialtodolist.addtodoitem;
 
-import com.borges.moises.materialtodolist.addtodoitem.view.AddTodoItemMvpView;
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
@@ -9,12 +8,12 @@ import com.borges.moises.materialtodolist.utils.DateUtils;
 /**
  * Created by Moisés on 14/04/2016.
  */
-public class AddTodoItemMvpPresenterImpl implements AddTodoItemMvpPresenter {
+public class AddTodoItemPresenter implements AddTodoItemMvp.Presenter {
 
-    private AddTodoItemMvpView mView;
+    private AddTodoItemMvp.View mView;
     private TodoItemService mService;
 
-    public AddTodoItemMvpPresenterImpl() {
+    public AddTodoItemPresenter() {
         mService = new TodoItemService();
     }
 
@@ -43,7 +42,7 @@ public class AddTodoItemMvpPresenterImpl implements AddTodoItemMvpPresenter {
 
 
     @Override
-    public void bindView(AddTodoItemMvpView view) {
+    public void bindView(AddTodoItemMvp.View view) {
         mView = view;
     }
 

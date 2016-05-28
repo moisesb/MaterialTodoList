@@ -1,4 +1,4 @@
-package com.borges.moises.materialtodolist.todoitemdetails;
+package com.borges.moises.materialtodolist.edittodoitem;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsActivity extends AppCompatActivity {
+public class EditTodoItemActivity extends AppCompatActivity {
 
     public static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.todoItemId";
 
@@ -60,7 +60,7 @@ public class TodoItemDetailsActivity extends AppCompatActivity {
             throw new IllegalArgumentException("todo item id invalid: " + todoItemId);
         }
 
-        Fragment fragment = TodoItemDetailsFragment.newFragment(todoItemId);
+        Fragment fragment = EditTodoItemFragment.newInstance(todoItemId);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.framelayout, fragment)
                 .commit();
@@ -75,7 +75,7 @@ public class TodoItemDetailsActivity extends AppCompatActivity {
     }
 
     public static void start(Context context, long todoItemId) {
-        Intent intent = new Intent(context, TodoItemDetailsActivity.class);
+        Intent intent = new Intent(context, EditTodoItemActivity.class);
         intent.putExtra(ARG_TODO_ITEM_ID, todoItemId);
         context.startActivity(intent);
     }

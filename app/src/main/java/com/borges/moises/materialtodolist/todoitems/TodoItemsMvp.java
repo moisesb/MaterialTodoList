@@ -11,8 +11,6 @@ import java.util.List;
  */
 public interface TodoItemsMvp {
     interface View extends MvpView {
-        void showTodoItems(List<TodoItem> todoItems);
-
         void showTodoItem(TodoItem todoItem);
 
         void removeTodoItem(TodoItem todoItem);

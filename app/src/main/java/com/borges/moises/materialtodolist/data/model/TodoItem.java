@@ -1,5 +1,8 @@
 package com.borges.moises.materialtodolist.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 /**
@@ -13,14 +16,19 @@ public class TodoItem {
     private Priority priority;
     private String location;
     private boolean done;
-    private boolean deleted;
     private Date doneAt;
-    private Date createAt;
-    private Date updateAt;
+    private String serverId;
+    private boolean dirty;
+    private boolean deleted;
+    private int version;
+    private Date createdAt;
+    private Date updatedAt;
 
     public TodoItem() {
         priority = Priority.NORMAL;
         deleted = false;
+        dirty = false;
+        version = 1;
     }
 
     public long getId() {
@@ -79,35 +87,76 @@ public class TodoItem {
         this.done = done;
     }
 
+    @JsonProperty("done_at")
     public Date getDoneAt() {
         return doneAt;
     }
 
+    @JsonProperty("done_at")
     public void setDoneAt(Date doneAt) {
         this.doneAt = doneAt;
     }
 
-    public Date getCreateAt() {
-        return createAt;
+    @JsonIgnore
+    public String getServerId() {
+        return serverId;
     }
 
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
+    @JsonIgnore
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
-    public Date getUpdateAt() {
-        return updateAt;
+    @JsonIgnore
+    public boolean isDirty() {
+        return dirty;
     }
 
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
+    @JsonIgnore
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }
 
+    @JsonIgnore
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @JsonProperty("created_at")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("created_at")
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonProperty("updated_at")
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @JsonProperty("updated_at")
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @JsonIgnore
+    public void incrementVersion(){
+        this.version++;
     }
 }

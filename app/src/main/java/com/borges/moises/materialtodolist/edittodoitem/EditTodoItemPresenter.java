@@ -1,23 +1,21 @@
-package com.borges.moises.materialtodolist.todoitemdetails.presenter;
+package com.borges.moises.materialtodolist.edittodoitem;
 
 import android.support.annotation.NonNull;
 
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
-import com.borges.moises.materialtodolist.todoitemdetails.view.TodoItemDetailsMvpView;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class TodoItemDetailsMvpPresenterImpl implements TodoItemDetailsMvpPresenter {
+public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
 
-    private TodoItemDetailsMvpView mView;
+    private EditTodoItemMvp.View mView;
     private TodoItemService mService;
 
-    public TodoItemDetailsMvpPresenterImpl(TodoItemDetailsMvpView view) {
-        mView = view;
+    public EditTodoItemPresenter() {
         mService = new TodoItemService();
     }
 
@@ -35,8 +33,7 @@ public class TodoItemDetailsMvpPresenterImpl implements TodoItemDetailsMvpPresen
     public void editTodoItem(long todoItemId, String title, String description, Priority priority, String location, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute) {
         verifyView();
 
-        TodoItem todoItem = new TodoItem();
-        todoItem.setId(todoItemId);
+        TodoItem todoItem = mService.getTodoItem(todoItemId);
         todoItem.setTitle(title);
         todoItem.setDescription(description);
         todoItem.setPriority(priority == null? Priority.NORMAL : priority);
@@ -75,7 +72,7 @@ public class TodoItemDetailsMvpPresenterImpl implements TodoItemDetailsMvpPresen
 
 
     @Override
-    public void bindView(@NonNull TodoItemDetailsMvpView view) {
+    public void bindView(@NonNull EditTodoItemMvp.View view) {
         mView = view;
     }
 
