@@ -8,6 +8,24 @@
             android:checked="false"
             android:title="@string/sign_out"/>
 
+        <item
+            android:id="@+id/settings_menu"
+            android:icon="@drawable/ic_settings_black_24px"
+            android:checked="false"
+            android:title="@string/settings"/>
+
     </group>
+
+    <item
+        android:id="@+id/navigation_subheader"
+        android:title="@string/tag">
+        <menu>
+            <item
+                android:id="@+id/tag"
+                android:icon="@drawable/ic_label_black_24px"
+                android:checked="false"
+                android:title="@string/settings"/>
+        </menu>
+    </item>
 
 </menu>

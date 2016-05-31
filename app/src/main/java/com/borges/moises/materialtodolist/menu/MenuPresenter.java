@@ -2,6 +2,7 @@ package com.borges.moises.materialtodolist.menu;
 
 import android.support.annotation.NonNull;
 
+import com.borges.moises.materialtodolist.data.model.User;
 import com.borges.moises.materialtodolist.data.services.UserService;
 
 /**
@@ -20,9 +21,14 @@ public class MenuPresenter implements MenuMvp.Presenter {
     public void loadMenu() {
         checkView();
 
-        if (mService.getSignedInUser() == null){
+        final User user = mService.getSignedInUser();
+        if (user == null){
+            mView.showUserName("");
+            mView.showUserPicture(null);
             mView.showLoginMenu();
         }else{
+            mView.showUserName(user.getUserName());
+            mView.showUserPicture(user.getImageUrl());
             mView.showLogoutMenu();
         }
     }

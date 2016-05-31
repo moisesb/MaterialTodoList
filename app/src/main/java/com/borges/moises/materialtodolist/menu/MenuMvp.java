@@ -7,16 +7,25 @@ import com.borges.moises.materialtodolist.mvp.MvpView;
  * Created by moises.anjos on 24/05/2016.
  */
 public interface MenuMvp {
-    interface View extends MvpView{
+    interface View extends MvpView {
         void showLoginMenu();
+
         void showLogoutMenu();
+
         void openLogin();
+
         void openCreateAccount();
+
+        void showUserName(String userName);
+
+        void showUserPicture(String imageUrl);
     }
 
-    interface Presenter extends MvpPresenter<View>{
+    interface Presenter extends MvpPresenter<View> {
         void loadMenu();
+
         void openLoginOrCreateAccount();
+
         void logout();
     }
 }

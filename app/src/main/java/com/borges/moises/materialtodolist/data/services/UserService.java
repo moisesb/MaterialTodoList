@@ -194,7 +194,7 @@ public class UserService {
 
         final String email = (String) dataSnapshot.child("email").getValue();
         final String userName = (String) dataSnapshot.child("userName").getValue();
-        final String pictureUrl = (String) dataSnapshot.child("pictureUrl").getValue();
+        final String pictureUrl = (String) dataSnapshot.child("imageUrl").getValue();
         User user = new User();
         user.setUid(dataSnapshot.getKey());
         user.setEmail(email);

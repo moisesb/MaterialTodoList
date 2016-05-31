@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
@@ -18,9 +19,11 @@ import com.borges.moises.materialtodolist.data.services.UserService;
 import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
 import com.borges.moises.materialtodolist.menu.MenuPresenter;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Moisés on 11/04/2016.
@@ -39,6 +42,9 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
 
     @Bind(R.id.navigation_view)
     NavigationView mNavigationView;
+
+    TextView mUserNameTextView;
+    CircleImageView mProfilePictureImageView;
 
     MenuMvp.Presenter mPresenter;
 
@@ -68,6 +74,11 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     }
 
     private void setupDrawer() {
+        if (mNavigationView.getHeaderCount() > 0) {
+            View headerView = mNavigationView.getHeaderView(0);
+            mUserNameTextView = (TextView) headerView.findViewById(R.id.user_name);
+            mProfilePictureImageView = (CircleImageView) headerView.findViewById(R.id.user_profile_image);
+        }
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -142,5 +153,19 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     @Override
     public void openCreateAccount() {
         CreateAccountActivity.start(this);
+    }
+
+    @Override
+    public void showUserName(String userName) {
+        mUserNameTextView.setText(userName);
+    }
+
+    @Override
+    public void showUserPicture(String imageUrl) {
+        Picasso.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_account_circle_white_24dp)
+                .resize(56,56)
+                .into(mProfilePictureImageView);
     }
 }
