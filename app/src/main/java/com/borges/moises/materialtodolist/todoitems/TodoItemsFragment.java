@@ -11,6 +11,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -22,21 +24,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.sync.SyncService;
 import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
 import com.borges.moises.materialtodolist.utils.DateUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Moisés on 11/04/2016.
@@ -46,15 +54,26 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Bind(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
 
-    @Bind(R.id.message_textview)
-    TextView mMessageTextView;
+    @Bind(R.id.no_todo_items_layout)
+    LinearLayout mNoTodoItemsLayout;
+
+    @Bind(R.id.first_time_layout)
+    LinearLayout mFirstTimeLayout;
+
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @Bind(R.id.add_todo_item_button)
+    AppCompatButton mAddTodoItemButton;
+
+    private boolean mFirstRun = false;
 
     CoordinatorLayout mCoordinatorLayout;
 
     private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
         @Override
         public void onClick(TodoItem todoItem, boolean done) {
-            mPresenter.doneTodoItem(todoItem,done);
+            mPresenter.doneTodoItem(todoItem, done);
         }
     };
 
@@ -75,13 +94,13 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
-                TodoItem todoItem = mTodoItemsAdpter.getTodoItem(viewHolder.getAdapterPosition());
+                TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
                 mPresenter.deleteTodoItem(todoItem);
             }
         }
     };
 
-    private TodoItemsAdpter mTodoItemsAdpter = new TodoItemsAdpter(new ArrayList<TodoItem>(0),
+    private TodoItemsAdapter mTodoItemsAdapter = new TodoItemsAdapter(new ArrayList<TodoItem>(0),
             mCheckBoxClickListener,
             mTodoItemClickListener);
 
@@ -122,14 +141,39 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public void onResume() {
         super.onResume();
         mPresenter.loadTodoItems();
+        registerForEvents();
         startServicesOnFirstRun();
+    }
+
+    private void registerForEvents() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
 
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        unregisterForEvents();
         super.onDestroy();
+    }
+
+    @OnClick(R.id.add_todo_item_button) void onAddTodoItemClick(){
+        mPresenter.addNewTodoItem();
+    }
+
+    private void unregisterForEvents() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void handleTodoItemsListChanged(TodoItemsListUpdateEvent event) {
+        // TODO: 31/05/2016 finish handle todo items list changed event
+        mPresenter.loadTodoItems();
     }
 
     public static Fragment newInstace() {
@@ -142,48 +186,48 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         mTodoItemsRecyclerView.setHasFixedSize(true);
         mTodoItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mTodoItemsRecyclerView.setAdapter(mTodoItemsAdpter);
+        mTodoItemsRecyclerView.setAdapter(mTodoItemsAdapter);
     }
 
     private void startServicesOnFirstRun() {
         final String preference = "PREFERENCE";
         final String appFirstRun = "appFirstRun";
 
-        final boolean isFirstRun = getActivity()
+        mFirstRun =  getActivity()
                 .getSharedPreferences(preference, Context.MODE_PRIVATE)
                 .getBoolean(appFirstRun, true);
 
         //if (isFirstRun) {
-            SyncService.start(getContext());
+        SyncService.start(getContext());
 
-            ServiceScheduler serviceScheduler = new ServiceScheduler();
-            serviceScheduler.setAlarm(getContext());
+        ServiceScheduler serviceScheduler = new ServiceScheduler();
+        serviceScheduler.setAlarm(getContext());
 
-            getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
-                    .edit().putBoolean(appFirstRun,false)
-                    .commit();
+        getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
+                .edit().putBoolean(appFirstRun, false)
+                .commit();
         //}
     }
 
     @Override
     public void showTodoItem(final TodoItem todoItem) {
-        mMessageTextView.setVisibility(View.GONE);
+        mNoTodoItemsLayout.setVisibility(View.GONE);
         mTodoItemsRecyclerView.setVisibility(View.VISIBLE);
-        mTodoItemsAdpter.addTodoItem(todoItem);
+        mTodoItemsAdapter.addTodoItem(todoItem);
     }
 
     @Override
     public void removeTodoItem(TodoItem todoItem) {
-        mTodoItemsAdpter.deleteTodoItem(todoItem);
+        mTodoItemsAdapter.deleteTodoItem(todoItem);
     }
 
     public void cleanTodoItems() {
-        mTodoItemsAdpter.cleanTodoItems();
+        mTodoItemsAdapter.cleanTodoItems();
     }
 
     @Override
     public void openTodoItemDetails(long todoItemId) {
-        EditTodoItemActivity.start(getContext(),todoItemId);
+        EditTodoItemActivity.start(getContext(), todoItemId);
         cleanTodoItems();
     }
 
@@ -196,12 +240,18 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Override
     public void showNoTodoItemMessage() {
         mTodoItemsRecyclerView.setVisibility(View.GONE);
-        mMessageTextView.setVisibility(View.VISIBLE);
+        mNoTodoItemsLayout.setVisibility(mFirstRun? View.GONE: View.VISIBLE);
+        mFirstTimeLayout.setVisibility(mFirstRun? View.VISIBLE: View.GONE);
+
+        if (mFirstRun){
+            mAddTodoItemButton.setEnabled(true);
+        }
+
     }
 
     @Override
     public void showUndoDeleteOption(final TodoItem todoItem) {
-        Snackbar.make(mCoordinatorLayout,R.string.task_deleted, Snackbar.LENGTH_LONG)
+        Snackbar.make(mCoordinatorLayout, R.string.task_deleted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -212,6 +262,16 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         ;
     }
 
+    @Override
+    public void showProgress(final boolean loading) {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(loading);
+            }
+        });
+    }
+
     public interface OnCheckBoxClickListener {
         void onClick(TodoItem todoItem, boolean done);
     }
@@ -220,23 +280,18 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         void onClick(TodoItem todoItem);
     }
 
-    public static class TodoItemsAdpter extends RecyclerView.Adapter<TodoItemsAdpter.ViewHolder> {
+    public static class TodoItemsAdapter extends RecyclerView.Adapter<TodoItemsAdapter.ViewHolder> {
 
         private List<TodoItem> mTodoItems;
         private OnCheckBoxClickListener mOnCheckBoxClickListener;
         private OnTodoItemClickListener mOnTodoItemClickListener;
 
-        public TodoItemsAdpter(List<TodoItem> todoItems,
-                               @NonNull OnCheckBoxClickListener onCheckBoxClickListener,
-                               @NonNull OnTodoItemClickListener onTodoItemClickListener) {
+        public TodoItemsAdapter(List<TodoItem> todoItems,
+                                @NonNull OnCheckBoxClickListener onCheckBoxClickListener,
+                                @NonNull OnTodoItemClickListener onTodoItemClickListener) {
             mTodoItems = todoItems;
             mOnCheckBoxClickListener = onCheckBoxClickListener;
             mOnTodoItemClickListener = onTodoItemClickListener;
-        }
-
-        public void replaceData(List<TodoItem> todoItems) {
-            mTodoItems = todoItems;
-            notifyDataSetChanged();
         }
 
         public void deleteTodoItem(TodoItem todoItem) {
@@ -278,9 +333,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         public void addTodoItem(TodoItem todoItem) {
-            mTodoItems.add(todoItem);
-            final int position = mTodoItems.indexOf(todoItem);
-            notifyItemInserted(position);
+            if (!mTodoItems.contains(todoItem)) {
+                mTodoItems.add(todoItem);
+                final int position = mTodoItems.indexOf(todoItem);
+                notifyItemInserted(position);
+            }
         }
 
         public void cleanTodoItems() {
@@ -337,14 +394,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 }
 
                 if (todoItem.isDone()) {
-                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
-                    mDateTextView.setTextColor(ContextCompat.getColor(mContext,R.color.grey));
+                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+                    mDateTextView.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
                     SpannableString spanTitle = new SpannableString(todoItem.getTitle());
-                    spanTitle.setSpan(new StrikethroughSpan(),0,spanTitle.length(),0);
+                    spanTitle.setSpan(new StrikethroughSpan(), 0, spanTitle.length(), 0);
                     mTitleTextView.setText(spanTitle);
-                }else {
-                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext,android.R.color.black));
-                    mDateTextView.setTextColor(ContextCompat.getColor(mContext,R.color.red));
+                } else {
+                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext, android.R.color.black));
+                    mDateTextView.setTextColor(ContextCompat.getColor(mContext, R.color.red));
                     mTitleTextView.setText(todoItem.getTitle());
                 }
 

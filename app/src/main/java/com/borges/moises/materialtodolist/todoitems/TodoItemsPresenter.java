@@ -30,6 +30,9 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
     @Override
     public void loadTodoItems() {
+        checkView();
+
+        mView.showProgress(true);
         mTodoItemsSubscription = mService.getTodoItems()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -53,6 +56,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
                         if (!hasTodoItems) {
                             mView.showNoTodoItemMessage();
                         }
+                        mView.showProgress(false);
                     }
 
                     @Override
@@ -63,10 +67,16 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
                     @Override
                     public void onNext(TodoItem todoItem) {
                         Log.d("TodoItemsPresenter", "showing " + todoItem.getTitle());
-                        hasTodoItems = true;
                         mView.showTodoItem(todoItem);
+                        hasTodoItems = true;
                     }
                 });
+    }
+
+    private void checkView() {
+        if (mView == null) {
+            throw new IllegalStateException("Should bind view first");
+        }
     }
 
     @Override
@@ -146,11 +156,11 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     @Override
     public void unbindView() {
         if (mTodoItemsSubscription != null &&
-                !mTodoItemsSubscription.isUnsubscribed()){
+                !mTodoItemsSubscription.isUnsubscribed()) {
             mTodoItemsSubscription.unsubscribe();
         }
         if (mRemainingTodoItemsSubscription != null &&
-                !mRemainingTodoItemsSubscription.isUnsubscribed()){
+                !mRemainingTodoItemsSubscription.isUnsubscribed()) {
             mRemainingTodoItemsSubscription.unsubscribe();
         }
         mView = null;

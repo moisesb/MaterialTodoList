@@ -20,6 +20,7 @@ public class ServiceScheduler extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // TODO: 31/05/2016 fix a bug, this service should run once a day
         Log.i("Action", intent.getAction() + "");
         if (BOOT_COMPLETED_EVENT.equals(intent.getAction())) {
             Log.i("Action", "set alarm");

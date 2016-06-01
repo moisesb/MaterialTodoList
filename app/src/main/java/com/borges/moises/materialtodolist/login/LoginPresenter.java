@@ -61,6 +61,9 @@ public class LoginPresenter implements LoginMvp.Presenter {
     @Override
     public void loginWithFacebook(String authToken) {
         checkView();
+
+        mView.showProgress(true);
+
         mService.loginWithFacebook(authToken,mListener);
     }
 

@@ -38,6 +38,8 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+    compile 'org.greenrobot:eventbus:3.0.0'
+
     // facebook sign in
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 

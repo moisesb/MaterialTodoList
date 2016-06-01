@@ -30,10 +30,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View {
 
-    public static final String AUTHORITY = "com.borges.moises.materialtodolist.provider";
-    public static final String ACCOUNT_TYPE = "com.borges.moises.materialtodolist";
-    public static final String ACCOUNT = "default_account";
-
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -80,6 +76,8 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
             mProfilePictureImageView = (CircleImageView) headerView.findViewById(R.id.user_profile_image);
         }
 
+        // TODO: 31/05/2016 add menu actions to open list for each tag
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -89,6 +87,9 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                         break;
                     case R.id.sign_out_menu:
                         mPresenter.logout();
+                        break;
+                    case R.id.settings_menu:
+                        // TODO: 31/05/2016 create settings activity and open from where
                         break;
                     default:
                         throw new IllegalStateException("Not implemented");

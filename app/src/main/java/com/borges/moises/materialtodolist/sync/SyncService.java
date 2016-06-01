@@ -10,10 +10,13 @@ import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.model.User;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 import com.borges.moises.materialtodolist.data.services.UserService;
+import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +42,7 @@ public class SyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        // TODO: 31/05/2016 this service should run once a day
         final UserService userService = new UserService(getApplicationContext());
         final User user = userService.getLoggedUser();
         if (user == null || user.getUid() == null) {
@@ -92,8 +96,14 @@ public class SyncService extends IntentService {
                 .subscribe(new Subscriber<TodoItem>() {
                     @Override
                     public void onCompleted() {
+                        boolean listUpdated = false;
                         for (TodoItem todoItemFromServe : todoItemsFromServer) {
                             todoItemService.addTodoItem(todoItemFromServe);
+                            listUpdated = true;
+                        }
+
+                        if (listUpdated) {
+                            EventBus.getDefault().post(new TodoItemsListUpdateEvent());
                         }
                         Log.d(NAME,"conflicts solved");
                     }

@@ -73,6 +73,7 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // TODO: 31/05/2016 add an icon and change the background color
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
         ButterKnife.bind(this,view);
 

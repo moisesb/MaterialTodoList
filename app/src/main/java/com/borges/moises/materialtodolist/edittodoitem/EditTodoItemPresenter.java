@@ -56,7 +56,6 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
 
     @Override
     public void deleteTodoItem(long todoItemId) {
-        // TODO: 09/05/2016 Should show a dialog before delete todo items
         verifyView();
 
         TodoItem todoItem = mService.getTodoItem(todoItemId);
