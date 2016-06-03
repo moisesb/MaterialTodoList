@@ -8,6 +8,12 @@
             android:checked="false"
             android:title="@string/sign_in"/>
 
+        <item
+            android:id="@+id/settings_menu"
+            android:icon="@drawable/ic_settings_black_24px"
+            android:checked="false"
+            android:title="@string/settings"/>
+
     </group>
 
 </menu>

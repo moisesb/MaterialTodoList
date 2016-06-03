@@ -11,8 +11,9 @@ import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 
-import butterknife.Bind;
+
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -20,10 +21,10 @@ import butterknife.ButterKnife;
  */
 public class AddTodoItemActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.activity_title_text_view)
+    @BindView(R.id.activity_title_text_view)
     TextView mTitleTextView;
 
     @BindString(R.string.add_new_task)

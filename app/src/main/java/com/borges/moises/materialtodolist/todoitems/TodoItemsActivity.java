@@ -15,13 +15,16 @@ import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
+import com.borges.moises.materialtodolist.data.model.Settings;
 import com.borges.moises.materialtodolist.data.services.UserService;
 import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
 import com.borges.moises.materialtodolist.menu.MenuPresenter;
+import com.borges.moises.materialtodolist.settings.SettingsActivity;
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,13 +33,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.drawer)
+    @BindView(R.id.drawer)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.navigation_view)
+    @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
 
     TextView mUserNameTextView;
@@ -89,7 +92,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                         mPresenter.logout();
                         break;
                     case R.id.settings_menu:
-                        // TODO: 31/05/2016 create settings activity and open from where
+                        mPresenter.openSettings();
                         break;
                     default:
                         throw new IllegalStateException("Not implemented");
@@ -168,5 +171,10 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                 .placeholder(R.drawable.ic_account_circle_white_24dp)
                 .resize(56,56)
                 .into(mProfilePictureImageView);
+    }
+
+    @Override
+    public void openSettings() {
+        SettingsActivity.start(this);
     }
 }

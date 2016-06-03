@@ -24,8 +24,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import butterknife.Bind;
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -43,19 +43,19 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
     @BindString(R.string.empty_password)
     String mEmptyPasswordStr;
 
-    @Bind(R.id.email_edit_text)
+    @BindView(R.id.email_edit_text)
     EditText mEmailEditText;
 
-    @Bind(R.id.password_edit_text)
+    @BindView(R.id.password_edit_text)
     EditText mPasswordEditText;
 
-    @Bind(R.id.login_linear_layout)
+    @BindView(R.id.login_linear_layout)
     LinearLayout mLinearLayout;
 
-    @Bind(R.id.sign_in_button)
+    @BindView(R.id.sign_in_button)
     Button mSignInButton;
 
-    @Bind(R.id.facebook_login_button)
+    @BindView(R.id.facebook_login_button)
     LoginButton mFacebookLoginButton;
 
     private ProgressDialog mProgressDialog;

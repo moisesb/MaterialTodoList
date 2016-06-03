@@ -24,8 +24,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import butterknife.Bind;
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -46,22 +46,22 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     @BindString(R.string.invalid_username)
     String mInvalidUserNameStr;
 
-    @Bind(R.id.password_edit_text)
+    @BindView(R.id.password_edit_text)
     EditText mPasswordEditText;
 
-    @Bind(R.id.email_edit_text)
+    @BindView(R.id.email_edit_text)
     EditText mEmailEditText;
 
-    @Bind(R.id.name_edit_text)
+    @BindView(R.id.name_edit_text)
     EditText mNameEditText;
 
-    @Bind(R.id.email_account_linear_layout)
+    @BindView(R.id.email_account_linear_layout)
     LinearLayout mLinearLayout;
 
-    @Bind(R.id.sign_up_button)
+    @BindView(R.id.sign_up_button)
     AppCompatButton mCreateAccountButton;
 
-    @Bind(R.id.facebook_login_button)
+    @BindView(R.id.facebook_login_button)
     LoginButton mFacebookLoginButton;
 
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();

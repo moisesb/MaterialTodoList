@@ -42,7 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -51,19 +51,19 @@ import butterknife.OnClick;
  */
 public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
-    @Bind(R.id.todo_items_recyclerview)
+    @BindView(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
 
-    @Bind(R.id.no_todo_items_layout)
+    @BindView(R.id.no_todo_items_layout)
     LinearLayout mNoTodoItemsLayout;
 
-    @Bind(R.id.first_time_layout)
+    @BindView(R.id.first_time_layout)
     LinearLayout mFirstTimeLayout;
 
-    @Bind(R.id.swipe_refresh_layout)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @Bind(R.id.add_todo_item_button)
+    @BindView(R.id.add_todo_item_button)
     AppCompatButton mAddTodoItemButton;
 
     private boolean mFirstRun = false;

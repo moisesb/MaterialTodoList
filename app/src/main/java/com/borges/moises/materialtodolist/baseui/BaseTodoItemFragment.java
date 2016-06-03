@@ -22,8 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -35,22 +35,22 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
     @BindString(R.string.title_requied)
     protected String mTitleRequiedString;
 
-    @Bind(R.id.todo_item_title_edit_text)
+    @BindView(R.id.todo_item_title_edit_text)
     protected EditText mTitleEditText;
 
-    @Bind(R.id.todo_item_date_edit_text)
+    @BindView(R.id.todo_item_date_edit_text)
     protected EditText mDateEditText;
 
-    @Bind(R.id.todo_item_description_edit_text)
+    @BindView(R.id.todo_item_description_edit_text)
     protected EditText mDescriptionEditText;
 
-    @Bind(R.id.todo_item_time_edit_text)
+    @BindView(R.id.todo_item_time_edit_text)
     protected EditText mTimeEditText;
 
-    @Bind(R.id.todo_item_location_edit_text)
+    @BindView(R.id.todo_item_location_edit_text)
     protected EditText mLocationEditText;
 
-    @Bind(R.id.todo_item_priority_edit_text)
+    @BindView(R.id.todo_item_priority_edit_text)
     protected EditText mPriorityEditText;
 
     protected int mYear = -1, mMonthOfYear = -1 , mDayOfMonth = -1, mHourOfDay = -1, mMinute = -1;

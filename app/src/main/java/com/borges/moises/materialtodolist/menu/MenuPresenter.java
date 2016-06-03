@@ -58,6 +58,11 @@ public class MenuPresenter implements MenuMvp.Presenter {
     }
 
     @Override
+    public void openSettings() {
+        mView.openSettings();
+    }
+
+    @Override
     public void bindView(@NonNull MenuMvp.View view) {
         mView = view;
     }

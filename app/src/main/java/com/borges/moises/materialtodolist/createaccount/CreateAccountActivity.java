@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 
 import com.borges.moises.materialtodolist.R;
 
-import butterknife.Bind;
+
 import butterknife.ButterKnife;
 
 public class CreateAccountActivity extends AppCompatActivity{

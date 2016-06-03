@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 
-import butterknife.Bind;
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -23,10 +23,10 @@ public class EditTodoItemActivity extends AppCompatActivity {
 
     public static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.todoItemId";
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.activity_title_text_view)
+    @BindView(R.id.activity_title_text_view)
     TextView mTitleTextView;
 
     @BindString(R.string.edit_task)

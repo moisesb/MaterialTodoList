@@ -19,6 +19,8 @@ public interface MenuMvp {
         void showUserName(String userName);
 
         void showUserPicture(String imageUrl);
+
+        void openSettings();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -27,5 +29,7 @@ public interface MenuMvp {
         void openLoginOrCreateAccount();
 
         void logout();
+
+        void openSettings();
     }
 }

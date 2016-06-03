@@ -69,6 +69,9 @@
     <string name="login_with_facebook">LOGIN WITH FACEBOOK</string>
     <string name="logout">LOGOUT</string>
     <string name="login_with_email">LOGIN WITH EMAIL</string>
-    <string name="create_account_with_facebook">CREATE ACCOUNT WITH FACEBOOK</string>
-    <string name="create_account_with_email">CREATE ACCOUNT WITH EMAIL</string>
+    <string name="create_account_with_facebook">SIGN UP WITH FACEBOOK</string>
+    <string name="create_account_with_email">SIGN UP WITH EMAIL</string>
+    <string name="notifications">Notifications</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="notification_time">Show notification at</string>
 </resources>
