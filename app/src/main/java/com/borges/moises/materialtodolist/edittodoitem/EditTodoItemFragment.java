@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -123,7 +124,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
 
         mHourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         mMinute = calendar.get(Calendar.MINUTE);
-        mTimeEditText.setText(getTime(mHourOfDay,mMinute));
+        mTimeEditText.setText(DateUtils.getTime(mHourOfDay,mMinute));
 
     }
 

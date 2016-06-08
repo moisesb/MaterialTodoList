@@ -168,7 +168,6 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     public void showUserPicture(String imageUrl) {
         Picasso.with(this)
                 .load(imageUrl)
-                .placeholder(R.drawable.ic_account_circle_white_24dp)
                 .resize(56,56)
                 .into(mProfilePictureImageView);
     }

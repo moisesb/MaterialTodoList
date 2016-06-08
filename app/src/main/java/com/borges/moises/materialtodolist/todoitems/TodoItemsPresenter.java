@@ -31,7 +31,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     @Override
     public void loadTodoItems() {
         checkView();
-
+        mView.clearTodoItems();
         mView.showProgress(true);
         mTodoItemsSubscription = mService.getTodoItems()
                 .subscribeOn(Schedulers.computation())

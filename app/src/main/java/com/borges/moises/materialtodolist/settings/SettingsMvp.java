@@ -15,6 +15,10 @@ public interface SettingsMvp {
         void showTime(int hour, int minute);
 
         void showShouldProvideTimeMessage();
+
+        void close();
+
+        void showSettingsSaved();
     }
 
     interface Presenter extends MvpPresenter<View> {

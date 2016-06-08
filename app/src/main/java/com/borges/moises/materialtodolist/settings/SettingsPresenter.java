@@ -26,7 +26,7 @@ public class SettingsPresenter implements SettingsMvp.Presenter {
 
     @Override
     public void saveSettings(boolean notificationEnabled, int hour, int minute) {
-        if (notificationEnabled && (hour > -1 || minute > -1)) {
+        if (notificationEnabled && (hour == -1 || minute == -1)) {
             mView.showShouldProvideTimeMessage();
             return;
         }
@@ -34,6 +34,10 @@ public class SettingsPresenter implements SettingsMvp.Presenter {
         mSettings.setNotificationEnabled(notificationEnabled);
         mSettings.setNotificationHour(hour);
         mSettings.setNotificationMinute(minute);
+        mSettings.save();
+
+        mView.showSettingsSaved();
+        mView.close();
     }
 
     @Override

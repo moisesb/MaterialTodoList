@@ -64,8 +64,9 @@
 
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="settings_activity"
+            android:label="@string/settings_activity"
             android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".todoitems.TodoItemsActivity"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity

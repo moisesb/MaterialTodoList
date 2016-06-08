@@ -40,6 +40,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -135,14 +137,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         super.onActivityCreated(savedInstanceState);
         mPresenter = new TodoItemsPresenter();
         mPresenter.bindView(this);
+        startServicesOnFirstRun();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.loadTodoItems();
         registerForEvents();
-        startServicesOnFirstRun();
+        mPresenter.loadTodoItems();
     }
 
     private void registerForEvents() {
@@ -221,20 +223,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdapter.deleteTodoItem(todoItem);
     }
 
-    public void cleanTodoItems() {
-        mTodoItemsAdapter.cleanTodoItems();
-    }
-
     @Override
     public void openTodoItemDetails(long todoItemId) {
         EditTodoItemActivity.start(getContext(), todoItemId);
-        cleanTodoItems();
     }
 
     @Override
     public void openNewTodoItem() {
         AddTodoItemActivity.start(getContext());
-        cleanTodoItems();
     }
 
     @Override
@@ -272,6 +268,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         });
     }
 
+    @Override
+    public void clearTodoItems() {
+        mTodoItemsAdapter.clearTodoItems();
+    }
+
     public interface OnCheckBoxClickListener {
         void onClick(TodoItem todoItem, boolean done);
     }
@@ -298,6 +299,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             int position = getTodoItemPosition(todoItem);
             mTodoItems.remove(position);
             notifyItemRemoved(position);
+        }
+
+        public void clearTodoItems(){
+            mTodoItems.clear();
+            notifyDataSetChanged();
         }
 
         private int getTodoItemPosition(TodoItem todoItem) {
@@ -338,11 +344,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 final int position = mTodoItems.indexOf(todoItem);
                 notifyItemInserted(position);
             }
-        }
-
-        public void cleanTodoItems() {
-            mTodoItems.clear();
-            notifyDataSetChanged();
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {

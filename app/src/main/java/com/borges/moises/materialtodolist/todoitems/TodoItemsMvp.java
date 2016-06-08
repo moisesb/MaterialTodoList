@@ -24,6 +24,8 @@ public interface TodoItemsMvp {
         void showUndoDeleteOption(TodoItem todoItem);
 
         void showProgress(boolean loading);
+
+        void clearTodoItems();
     }
 
     interface Presenter extends MvpPresenter<View> {

@@ -71,18 +71,11 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             mHourOfDay = hourOfDay;
             mMinute = minute;
-            mTimeEditText.setText(getTime(hourOfDay, minute));
+            mTimeEditText.setText(DateUtils.getTime(hourOfDay, minute));
         }
     };
 
-    @NonNull
-    protected String getTime(int hourOfDay, int minute) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        return format.format(calendar.getTime());
-    }
+
 
     protected String getDate(int year, int monthOfYear, int dayOfMonth) {
         final Date date = DateUtils.getDate(year, monthOfYear, dayOfMonth);

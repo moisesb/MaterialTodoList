@@ -1,5 +1,7 @@
 package com.borges.moises.materialtodolist.utils;
 
+import android.support.annotation.NonNull;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,6 +64,15 @@ public class DateUtils {
         }
 
         return calendar.getTime();
+    }
+
+    @NonNull
+    public static String getTime(int hourOfDay, int minute) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(calendar.getTime());
     }
 
 }
