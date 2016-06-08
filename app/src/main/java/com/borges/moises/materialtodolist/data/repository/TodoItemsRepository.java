@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public interface TodoItemRepository {
+public interface TodoItemsRepository {
     boolean addTodoItem(@NonNull TodoItem todoItem);
     boolean updateTodoItem(@NonNull TodoItem todoItem);
     boolean removeTodoItem(@NonNull TodoItem todoItem);

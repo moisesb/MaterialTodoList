@@ -3,7 +3,7 @@ package com.borges.moises.materialtodolist.data.scheme;
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItemTable {
+public class TodoItemsTable {
 
     public static final String TABLE_NAME = "todoitems";
 
@@ -22,6 +22,7 @@ public class TodoItemTable {
         public static final String DIRTY = "dirty";
         public static final String VERSION = "version";
         public static final String SERVER_ID = "server_id";
+        public static final String TAG = "tag";
 
         private Columns() {
 
@@ -43,7 +44,9 @@ public class TodoItemTable {
                 Columns.SERVER_ID + "," +
                 Columns.CREATED_AT + "," +
                 Columns.UPDATED_AT + "," +
-                Columns.LOCATION + ")";
+                Columns.LOCATION + "," +
+                Columns.TAG + "," +
+                "foreign key(" + Columns.TAG + ") references " + TagsTable.TABLE_NAME + "(" + TagsTable.Columns.ID + ")" + ")";
 
         public static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
@@ -52,7 +55,7 @@ public class TodoItemTable {
         }
     }
 
-    private TodoItemTable() {
+    private TodoItemsTable() {
 
     }
 

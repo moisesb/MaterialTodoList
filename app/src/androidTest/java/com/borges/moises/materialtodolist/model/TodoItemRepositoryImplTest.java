@@ -4,11 +4,12 @@ import android.test.AndroidTestCase;
 
 import com.borges.moises.materialtodolist.data.MaterialTodoItemsDatabase;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
-import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemRepository;
-import com.borges.moises.materialtodolist.data.repository.TodoItemRepository;
+import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemsRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemsRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpec;
 import com.borges.moises.materialtodolist.helpers.DatabaseHelper;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -17,17 +18,20 @@ import java.util.List;
 public class TodoItemRepositoryImplTest extends AndroidTestCase {
 
     private TodoItem mTodoItem;
-    private TodoItemRepository mTodoItemRepository;
+    private TodoItemsRepository mTodoItemRepository;
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         MaterialTodoItemsDatabase.init(mContext);
-        mTodoItemRepository = SqliteTodoItemRepository.getInstance();
+        mTodoItemRepository = SqliteTodoItemsRepository.getInstance();
         DatabaseHelper.beginTransaction();
         mTodoItem = new TodoItem();
         mTodoItem.setTitle("Some title");
         mTodoItem.setDescription("Do that");
+        Calendar calendar = Calendar.getInstance();
+        mTodoItem.setCreatedAt(calendar.getTime());
+        mTodoItem.setUpdatedAt(calendar.getTime());
     }
 
     @Override
@@ -52,7 +56,7 @@ public class TodoItemRepositoryImplTest extends AndroidTestCase {
         assertNull(mTodoItemRepository.getTodoItem(mTodoItem.getId()));
     }
 
-    public void testupdateTodoItem() throws Exception {
+    public void testUpdateTodoItem() throws Exception {
         boolean inserted = mTodoItemRepository.addTodoItem(mTodoItem);
         assertTrue(inserted);
         mTodoItem.setDescription("new description");

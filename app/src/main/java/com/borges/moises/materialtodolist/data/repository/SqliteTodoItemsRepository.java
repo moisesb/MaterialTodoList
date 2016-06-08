@@ -18,27 +18,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.Columns;
-import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.TABLE_NAME;
+import static com.borges.moises.materialtodolist.data.scheme.TodoItemsTable.Columns;
+import static com.borges.moises.materialtodolist.data.scheme.TodoItemsTable.TABLE_NAME;
 
 /**
  * Created by Moisés on 11/04/2016.
  */
-public final class SqliteTodoItemRepository implements TodoItemRepository {
+public final class SqliteTodoItemsRepository implements TodoItemsRepository {
 
     private SQLiteDatabase mDatabase;
 
-    private static SqliteTodoItemRepository INSTANCE;
+    private static SqliteTodoItemsRepository INSTANCE;
     private static final String WHERE_CLAUSE = Columns.ID + " = ?";
 
-    private SqliteTodoItemRepository() {
+    private SqliteTodoItemsRepository() {
         mDatabase = MaterialTodoItemsDatabase.getInstance()
                 .getWritableDatabase();
     }
 
-    public static TodoItemRepository getInstance() {
+    public static TodoItemsRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new SqliteTodoItemRepository();
+            INSTANCE = new SqliteTodoItemsRepository();
         }
 
         return INSTANCE;

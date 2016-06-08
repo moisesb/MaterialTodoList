@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.borges.moises.materialtodolist.data.scheme.TodoItemTable;
+import com.borges.moises.materialtodolist.data.scheme.TagsTable;
+import com.borges.moises.materialtodolist.data.scheme.TodoItemsTable;
 
 /**
  * Created by Moisés on 11/04/2016.
@@ -36,12 +37,14 @@ public class MaterialTodoItemsDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TodoItemTable.Sql.CREATE_TABLE);
+        db.execSQL(TagsTable.Sql.CREATE_TABLE);
+        db.execSQL(TodoItemsTable.Sql.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(TodoItemTable.Sql.DROP_TABLE);
+        db.execSQL(TodoItemsTable.Sql.DROP_TABLE);
+        db.execSQL(TagsTable.Sql.DROP_TABLE);
         onCreate(db);
     }
 }

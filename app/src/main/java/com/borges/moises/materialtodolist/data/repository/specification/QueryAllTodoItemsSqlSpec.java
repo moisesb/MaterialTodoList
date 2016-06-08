@@ -1,6 +1,6 @@
 package com.borges.moises.materialtodolist.data.repository.specification;
 
-import static com.borges.moises.materialtodolist.data.scheme.TodoItemTable.TABLE_NAME;
+import static com.borges.moises.materialtodolist.data.scheme.TodoItemsTable.TABLE_NAME;
 
 /**
  * Created by Moisés on 13/04/2016.

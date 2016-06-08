@@ -5,7 +5,7 @@
     <string name="add_todo_item_activity"></string>
     <string name="done_todo_item_text">Done</string>
     <string name="delete_todo_item_text">Delete</string>
-    <string name="title">Title</string>
+    <string name="name">Title</string>
     <string name="description">Description</string>
     <string name="date">Date</string>
     <string name="urgent_task">Urgent Task</string>
