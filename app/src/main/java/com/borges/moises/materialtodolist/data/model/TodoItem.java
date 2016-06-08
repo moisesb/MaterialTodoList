@@ -24,6 +24,7 @@ public class TodoItem {
     private Date createdAt;
     private Date updatedAt;
 
+    // TODO: 06/06/2016 add tag attribute
     public TodoItem() {
         priority = Priority.NORMAL;
         deleted = false;

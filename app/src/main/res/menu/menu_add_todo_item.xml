@@ -5,7 +5,7 @@
             tools:context=".addtodoitem.AddTodoItemActivity">
 
     <item android:id="@+id/action_add"
-          android:title="@string/action_add"
+          android:name="@string/action_add"
           android:icon="@drawable/ic_done_white_24dp"
           android:orderInCategory="100"
           app:showAsAction="always"/>
