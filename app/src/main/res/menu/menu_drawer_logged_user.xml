@@ -6,13 +6,15 @@
             android:id="@+id/sign_out_menu"
             android:icon="@drawable/ic_exit_to_app_black_24px"
             android:checked="false"
-            android:name="@string/sign_out"/>
+            android:name="@string/sign_out"
+            android:title="@string/sign_out"/>
 
         <item
             android:id="@+id/settings_menu"
             android:icon="@drawable/ic_settings_black_24px"
             android:checked="false"
-            android:name="@string/settings"/>
+            android:name="@string/settings"
+            android:title="@string/settings"/>
 
     </group>
 
@@ -24,7 +26,8 @@
                 android:id="@+id/tag"
                 android:icon="@drawable/ic_label_black_24px"
                 android:checked="false"
-                android:name="@string/settings"/>
+                android:name="@string/settings"
+                android:title="@string/settings"/>
         </menu>
     </item>
 

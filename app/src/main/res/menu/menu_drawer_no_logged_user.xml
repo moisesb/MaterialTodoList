@@ -6,13 +6,15 @@
             android:id="@+id/sign_in_menu"
             android:icon="@drawable/ic_account_circle_black_24px"
             android:checked="false"
-            android:name="@string/sign_in"/>
+            android:name="@string/sign_in"
+            android:title="@string/sign_in"/>
 
         <item
             android:id="@+id/settings_menu"
             android:icon="@drawable/ic_settings_black_24px"
             android:checked="false"
-            android:name="@string/settings"/>
+            android:name="@string/settings"
+            android:title="@string/settings"/>
 
     </group>
 
