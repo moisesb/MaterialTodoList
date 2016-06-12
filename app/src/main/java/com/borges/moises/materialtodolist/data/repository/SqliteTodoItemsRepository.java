@@ -12,6 +12,7 @@ import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.specification.Specification;
 import com.borges.moises.materialtodolist.data.repository.specification.SqlSpecification;
+import com.borges.moises.materialtodolist.data.scheme.TagsTable;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
             long id = mDatabase.insertOrThrow(TABLE_NAME, null, contentValues);
             todoItem.setId(id);
             return id >= 0;
-        }catch (SQLiteException e) {
+        } catch (SQLiteException e) {
             return false;
         }
 
@@ -73,6 +74,7 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
         contentValues.put(Columns.DONE_AT, DateUtils.dateToDbString(todoItem.getDoneAt()));
         contentValues.put(Columns.CREATED_AT, todoItem.getCreatedAt().getTime());
         contentValues.put(Columns.UPDATED_AT, todoItem.getUpdatedAt().getTime());
+        contentValues.put(Columns.TAG, todoItem.getTagId());
         return contentValues;
     }
 
@@ -84,14 +86,13 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
             final ContentValues contentValues = getContentValues(todoItem);
             mDatabase.update(TABLE_NAME, contentValues, whereClause, whereArgs);
             return true;
-        }catch (SQLiteException e) {
+        } catch (SQLiteException e) {
             return false;
         }
     }
 
     @Override
     public boolean removeTodoItem(@NonNull TodoItem todoItem) {
-
         final String[] whereArgs = getWhereArgsForId(todoItem);
         mDatabase.delete(TABLE_NAME, WHERE_CLAUSE, whereArgs);
         return true;
@@ -101,7 +102,7 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
     @Override
     public TodoItem getTodoItem(long todoItemid) {
         final String[] whereArgs = {String.valueOf(todoItemid)};
-        Cursor cursor = mDatabase.query(TABLE_NAME,null,WHERE_CLAUSE, whereArgs, null, null, null);
+        Cursor cursor = mDatabase.query(TABLE_NAME, null, WHERE_CLAUSE, whereArgs, null, null, null);
         cursor.moveToFirst();
         return getTodoItem(cursor);
     }
@@ -125,6 +126,8 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
         todoItem.setDoneAt(DateUtils.dbStringToDate(cursor.getString(cursor.getColumnIndex(Columns.DONE_AT))));
         todoItem.setCreatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.CREATED_AT))));
         todoItem.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Columns.UPDATED_AT))));
+        final long tagId = cursor.getLong(cursor.getColumnIndex(Columns.TAG));
+        todoItem.setTagId(tagId);
         return todoItem;
     }
 
@@ -134,7 +137,7 @@ public final class SqliteTodoItemsRepository implements TodoItemsRepository {
             throw new IllegalArgumentException("Specification should implement SqlSpecfication");
         }
         SqlSpecification sqlSpecification = (SqlSpecification) specification;
-        Cursor cursor = mDatabase.rawQuery(sqlSpecification.toSqlQuery(),sqlSpecification.getSelectionArgs());
+        Cursor cursor = mDatabase.rawQuery(sqlSpecification.toSqlQuery(),  sqlSpecification.getSelectionArgs());
         cursor.moveToFirst();
         List<TodoItem> todoItems = new ArrayList<>();
         while (!cursor.isAfterLast()) {

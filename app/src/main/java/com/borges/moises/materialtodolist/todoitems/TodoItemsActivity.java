@@ -9,13 +9,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
-import com.borges.moises.materialtodolist.data.model.Settings;
+import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.repository.SqliteTagsRepository;
 import com.borges.moises.materialtodolist.data.services.UserService;
 import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
@@ -23,6 +27,9 @@ import com.borges.moises.materialtodolist.menu.MenuPresenter;
 import com.borges.moises.materialtodolist.settings.SettingsActivity;
 import com.squareup.picasso.Picasso;
 
+
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +49,9 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
 
+    private SubMenu mTagsSubmenu;
+    private MenuItem mPreviousMenuItemSelected = null;
+
     TextView mUserNameTextView;
     CircleImageView mProfilePictureImageView;
 
@@ -53,17 +63,17 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         setContentView(R.layout.activity_todo_items);
         ButterKnife.bind(this);
         setupWindowAnimations();
-        mPresenter = new MenuPresenter(new UserService(this));
+        mPresenter = new MenuPresenter(new UserService(this), SqliteTagsRepository.getInstance());
         mPresenter.bindView(this);
         setupToolbar();
+        setupDrawer();
+        mPresenter.loadMenu();
         initFragment();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setupDrawer();
-        mPresenter.loadMenu();
     }
 
     @Override
@@ -84,6 +94,13 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                item.setCheckable(true);
+                item.setChecked(true);
+                if (mPreviousMenuItemSelected != null) {
+                    mPreviousMenuItemSelected.setChecked(false);
+                }
+                mPreviousMenuItemSelected = item;
+
                 switch (item.getItemId()) {
                     case R.id.sign_in_menu:
                         mPresenter.openLoginOrCreateAccount();
@@ -95,7 +112,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                         mPresenter.openSettings();
                         break;
                     default:
-                        throw new IllegalStateException("Not implemented");
+                        //onTagClick(item);
                 }
 
                 mDrawerLayout.closeDrawers();
@@ -123,7 +140,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                 .commit();
     }
 
-    protected void setupToolbar() {
+    private void setupToolbar() {
         setSupportActionBar(mToolbar);
     }
 
@@ -168,12 +185,34 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     public void showUserPicture(String imageUrl) {
         Picasso.with(this)
                 .load(imageUrl)
-                .resize(56,56)
+                .resize(56, 56)
                 .into(mProfilePictureImageView);
     }
 
     @Override
     public void openSettings() {
         SettingsActivity.start(this);
+    }
+
+    @Override
+    public void addTag(final Tag tag) {
+        if (mTagsSubmenu == null) {
+            mTagsSubmenu = mNavigationView.getMenu().addSubMenu(R.string.tags);
+            mTagsSubmenu.setGroupCheckable(0,true,true);
+        }
+        final MenuItem menuItem = mTagsSubmenu.add(0, Menu.FIRST, Menu.NONE, tag.getName());
+        menuItem.setIcon(R.drawable.ic_label_black_24px)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        mPresenter.openFilterTodoItemsByTag(tag);
+                        return false;
+                    }
+                });
+    }
+
+    @Override
+    public void filterTodoItemsByTag(Tag tag) {
+
     }
 }

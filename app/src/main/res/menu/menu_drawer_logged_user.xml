@@ -20,15 +20,9 @@
 
     <item
         android:id="@+id/navigation_subheader"
-        android:name="@string/tag">
-        <menu>
-            <item
-                android:id="@+id/tag"
-                android:icon="@drawable/ic_label_black_24px"
-                android:checked="false"
-                android:name="@string/settings"
-                android:title="@string/settings"/>
-        </menu>
+        android:name="@string/tags"
+        android:title="@string/tags">
+
     </item>
 
 </menu>

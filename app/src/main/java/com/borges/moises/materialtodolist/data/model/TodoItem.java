@@ -23,6 +23,7 @@ public class TodoItem {
     private int version;
     private Date createdAt;
     private Date updatedAt;
+    private Long tagId = null;
 
     // TODO: 06/06/2016 add tag attribute
     public TodoItem() {
@@ -154,6 +155,16 @@ public class TodoItem {
     @JsonProperty("updated_at")
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @JsonProperty("tag_id")
+    public Long getTagId() {
+        return tagId;
+    }
+
+    @JsonProperty("tag_id")
+    public void setTagId(Long tagId) {
+        this.tagId = tagId;
     }
 
     @JsonIgnore

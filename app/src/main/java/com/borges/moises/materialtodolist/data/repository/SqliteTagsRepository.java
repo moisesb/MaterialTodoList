@@ -11,7 +11,9 @@ import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.data.scheme.TagsTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.borges.moises.materialtodolist.data.scheme.TagsTable.*;
 
@@ -58,11 +60,13 @@ public class SqliteTagsRepository implements TagsRepository {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public Tag getTag(long id) {
         Cursor cursor = mDatabase.query(TABLE_NAME, null, sWhereClause, new String[]{String.valueOf(id)}, null, null, TagsTable.Columns.NAME + " ASC");
         cursor.moveToFirst();
 
-        return getTag(cursor);
+        final Tag tag = getTag(cursor);
+        return tag;
     }
 
     @Nullable
@@ -84,7 +88,8 @@ public class SqliteTagsRepository implements TagsRepository {
 
         List<Tag> tags = new ArrayList<>();
         while (!cursor.isAfterLast()) {
-            tags.add(getTag(cursor));
+            final Tag tag = getTag(cursor);
+            tags.add(tag);
             cursor.moveToNext();
         }
         return tags;

@@ -2,8 +2,12 @@ package com.borges.moises.materialtodolist.menu;
 
 import android.support.annotation.NonNull;
 
+import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.data.model.User;
+import com.borges.moises.materialtodolist.data.repository.TagsRepository;
 import com.borges.moises.materialtodolist.data.services.UserService;
+
+import java.util.List;
 
 /**
  * Created by moises.anjos on 24/05/2016.
@@ -12,9 +16,11 @@ public class MenuPresenter implements MenuMvp.Presenter {
 
     private MenuMvp.View mView;
     private UserService mService;
+    private TagsRepository mTagsRepository;
 
-    public MenuPresenter(@NonNull UserService service){
+    public MenuPresenter(@NonNull UserService service, @NonNull TagsRepository tagsRepository){
         mService = service;
+        mTagsRepository = tagsRepository;
     }
 
     @Override
@@ -30,6 +36,11 @@ public class MenuPresenter implements MenuMvp.Presenter {
             mView.showUserName(user.getUserName());
             mView.showUserPicture(user.getImageUrl());
             mView.showLogoutMenu();
+        }
+
+        List<Tag> tags = mTagsRepository.getTags();
+        for (Tag tag : tags) {
+            mView.addTag(tag);
         }
     }
 
@@ -60,6 +71,12 @@ public class MenuPresenter implements MenuMvp.Presenter {
     @Override
     public void openSettings() {
         mView.openSettings();
+    }
+
+    @Override
+    public void openFilterTodoItemsByTag(Tag tag) {
+        checkView();
+        mView.filterTodoItemsByTag(tag);
     }
 
     @Override
