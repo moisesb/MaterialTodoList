@@ -29,7 +29,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     }
 
     @Override
-    public void loadTodoItems() {
+    public void loadTodoItems(final Long tag) {
         checkView();
         mView.clearTodoItems();
         mView.showProgress(true);
@@ -46,6 +46,12 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
                     @Override
                     public Boolean call(TodoItem todoItem) {
                         return !todoItem.isDeleted();
+                    }
+                })
+                .filter(new Func1<TodoItem, Boolean>() {
+                    @Override
+                    public Boolean call(TodoItem todoItem) {
+                        return tag == null || tag < 0 || todoItem.getTagId().equals(tag);
                     }
                 })
                 .subscribe(new Subscriber<TodoItem>() {

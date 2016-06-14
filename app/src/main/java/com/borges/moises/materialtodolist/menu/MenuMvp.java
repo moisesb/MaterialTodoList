@@ -26,6 +26,10 @@ public interface MenuMvp {
         void addTag(Tag tag);
 
         void filterTodoItemsByTag(Tag tag);
+
+        void showTagTitle(String tagName);
+
+        void addAllTasksTag(Tag tag);
     }
 
     interface Presenter extends MvpPresenter<View> {

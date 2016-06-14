@@ -59,7 +59,18 @@ public class SqliteTodoItemRepositoryTest extends AndroidTestCase {
         super.tearDown();
     }
 
+    public void testInsertTodoItemWithoutTag() throws Exception {
+        mTodoItem.setTagId(null);
+        boolean inserted = mTodoItemsRepository.addTodoItem(mTodoItem);
+        assertTrue(inserted);
+        TodoItem todoItemFromRepository = mTodoItemsRepository.getTodoItem(mTodoItem.getId());
+        assertEquals(mTodoItem.getTitle(),todoItemFromRepository.getTitle());
+        assertEquals(mTodoItem.getDescription(), todoItemFromRepository.getDescription());
+        assertNull(mTodoItem.getTagId());
+    }
+
     public void testInsertTodoItem() throws Exception {
+        mTodoItem.setTagId(mTag.getId());
         boolean inserted = mTodoItemsRepository.addTodoItem(mTodoItem);
         assertTrue(inserted);
         TodoItem todoItemFromRepository = mTodoItemsRepository.getTodoItem(mTodoItem.getId());

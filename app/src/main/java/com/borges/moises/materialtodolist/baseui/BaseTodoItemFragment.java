@@ -53,6 +53,9 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
     @BindView(R.id.todo_item_priority_edit_text)
     protected EditText mPriorityEditText;
 
+    @BindView(R.id.todo_item_tag_edit_text)
+    protected EditText mTagEditText;
+
     protected int mYear = -1, mMonthOfYear = -1 , mDayOfMonth = -1, mHourOfDay = -1, mMinute = -1;
     protected Priority mPriority = null;
 
@@ -110,6 +113,10 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
 
     @OnClick(R.id.todo_item_priority_edit_text) void onPriorityClick() {
         PriorityPickerDialog.show(getFragmentManager(),this);
+    }
+
+    @OnClick(R.id.todo_item_tag_edit_text) void onTagClick() {
+
     }
 
     @Override
