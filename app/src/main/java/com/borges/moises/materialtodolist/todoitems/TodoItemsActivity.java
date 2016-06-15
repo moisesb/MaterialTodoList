@@ -25,11 +25,9 @@ import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
 import com.borges.moises.materialtodolist.menu.MenuPresenter;
 import com.borges.moises.materialtodolist.settings.SettingsActivity;
+import com.borges.moises.materialtodolist.tags.TagsActivity;
 import com.squareup.picasso.Picasso;
 
-
-import java.util.HashSet;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,10 +50,10 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     private SubMenu mTagsSubmenu;
     private MenuItem mPreviousMenuItemSelected = null;
 
-    TextView mUserNameTextView;
-    CircleImageView mProfilePictureImageView;
+    private TextView mUserNameTextView;
+    private CircleImageView mProfilePictureImageView;
 
-    MenuMvp.Presenter mPresenter;
+    private MenuMvp.Presenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +65,14 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         mPresenter.bindView(this);
         setupToolbar();
         setupDrawer();
-        mPresenter.loadMenu();
-        initFragment();
+        showTodoItems(null);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mPresenter.loadMenu();
+        Log.d("Menu", "loadMenu");
     }
 
     @Override
@@ -88,8 +87,6 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
             mUserNameTextView = (TextView) headerView.findViewById(R.id.user_name);
             mProfilePictureImageView = (CircleImageView) headerView.findViewById(R.id.user_profile_image);
         }
-
-        // TODO: 31/05/2016 add menu actions to open list for each tag
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -110,6 +107,9 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                         break;
                     case R.id.settings_menu:
                         mPresenter.openSettings();
+                        break;
+                    case R.id.tags_menu:
+                        mPresenter.openTags();
                         break;
                     default:
                         //onTagClick(item);
@@ -133,8 +133,8 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         actionBarDrawerToggle.syncState();
     }
 
-    private void initFragment() {
-        Fragment contentFragment = TodoItemsFragment.newInstace();
+    private void showTodoItems(Long tagId) {
+        Fragment contentFragment = TodoItemsFragment.newInstace(tagId);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.framelayout, contentFragment)
                 .commit();
@@ -195,11 +195,13 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     }
 
     @Override
+    public void openTags() {
+        TagsActivity.start(this);
+    }
+
+    @Override
     public void addTag(final Tag tag) {
-        if (mTagsSubmenu == null) {
-            mTagsSubmenu = mNavigationView.getMenu().addSubMenu(R.string.tags);
-            mTagsSubmenu.setGroupCheckable(0,true,true);
-        }
+        createTagsSubmenu();
         final MenuItem menuItem = mTagsSubmenu.add(0, Menu.FIRST, Menu.NONE, tag.getName());
         menuItem.setIcon(R.drawable.ic_label_black_24px)
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -211,8 +213,40 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                 });
     }
 
+    private void createTagsSubmenu() {
+        if (mTagsSubmenu == null) {
+            mTagsSubmenu = mNavigationView.getMenu().addSubMenu(R.string.tags);
+            mTagsSubmenu.setGroupCheckable(0,true,true);
+        }
+    }
+
     @Override
     public void filterTodoItemsByTag(Tag tag) {
+        showTodoItems(tag.getId());
+    }
+
+    @Override
+    public void showTagTitle(String tagName) {
+        if (tagName == null || tagName.isEmpty()) {
+            mToolbar.setTitle(R.string.all_tasks);
+        }else {
+            mToolbar.setTitle(tagName);
+        }
+    }
+
+    @Override
+    public void addAllTasksTag(Tag tag) {
+        final String allTasksTitle = getResources().getString(R.string.all_tasks);
+        tag.setName(allTasksTitle);
+        addTag(tag);
+    }
+
+    @Override
+    public void clearMenuTags() {
+        if (mTagsSubmenu != null) {
+            mTagsSubmenu = null;
+            supportInvalidateOptionsMenu();
+        }
 
     }
 }

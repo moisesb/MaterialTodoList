@@ -23,9 +23,17 @@ public interface MenuMvp {
 
         void openSettings();
 
+        void openTags();
+
         void addTag(Tag tag);
 
         void filterTodoItemsByTag(Tag tag);
+
+        void showTagTitle(String tagName);
+
+        void addAllTasksTag(Tag tag);
+
+        void clearMenuTags();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -38,5 +46,7 @@ public interface MenuMvp {
         void openSettings();
 
         void openFilterTodoItemsByTag(Tag tag);
+
+        void openTags();
     }
 }

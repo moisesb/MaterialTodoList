@@ -36,7 +36,9 @@
                 android:textSize="24sp"
                 android:text="@string/add_new_task"
                 android:layout_marginLeft="72dp"
+                android:layout_marginStart="72dp"
                 android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="20dp"
                 tools:text="Todo Item"/>
 

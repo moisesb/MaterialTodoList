@@ -40,8 +40,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,6 +50,9 @@ import butterknife.OnClick;
  * Created by Moisés on 11/04/2016.
  */
 public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
+
+    private static final String TAG_ARG =
+            "com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.tag";
 
     @BindView(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
@@ -68,9 +69,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @BindView(R.id.add_todo_item_button)
     AppCompatButton mAddTodoItemButton;
 
+    private Long mTag = null;
+
     private boolean mFirstRun = false;
 
-    CoordinatorLayout mCoordinatorLayout;
+    private CoordinatorLayout mCoordinatorLayout;
 
     private OnCheckBoxClickListener mCheckBoxClickListener = new OnCheckBoxClickListener() {
         @Override
@@ -118,6 +121,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         View view = inflater.inflate(R.layout.fragment_todo_items, container, false);
         ButterKnife.bind(this, view);
 
+        if (getArguments() != null) {
+            mTag = getArguments().getLong(TAG_ARG);
+        }
         mCoordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator_layout);
 
         final FloatingActionButton mAddNoteFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
@@ -144,7 +150,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public void onResume() {
         super.onResume();
         registerForEvents();
-        mPresenter.loadTodoItems();
+        mPresenter.loadTodoItems(mTag);
     }
 
     private void registerForEvents() {
@@ -175,11 +181,17 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Subscribe
     public void handleTodoItemsListChanged(TodoItemsListUpdateEvent event) {
         // TODO: 31/05/2016 finish handle todo items list changed event
-        mPresenter.loadTodoItems();
+        mPresenter.loadTodoItems(mTag);
     }
 
-    public static Fragment newInstace() {
-        return new TodoItemsFragment();
+    public static Fragment newInstace(Long tagId) {
+        final TodoItemsFragment fragment = new TodoItemsFragment();
+        if (tagId != null) {
+            Bundle bundle = new Bundle();
+            bundle.putLong(TAG_ARG,tagId);
+            fragment.setArguments(bundle);
+        }
+        return fragment;
     }
 
     private void setupRecyclerView() {
@@ -207,7 +219,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
                 .edit().putBoolean(appFirstRun, false)
-                .commit();
+                .apply();
         //}
     }
 

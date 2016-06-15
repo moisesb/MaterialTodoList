@@ -29,7 +29,7 @@ public interface TodoItemsMvp {
     }
 
     interface Presenter extends MvpPresenter<View> {
-        void loadTodoItems();
+        void loadTodoItems(Long tag);
 
         void deleteTodoItem(TodoItem todoItem);
 

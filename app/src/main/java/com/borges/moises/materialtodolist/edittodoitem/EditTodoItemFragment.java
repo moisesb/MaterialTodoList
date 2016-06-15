@@ -17,10 +17,12 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Moisés on 24/04/2016.
@@ -84,7 +86,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
         final String location = mLocationEditText.getText().toString();
-        mPresenter.editTodoItem(mTodoItemId, title, description, mPriority, location, mYear, mMonthOfYear, mDayOfMonth, mHourOfDay, mMinute);
+        mPresenter.editTodoItem(mTodoItemId, title, description, mPriority, location, mYear, mMonthOfYear, mDayOfMonth, mHourOfDay, mMinute, mTag);
     }
 
     private void deleteTodoItem() {
@@ -162,6 +164,11 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
                 mPresenter.deleteTodoItem(mTodoItemId);
             }
         });
+    }
+
+    @Override
+    public void addTags(List<Tag> tags) {
+        mAvaliableTags = tags;
     }
 
     public static class ConfirmationDialog extends DialogFragment {

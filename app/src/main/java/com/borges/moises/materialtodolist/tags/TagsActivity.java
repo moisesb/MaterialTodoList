@@ -1,0 +1,268 @@
+package com.borges.moises.materialtodolist.tags;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.borges.moises.materialtodolist.R;
+import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.repository.SqliteTagsRepository;
+import com.borges.moises.materialtodolist.dialogs.TagDialog;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * Created by moises.anjos on 14/06/2016.
+ */
+
+public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.tags_recycler_view)
+    RecyclerView mTagsRecyclerView;
+
+    private TagsMvp.Presenter mPresenter;
+
+    private TagAdapter mAdapter = new TagAdapter(new ArrayList<Tag>(0),
+            new DeleteCallback() {
+                @Override
+                public void onDeleteTag(Tag tag) {
+                    mPresenter.deleteTag(tag);
+                }
+            },
+            new EditCallback() {
+                @Override
+                public void onEditTag(Tag tag) {
+                    TagDialog.showEditTag(getSupportFragmentManager(), tag, new TagDialog.EditCallback() {
+                        @Override
+                        public void onEditTag(Tag tag, String newTagName) {
+                            mPresenter.renameTag(tag, newTagName);
+                        }
+                    });
+                }
+            });
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tags);
+        ButterKnife.bind(this);
+        setupToolbar();
+        initRecyclerView();
+        mPresenter = new TagsPresenter(SqliteTagsRepository.getInstance());
+        mPresenter.bindView(this);
+    }
+
+    private void initRecyclerView() {
+        mTagsRecyclerView.setHasFixedSize(true);
+        mTagsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mTagsRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.loadTags();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.unbindView();
+        super.onDestroy();
+    }
+
+    @OnClick(R.id.fab)
+    void onAddTagClick() {
+        TagDialog.showAddTag(getSupportFragmentManager(), new TagDialog.AddCallback() {
+            @Override
+            public void onAddTag(String tagName) {
+                mPresenter.addTag(tagName);
+            }
+        });
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+            default:
+                super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, TagsActivity.class);
+        context.startActivity(intent);
+    }
+
+    @Override
+    public void showTags(List<Tag> tags) {
+        mAdapter.replaceData(tags);
+    }
+
+    @Override
+    public void showTagNotAddedError() {
+
+    }
+
+    @Override
+    public void showTagAdded(Tag tag) {
+        mAdapter.addTag(tag);
+        Toast.makeText(this, R.string.tag_added, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showTagDeleted(Tag tag) {
+        mAdapter.removeTag(tag);
+        Toast.makeText(this, R.string.tag_deleted, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showTagNotEditedError() {
+        Toast.makeText(this, R.string.tag_not_edited, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateTag(Tag tag) {
+        mAdapter.updateTag(tag);
+        Toast.makeText(this, R.string.tag_edited, Toast.LENGTH_SHORT).show();
+    }
+
+    public interface DeleteCallback {
+        void onDeleteTag(Tag tag);
+    }
+
+    public interface EditCallback {
+        void onEditTag(Tag tag);
+    }
+
+    public static class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
+
+        private final List<Tag> mTags;
+        private final DeleteCallback mDeleteCallback;
+        private final EditCallback mEditCallback;
+
+        public TagAdapter(@NonNull List<Tag> tags,
+                          @NonNull DeleteCallback deleteCallback,
+                          @NonNull EditCallback editCallback) {
+            mTags = tags;
+            mDeleteCallback = deleteCallback;
+            mEditCallback = editCallback;
+        }
+
+        public void replaceData(@NonNull List<Tag> tags) {
+            mTags.clear();
+            mTags.addAll(tags);
+            notifyDataSetChanged();
+        }
+
+        public void addTag(Tag tag) {
+            for (int i = 0; i < mTags.size(); i++) {
+                Tag tagFromAdapter = mTags.get(i);
+                if (tagFromAdapter.getName().compareTo(tag.getName()) > 0) {
+                    mTags.add(i, tag);
+                    notifyItemInserted(i);
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public TagAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.tag_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(TagAdapter.ViewHolder holder, int position) {
+            final Tag tag = mTags.get(position);
+            holder.tagName.setText(tag.getName());
+            holder.numOfTasks.setText("3 tasks"); // TODO: 15/06/2016 should retrieve the number of tasks by tag first
+            holder.deleteImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDeleteCallback.onDeleteTag(tag);
+                }
+            });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditCallback.onEditTag(tag);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mTags.size();
+        }
+
+        public void removeTag(Tag tag) {
+            for (int i = 0; i < mTags.size(); i++) {
+                if (mTags.get(i).getId() == tag.getId()) {
+                    mTags.remove(i);
+                    notifyItemRemoved(i);
+                    break;
+                }
+            }
+        }
+
+        public void updateTag(Tag tag) {
+            for (int i = 0; i < mTags.size(); i++) {
+                if (mTags.get(i).getId() == tag.getId()) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            TextView tagName;
+            TextView numOfTasks;
+            ImageView deleteImg;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                tagName = (TextView) itemView.findViewById(R.id.tag_name_text_view);
+                numOfTasks = (TextView) itemView.findViewById(R.id.num_of_tasks_text_view);
+                deleteImg = (ImageView) itemView.findViewById(R.id.delete_tag_image);
+            }
+        }
+    }
+}

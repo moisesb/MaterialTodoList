@@ -3,9 +3,9 @@ package com.borges.moises.materialtodolist.baseui;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +15,15 @@ import android.widget.TimePicker;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.dialogs.PriorityPickerDialog;
+import com.borges.moises.materialtodolist.dialogs.TagPickerDialog;
+import com.borges.moises.materialtodolist.tags.TagsActivity;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -30,7 +33,7 @@ import butterknife.OnClick;
 /**
  * Created by Moisés on 14/04/2016.
  */
-public abstract class BaseTodoItemFragment extends Fragment implements PriorityPickerDialog.OnPrioritySelectedListener {
+public abstract class BaseTodoItemFragment extends Fragment implements PriorityPickerDialog.OnPrioritySelectedListener, TagPickerDialog.OnTagSelectedListener{
 
     @BindString(R.string.title_requied)
     protected String mTitleRequiedString;
@@ -53,8 +56,13 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
     @BindView(R.id.todo_item_priority_edit_text)
     protected EditText mPriorityEditText;
 
+    @BindView(R.id.todo_item_tag_edit_text)
+    protected EditText mTagEditText;
+
     protected int mYear = -1, mMonthOfYear = -1 , mDayOfMonth = -1, mHourOfDay = -1, mMinute = -1;
     protected Priority mPriority = null;
+    protected Tag mTag = null;
+    protected List<Tag> mAvaliableTags;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -112,10 +120,33 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
         PriorityPickerDialog.show(getFragmentManager(),this);
     }
 
+    @OnClick(R.id.todo_item_tag_edit_text) void onTagClick() {
+        TagPickerDialog.show(getFragmentManager(),this, mAvaliableTags);
+    }
+
     @Override
     public void onPrioritySelected(Priority priority) {
         mPriority = priority;
         String priorityText = getResources().getString(priority.stringResId());
         mPriorityEditText.setText(priorityText);
+    }
+
+    @Override
+    public void onNoTagSelected() {
+        mTag = null;
+        mTagEditText.setText("");
+    }
+
+    @Override
+    public void onCreateNewTagSelected() {
+        Log.d("Tags", "create new tag");
+        TagsActivity.start(getContext());
+        // TODO: 15/06/2016 should update the tags list after on resume
+    }
+
+    @Override
+    public void onTagSelected(Tag tag) {
+        mTag = tag;
+        mTagEditText.setText(tag.getName());
     }
 }
