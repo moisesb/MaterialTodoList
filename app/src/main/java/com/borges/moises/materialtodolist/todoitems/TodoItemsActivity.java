@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -24,6 +25,7 @@ import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.menu.MenuMvp;
 import com.borges.moises.materialtodolist.menu.MenuPresenter;
 import com.borges.moises.materialtodolist.settings.SettingsActivity;
+import com.borges.moises.materialtodolist.tags.TagsActivity;
 import com.squareup.picasso.Picasso;
 
 
@@ -63,13 +65,14 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         mPresenter.bindView(this);
         setupToolbar();
         setupDrawer();
-        mPresenter.loadMenu();
         showTodoItems(null);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mPresenter.loadMenu();
+        Log.d("Menu", "loadMenu");
     }
 
     @Override
@@ -84,8 +87,6 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
             mUserNameTextView = (TextView) headerView.findViewById(R.id.user_name);
             mProfilePictureImageView = (CircleImageView) headerView.findViewById(R.id.user_profile_image);
         }
-
-        // TODO: 31/05/2016 add menu actions to open list for each tag
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -106,6 +107,9 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                         break;
                     case R.id.settings_menu:
                         mPresenter.openSettings();
+                        break;
+                    case R.id.tags_menu:
+                        mPresenter.openTags();
                         break;
                     default:
                         //onTagClick(item);
@@ -191,6 +195,11 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     }
 
     @Override
+    public void openTags() {
+        TagsActivity.start(this);
+    }
+
+    @Override
     public void addTag(final Tag tag) {
         createTagsSubmenu();
         final MenuItem menuItem = mTagsSubmenu.add(0, Menu.FIRST, Menu.NONE, tag.getName());
@@ -230,5 +239,14 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         final String allTasksTitle = getResources().getString(R.string.all_tasks);
         tag.setName(allTasksTitle);
         addTag(tag);
+    }
+
+    @Override
+    public void clearMenuTags() {
+        if (mTagsSubmenu != null) {
+            mTagsSubmenu = null;
+            supportInvalidateOptionsMenu();
+        }
+
     }
 }

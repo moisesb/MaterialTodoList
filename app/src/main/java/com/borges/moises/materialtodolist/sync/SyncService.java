@@ -43,6 +43,7 @@ public class SyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // TODO: 31/05/2016 this service should run once a day
+        // TODO: 15/06/2016 this service should save tags too
         final UserService userService = new UserService(getApplicationContext());
         final User user = userService.getLoggedUser();
         if (user == null || user.getUid() == null) {

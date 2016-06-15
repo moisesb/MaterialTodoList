@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
+import com.borges.moises.materialtodolist.data.model.Tag;
+
+import java.util.List;
 
 /**
  * Created by Moisés on 14/04/2016.
@@ -58,7 +61,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
         final String location = mLocationEditText.getText().toString();
-        mPresenter.addTodoItem(title,description,mPriority,location,mYear,mMonthOfYear,mDayOfMonth,mHourOfDay,mMinute);
+        mPresenter.addTodoItem(title,description,mPriority,location,mYear,mMonthOfYear,mDayOfMonth,mHourOfDay,mMinute, mTag);
     }
 
     @Override
@@ -74,5 +77,10 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
     @Override
     public void showTodoItemAdded() {
         Toast.makeText(getContext(),R.string.todo_item_added,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void addTags(List<Tag> tags) {
+        mAvaliableTags = tags;
     }
 }

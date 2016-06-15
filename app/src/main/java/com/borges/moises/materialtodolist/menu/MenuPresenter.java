@@ -39,7 +39,7 @@ public class MenuPresenter implements MenuMvp.Presenter {
         }
 
         mView.showTagTitle(null);
-
+        mView.clearMenuTags();
         Tag allTasksTag = new Tag();
         allTasksTag.setId(-1);
         mView.addAllTasksTag(allTasksTag);
@@ -85,6 +85,12 @@ public class MenuPresenter implements MenuMvp.Presenter {
         checkView();
         mView.showTagTitle(tag.getName());
         mView.filterTodoItemsByTag(tag);
+    }
+
+    @Override
+    public void openTags() {
+        checkView();
+        mView.openTags();
     }
 
     @Override

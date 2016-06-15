@@ -16,13 +16,13 @@
             android:name="@string/settings"
             android:title="@string/settings"/>
 
+        <item
+            android:id="@+id/tags_menu"
+            android:icon="@drawable/ic_list_black_24px"
+            android:checked="false"
+            android:name="@string/manage_tags"
+            android:title="@string/manage_tags"/>
+
     </group>
-
-    <item
-        android:id="@+id/navigation_subheader"
-        android:name="@string/tags"
-        android:title="@string/tags">
-
-    </item>
 
 </menu>

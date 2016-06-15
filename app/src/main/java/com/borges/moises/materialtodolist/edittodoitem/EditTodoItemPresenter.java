@@ -3,7 +3,10 @@ package com.borges.moises.materialtodolist.edittodoitem;
 import android.support.annotation.NonNull;
 
 import com.borges.moises.materialtodolist.data.model.Priority;
+import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.data.repository.SqliteTagsRepository;
+import com.borges.moises.materialtodolist.data.repository.TagsRepository;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
@@ -14,9 +17,11 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
 
     private EditTodoItemMvp.View mView;
     private TodoItemService mService;
+    private TagsRepository mTagsRepository;
 
     public EditTodoItemPresenter() {
         mService = new TodoItemService();
+        mTagsRepository = SqliteTagsRepository.getInstance();
     }
 
     @Override
@@ -30,7 +35,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
     }
 
     @Override
-    public void editTodoItem(long todoItemId, String title, String description, Priority priority, String location, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute) {
+    public void editTodoItem(long todoItemId, String title, String description, Priority priority, String location, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute, Tag tag) {
         verifyView();
 
         TodoItem todoItem = mService.getTodoItem(todoItemId);
@@ -39,6 +44,9 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
         todoItem.setPriority(priority == null? Priority.NORMAL : priority);
         todoItem.setLocation(location);
         todoItem.setDate(DateUtils.getDate(year, monthOfYear, dayOfMonth, hourOfDay, minute));
+        if (tag != null) {
+            todoItem.setTagId(tag.getId());
+        }
 
         if (mService.isTodoItemValid(todoItem)) {
             mService.editTodoItem(todoItem);
@@ -73,6 +81,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
     @Override
     public void bindView(@NonNull EditTodoItemMvp.View view) {
         mView = view;
+        mView.addTags(mTagsRepository.getTags());
     }
 
     @Override
