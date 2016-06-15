@@ -77,6 +77,8 @@
     <string name="settings_activity">Settings</string>
     <string name="action_save">Save</string>
     <string name="settings_saved">Settings saved</string>
+    <string name="login_activity">Login</string>
+    <string name="create_account_activity">Create Account</string>
 
     <string-array name="initial_tags">
         <item>Inbox</item>

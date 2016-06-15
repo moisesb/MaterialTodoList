@@ -53,12 +53,16 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".createaccount.CreateAccountActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.Dark"
+            android:label="@string/create_account_activity"
+            android:parentActivityName=".todoitems.TodoItemsActivity"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.Dark"
+            android:label="@string/login_activity"
+            android:parentActivityName=".todoitems.TodoItemsActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
 
