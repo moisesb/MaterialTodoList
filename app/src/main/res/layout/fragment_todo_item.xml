@@ -155,7 +155,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
             android:focusableInTouchMode="false"
-            android:hint="@string/tag"
+            android:hint="@string/tasksByTag"
             android:inputType="text"/>
 
     </LinearLayout>

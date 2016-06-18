@@ -32,6 +32,12 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.loadTags();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_add_todo_item,menu);
     }

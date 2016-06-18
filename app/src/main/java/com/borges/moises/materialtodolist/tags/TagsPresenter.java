@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.tags;
 
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.model.TasksByTag;
 import com.borges.moises.materialtodolist.data.repository.TagsRepository;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class TagsPresenter implements TagsMvp.Presenter {
     public void loadTags() {
         checkView();
 
-        List<Tag> tags = mTagsRepository.getTags();
-        mView.showTags(tags);
+        final List<TasksByTag> tasksByTags = mTagsRepository.getTasksByTag();
+        mView.showTags(tasksByTags);
     }
 
     private void checkView() {
@@ -43,28 +44,31 @@ public class TagsPresenter implements TagsMvp.Presenter {
         tag.setName(tagName);
         mTagsRepository.addTag(tag);
         if (tag.getId() >= 0) {
-            mView.showTagAdded(tag);
+            TasksByTag tasksByTag = new TasksByTag(tag,0);
+            mView.showTagAdded(tasksByTag);
         }else {
             mView.showTagNotAddedError();
         }
     }
 
     @Override
-    public void deleteTag(Tag tag) {
+    public void deleteTag(TasksByTag tasksByTag) {
         checkView();
+        final Tag tag = tasksByTag.getTag();
         mTagsRepository.deleteTag(tag);
-        mView.showTagDeleted(tag);
+        mView.showTagDeleted(tasksByTag);
     }
 
     @Override
-    public void renameTag(Tag tag, String newTagName) {
+    public void renameTag(TasksByTag tasksByTag, String newTagName) {
         checkView();
         if (newTagName == null || newTagName.isEmpty()) {
             mView.showTagNotEditedError();
         }
+        final Tag tag = tasksByTag.getTag();
         tag.setName(newTagName);
         mTagsRepository.updateTag(tag);
-        mView.updateTag(tag);
+        mView.updateTag(tasksByTag);
     }
 
     @Override

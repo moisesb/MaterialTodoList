@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,13 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.model.TasksByTag;
 import com.borges.moises.materialtodolist.data.repository.SqliteTagsRepository;
 import com.borges.moises.materialtodolist.dialogs.TagDialog;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,20 +45,20 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
 
     private TagsMvp.Presenter mPresenter;
 
-    private TagAdapter mAdapter = new TagAdapter(new ArrayList<Tag>(0),
+    private TagAdapter mAdapter = new TagAdapter(new ArrayList<TasksByTag>(0),
             new DeleteCallback() {
                 @Override
-                public void onDeleteTag(Tag tag) {
-                    mPresenter.deleteTag(tag);
+                public void onDeleteTag(TasksByTag tasksByTag) {
+                    mPresenter.deleteTag(tasksByTag);
                 }
             },
             new EditCallback() {
                 @Override
-                public void onEditTag(Tag tag) {
-                    TagDialog.showEditTag(getSupportFragmentManager(), tag, new TagDialog.EditCallback() {
+                public void onEditTag(TasksByTag tasksByTag) {
+                    TagDialog.showEditTag(getSupportFragmentManager(), tasksByTag, new TagDialog.EditCallback() {
                         @Override
-                        public void onEditTag(Tag tag, String newTagName) {
-                            mPresenter.renameTag(tag, newTagName);
+                        public void onEditTag(TasksByTag tasksByTag, String newTagName) {
+                            mPresenter.renameTag(tasksByTag, newTagName);
                         }
                     });
                 }
@@ -129,8 +127,8 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
     }
 
     @Override
-    public void showTags(List<Tag> tags) {
-        mAdapter.replaceData(tags);
+    public void showTags(List<TasksByTag> tasksByTags) {
+        mAdapter.replaceData(tasksByTags);
     }
 
     @Override
@@ -139,14 +137,14 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
     }
 
     @Override
-    public void showTagAdded(Tag tag) {
-        mAdapter.addTag(tag);
+    public void showTagAdded(TasksByTag tasksByTag) {
+        mAdapter.addTag(tasksByTag);
         Toast.makeText(this, R.string.tag_added, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showTagDeleted(Tag tag) {
-        mAdapter.removeTag(tag);
+    public void showTagDeleted(TasksByTag tasksByTag) {
+        mAdapter.removeTag(tasksByTag);
         Toast.makeText(this, R.string.tag_deleted, Toast.LENGTH_SHORT).show();
     }
 
@@ -156,44 +154,44 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
     }
 
     @Override
-    public void updateTag(Tag tag) {
-        mAdapter.updateTag(tag);
+    public void updateTag(TasksByTag tasksByTag) {
+        mAdapter.updateTag(tasksByTag);
         Toast.makeText(this, R.string.tag_edited, Toast.LENGTH_SHORT).show();
     }
 
     public interface DeleteCallback {
-        void onDeleteTag(Tag tag);
+        void onDeleteTag(TasksByTag tasksByTag);
     }
 
     public interface EditCallback {
-        void onEditTag(Tag tag);
+        void onEditTag(TasksByTag tasksByTag);
     }
 
     public static class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
 
-        private final List<Tag> mTags;
+        private final List<TasksByTag> mTasksByTags;
         private final DeleteCallback mDeleteCallback;
         private final EditCallback mEditCallback;
 
-        public TagAdapter(@NonNull List<Tag> tags,
+        public TagAdapter(@NonNull ArrayList<TasksByTag> tasksByTags,
                           @NonNull DeleteCallback deleteCallback,
                           @NonNull EditCallback editCallback) {
-            mTags = tags;
+            mTasksByTags = tasksByTags;
             mDeleteCallback = deleteCallback;
             mEditCallback = editCallback;
         }
 
-        public void replaceData(@NonNull List<Tag> tags) {
-            mTags.clear();
-            mTags.addAll(tags);
+        public void replaceData(@NonNull List<TasksByTag> tags) {
+            mTasksByTags.clear();
+            mTasksByTags.addAll(tags);
             notifyDataSetChanged();
         }
 
-        public void addTag(Tag tag) {
-            for (int i = 0; i < mTags.size(); i++) {
-                Tag tagFromAdapter = mTags.get(i);
-                if (tagFromAdapter.getName().compareTo(tag.getName()) > 0) {
-                    mTags.add(i, tag);
+        public void addTag(TasksByTag tasksByTag) {
+            for (int i = 0; i < mTasksByTags.size(); i++) {
+                TasksByTag tasksByTagFromAdapter = mTasksByTags.get(i);
+                if (tasksByTagFromAdapter.getTag().getName().compareTo(tasksByTag.getTag().getName()) > 0) {
+                    mTasksByTags.add(i, tasksByTag);
                     notifyItemInserted(i);
                     break;
                 }
@@ -209,41 +207,53 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
 
         @Override
         public void onBindViewHolder(TagAdapter.ViewHolder holder, int position) {
-            final Tag tag = mTags.get(position);
-            holder.tagName.setText(tag.getName());
-            holder.numOfTasks.setText("3 tasks"); // TODO: 15/06/2016 should retrieve the number of tasks by tag first
+            final TasksByTag tasksByTag = mTasksByTags.get(position);
+            holder.tagName.setText(tasksByTag.getTag().getName());
+            final int numOfTasks = tasksByTag.getNumOfTasks();
+            final String numOfTasksMessage = numOfTasksMessage(holder.itemView.getContext(), numOfTasks);
+            holder.numOfTasks.setText(numOfTasksMessage);
             holder.deleteImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mDeleteCallback.onDeleteTag(tag);
+                    mDeleteCallback.onDeleteTag(tasksByTag);
                 }
             });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mEditCallback.onEditTag(tag);
+                    mEditCallback.onEditTag(tasksByTag);
                 }
             });
         }
 
-        @Override
-        public int getItemCount() {
-            return mTags.size();
+        private String numOfTasksMessage(Context context, int numOfTasks) {
+            if (numOfTasks > 0) {
+                 return context.getResources()
+                         .getQuantityString(R.plurals.number_of_tasks,numOfTasks,numOfTasks);
+            }else {
+                return context.getResources()
+                        .getString(R.string.zero_tasks);
+            }
         }
 
-        public void removeTag(Tag tag) {
-            for (int i = 0; i < mTags.size(); i++) {
-                if (mTags.get(i).getId() == tag.getId()) {
-                    mTags.remove(i);
+        @Override
+        public int getItemCount() {
+            return mTasksByTags.size();
+        }
+
+        public void removeTag(TasksByTag tasksByTag) {
+            for (int i = 0; i < mTasksByTags.size(); i++) {
+                if (mTasksByTags.get(i).getTag().getId() == tasksByTag.getTag().getId()) {
+                    mTasksByTags.remove(i);
                     notifyItemRemoved(i);
                     break;
                 }
             }
         }
 
-        public void updateTag(Tag tag) {
-            for (int i = 0; i < mTags.size(); i++) {
-                if (mTags.get(i).getId() == tag.getId()) {
+        public void updateTag(TasksByTag tasksByTag) {
+            for (int i = 0; i < mTasksByTags.size(); i++) {
+                if (mTasksByTags.get(i).getTag().getId() == tasksByTag.getTag().getId()) {
                     notifyItemChanged(i);
                     break;
                 }

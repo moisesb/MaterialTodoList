@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.borges.moises.materialtodolist.R;
-import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.model.TasksByTag;
 
 /**
  * Created by moises.anjos on 15/06/2016.
@@ -20,12 +20,12 @@ import com.borges.moises.materialtodolist.data.model.Tag;
 
 public class TagDialog extends DialogFragment {
 
-    private Tag mTag;
+    private TasksByTag mTasksByTag;
     private AddCallback mAddCallback;
     private EditCallback mEditCallback;
 
-    public void setTag(Tag mTag) {
-        this.mTag = mTag;
+    public void setTasksByTag(TasksByTag tasksByTag) {
+        mTasksByTag = tasksByTag;
     }
 
     public void setAddCallback(AddCallback mAddCallback) {
@@ -43,8 +43,8 @@ public class TagDialog extends DialogFragment {
         final View layout = LayoutInflater.from(getContext())
                 .inflate(R.layout.fragment_tag,null,false);
         final EditText nameEditTExt = (EditText) layout.findViewById(R.id.tag_name_edit_text);
-        if (mTag != null) {
-            nameEditTExt.setText(mTag.getName());
+        if (mTasksByTag != null) {
+            nameEditTExt.setText(mTasksByTag.getTag().getName());
         }
         return new AlertDialog.Builder(getContext())
                 .setTitle(dialogTitle())
@@ -52,10 +52,10 @@ public class TagDialog extends DialogFragment {
                 .setPositiveButton(dialogActionText(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mTag == null) {
+                        if (mTasksByTag == null) {
                             mAddCallback.onAddTag(nameEditTExt.getText().toString());
                         }else {
-                            mEditCallback.onEditTag(mTag,nameEditTExt.getText().toString());
+                            mEditCallback.onEditTag(mTasksByTag,nameEditTExt.getText().toString());
                         }
                     }
                 })
@@ -69,11 +69,11 @@ public class TagDialog extends DialogFragment {
     }
 
     private int dialogActionText() {
-        return mTag == null ? R.string.add : R.string.edit;
+        return mTasksByTag == null ? R.string.add : R.string.edit;
     }
 
     private int dialogTitle() {
-        return mTag == null? R.string.add_tag: R.string.edit_tag;
+        return mTasksByTag == null? R.string.add_tag: R.string.edit_tag;
     }
 
     public interface AddCallback {
@@ -81,7 +81,7 @@ public class TagDialog extends DialogFragment {
     }
 
     public interface EditCallback {
-        void onEditTag(Tag tag, String newTagName);
+        void onEditTag(TasksByTag tasksByTag, String newTagName);
     }
 
     public static void showAddTag(@NonNull FragmentManager fragmentManager,
@@ -92,11 +92,11 @@ public class TagDialog extends DialogFragment {
     }
 
     public static void showEditTag(@NonNull FragmentManager fragmentManager,
-                                   @NonNull Tag tag,
+                                   @NonNull TasksByTag tasksByTag,
                                    @NonNull EditCallback aeditCallbackdCallback) {
         TagDialog dialog = new TagDialog();
         dialog.setEditCallback(aeditCallbackdCallback);
-        dialog.setTag(tag);
+        dialog.setTasksByTag(tasksByTag);
         dialog.show(fragmentManager,"TagDialog");
     }
 }

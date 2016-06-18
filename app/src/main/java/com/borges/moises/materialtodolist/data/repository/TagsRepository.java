@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.data.repository;
 
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.model.TasksByTag;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface TagsRepository {
     Tag getTag(long id);
 
     List<Tag> getTags();
+
+    List<TasksByTag> getTasksByTag();
 }

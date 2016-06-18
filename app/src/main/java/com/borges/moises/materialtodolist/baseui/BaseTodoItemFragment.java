@@ -35,7 +35,7 @@ import butterknife.OnClick;
  */
 public abstract class BaseTodoItemFragment extends Fragment implements PriorityPickerDialog.OnPrioritySelectedListener, TagPickerDialog.OnTagSelectedListener{
 
-    @BindString(R.string.title_requied)
+    @BindString(R.string.title_required)
     protected String mTitleRequiedString;
 
     @BindView(R.id.todo_item_title_edit_text)

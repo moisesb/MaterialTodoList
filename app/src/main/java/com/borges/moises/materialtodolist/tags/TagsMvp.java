@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.tags;
 
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.data.model.TasksByTag;
 import com.borges.moises.materialtodolist.mvp.MvpPresenter;
 import com.borges.moises.materialtodolist.mvp.MvpView;
 
@@ -12,17 +13,17 @@ import java.util.List;
 
 public interface TagsMvp {
     interface View extends MvpView{
-        void showTags(List<Tag> tags);
+        void showTags(List<TasksByTag> tasksByTags);
 
         void showTagNotAddedError();
 
-        void showTagAdded(Tag tag);
+        void showTagAdded(TasksByTag tasksByTag);
 
-        void showTagDeleted(Tag tag);
+        void showTagDeleted(TasksByTag tasksByTag);
 
         void showTagNotEditedError();
 
-        void updateTag(Tag tag);
+        void updateTag(TasksByTag tasksByTag);
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -30,8 +31,8 @@ public interface TagsMvp {
 
         void addTag(String tagName);
 
-        void deleteTag(Tag tag);
+        void deleteTag(TasksByTag tasksByTag);
 
-        void renameTag(Tag tag, String newTagName);
+        void renameTag(TasksByTag tasksByTag, String newTagName);
     }
 }

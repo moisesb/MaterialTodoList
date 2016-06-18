@@ -33,6 +33,8 @@ public interface EditTodoItemMvp {
         void showDeleteConfirmationDialog();
 
         void addTags(List<Tag> tags);
+
+        void showTag(Tag tag);
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -43,5 +45,7 @@ public interface EditTodoItemMvp {
         void openDeleteConfirmationDialog();
 
         void deleteTodoItem(long todoItemId);
+
+        void loadTags();
     }
 }

@@ -134,6 +134,13 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             }
         });
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showProgress(false);
+            }
+        });
+
         setupRecyclerView();
         return view;
     }
@@ -167,7 +174,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         super.onDestroy();
     }
 
-    @OnClick(R.id.add_todo_item_button) void onAddTodoItemClick(){
+    @OnClick(R.id.add_todo_item_button)
+    void onAddTodoItemClick() {
         mPresenter.addNewTodoItem();
     }
 
@@ -188,7 +196,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         final TodoItemsFragment fragment = new TodoItemsFragment();
         if (tagId != null) {
             Bundle bundle = new Bundle();
-            bundle.putLong(TAG_ARG,tagId);
+            bundle.putLong(TAG_ARG, tagId);
             fragment.setArguments(bundle);
         }
         return fragment;
@@ -207,20 +215,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         final String preference = "PREFERENCE";
         final String appFirstRun = "appFirstRun";
 
-        mFirstRun =  getActivity()
+        mFirstRun = getActivity()
                 .getSharedPreferences(preference, Context.MODE_PRIVATE)
                 .getBoolean(appFirstRun, true);
 
-        //if (isFirstRun) {
-        SyncService.start(getContext());
+        if (mFirstRun) {
+            SyncService.start(getContext());
 
-        ServiceScheduler serviceScheduler = new ServiceScheduler();
-        serviceScheduler.setAlarm(getContext());
+            ServiceScheduler serviceScheduler = new ServiceScheduler();
+            serviceScheduler.setAlarm(getContext());
 
-        getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
-                .edit().putBoolean(appFirstRun, false)
-                .apply();
-        //}
+            getActivity().getSharedPreferences(preference, Context.MODE_PRIVATE)
+                    .edit().putBoolean(appFirstRun, false)
+                    .apply();
+        }
     }
 
     @Override
@@ -248,10 +256,10 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Override
     public void showNoTodoItemMessage() {
         mTodoItemsRecyclerView.setVisibility(View.GONE);
-        mNoTodoItemsLayout.setVisibility(mFirstRun? View.GONE: View.VISIBLE);
-        mFirstTimeLayout.setVisibility(mFirstRun? View.VISIBLE: View.GONE);
+        mNoTodoItemsLayout.setVisibility(mFirstRun ? View.GONE : View.VISIBLE);
+        mFirstTimeLayout.setVisibility(mFirstRun ? View.VISIBLE : View.GONE);
 
-        if (mFirstRun){
+        if (mFirstRun) {
             mAddTodoItemButton.setEnabled(true);
         }
 
@@ -313,7 +321,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             notifyItemRemoved(position);
         }
 
-        public void clearTodoItems(){
+        public void clearTodoItems() {
             mTodoItems.clear();
             notifyDataSetChanged();
         }

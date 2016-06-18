@@ -10,7 +10,10 @@ public abstract class TagsTable {
     public abstract class Columns {
         public static final String ID = "_id";
         public static final String NAME = "name";
+        public static final String ID_WITH_PREFIX = TABLE_NAME + "." + ID;
+        public static final String NAME_WITH_PREFIX = TABLE_NAME + "." + NAME;
     }
+
 
     public static class Sql {
         public static final String CREATE_TABLE = "create table if not exists " + TABLE_NAME + "(" +

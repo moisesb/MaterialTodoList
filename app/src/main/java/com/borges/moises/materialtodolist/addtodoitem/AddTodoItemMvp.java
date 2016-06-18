@@ -23,5 +23,7 @@ public interface AddTodoItemMvp {
 
     interface Presenter extends MvpPresenter<View> {
         void addTodoItem(String title, String description, Priority priority, String location, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute, Tag tag);
+
+        void loadTags();
     }
 }

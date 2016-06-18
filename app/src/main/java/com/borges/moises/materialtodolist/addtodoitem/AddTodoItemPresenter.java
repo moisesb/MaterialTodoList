@@ -48,11 +48,15 @@ public class AddTodoItemPresenter implements AddTodoItemMvp.Presenter {
         }
     }
 
+    @Override
+    public void loadTags() {
+        mView.addTags(mTagRepository.getTags());
+    }
+
 
     @Override
     public void bindView(AddTodoItemMvp.View view) {
         mView = view;
-        mView.addTags(mTagRepository.getTags());
     }
 
     @Override

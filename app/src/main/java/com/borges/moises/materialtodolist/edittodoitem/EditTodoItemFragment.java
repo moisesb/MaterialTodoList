@@ -54,6 +54,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     @Override
     public void onResume() {
         super.onResume();
+        mPresenter.loadTags();
         mPresenter.openTodoItem(mTodoItemId);
     }
 
@@ -134,6 +135,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     public void showPriority(Priority priority) {
         String priorityStr = getResources().getString(priority.stringResId());
         mPriorityEditText.setText(priorityStr);
+        mPriority = priority;
     }
 
     @Override
@@ -169,6 +171,14 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     @Override
     public void addTags(List<Tag> tags) {
         mAvaliableTags = tags;
+    }
+
+    @Override
+    public void showTag(Tag tag) {
+        if (tag != null) {
+            mTagEditText.setText(tag.getName());
+        }
+        mTag = tag;
     }
 
     public static class ConfirmationDialog extends DialogFragment {

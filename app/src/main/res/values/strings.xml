@@ -11,7 +11,7 @@
     <string name="urgent_task">Urgent Task</string>
     <string name="time">Time</string>
     <string name="action_add">Add</string>
-    <string name="title_requied">Title is requied</string>
+    <string name="title_required">Title is requied</string>
     <string name="invalid_date">Date is invalid</string>
     <string name="location">Location</string>
     <string name="notes">Notes</string>
@@ -25,8 +25,8 @@
     <string name="add_new_task">Add New Task</string>
     <string name="select_priority">Select Priority</string>
     <string name="priority_high">High</string>
-    <string name="priority_normal">Normal Priority</string>
-    <string name="priority_low">Low Priority</string>
+    <string name="priority_normal">Normal</string>
+    <string name="priority_low">Low</string>
     <string name="todo_item_added">Task added successfully</string>
     <string name="todo_item_edited">Todo Item edited</string>
     <string name="edit_task">Edit Task</string>
@@ -50,6 +50,16 @@
     <plurals name="pending_task">
         <item quantity="one">You have one pending task for today</item>
         <item quantity="other">You have %d pending tasks for today</item>
+    </plurals>
+
+    <string name="zero_tasks">0 Tasks</string>
+
+    <plurals name="number_of_tasks">
+        <item quantity="zero">0 Tasks</item>
+        <item quantity="one">1 Task</item>
+        <item quantity="other">%d Tasks</item>
+        <item quantity="many">%d Tasks</item>
+        <item quantity="few">%d Tasks</item>
     </plurals>
 
     <string name="closeDrawer">Close Drawer</string>
@@ -80,7 +90,7 @@
     <string name="login_activity">Login</string>
     <string name="create_account_activity">Create Account</string>
     <string name="all_tasks">All Tasks</string>
-    <string name="tag">Tag</string>
+    <string name="tasksByTag">Tag</string>
     <string name="select_tag">Select Tag</string>
     <string name="no_tag">No Tag</string>
     <string name="create_tag">Create new Tag</string>

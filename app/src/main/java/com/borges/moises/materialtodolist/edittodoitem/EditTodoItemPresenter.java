@@ -32,6 +32,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
         mView.showDate(todoItem.getDate());
         mView.showPriority(todoItem.getPriority());
         mView.showLocation(todoItem.getLocation());
+        mView.showTag(mTagsRepository.getTag(todoItem.getTagId()));
     }
 
     @Override
@@ -71,6 +72,11 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
         mView.close();
     }
 
+    @Override
+    public void loadTags() {
+        mView.addTags(mTagsRepository.getTags());
+    }
+
     private void verifyView() {
         if (mView == null) {
             throw new IllegalStateException("View is unbinded");
@@ -81,7 +87,6 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
     @Override
     public void bindView(@NonNull EditTodoItemMvp.View view) {
         mView = view;
-        mView.addTags(mTagsRepository.getTags());
     }
 
     @Override
