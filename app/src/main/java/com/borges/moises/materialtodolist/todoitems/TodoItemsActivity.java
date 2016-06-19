@@ -105,9 +105,11 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                     case R.id.sign_out_menu:
                         mPresenter.logout();
                         break;
+                    /*
                     case R.id.settings_menu:
-                        mPresenter.openSettings();
+                        //mPresenter.openSettings(); // TODO: 19/06/2016 Enable after implement changing notification time
                         break;
+                    */
                     case R.id.tags_menu:
                         mPresenter.openTags();
                         break;
