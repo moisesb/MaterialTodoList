@@ -1,0 +1,122 @@
+<resources>
+    <string name="app_name">Gerenciador de Tarefas</string>
+    <string name="action_settings">Configurações</string>
+    <string name="none_todo_item_found">Não existe nenhuma tarefa nessa lista</string>
+    <string name="add_todo_item_activity"></string>
+    <string name="done_todo_item_text">Feito</string>
+    <string name="delete_todo_item_text">Apagar</string>
+    <string name="name">Titulo</string>
+    <string name="description">Descrição</string>
+    <string name="date">Data</string>
+    <string name="urgent_task">Tarefa Urgente</string>
+    <string name="time">Hora</string>
+    <string name="action_add">Adicionar</string>
+    <string name="title_required">Titulo é necessário</string>
+    <string name="invalid_date">Data invalida</string>
+    <string name="location">Local</string>
+    <string name="notes">Observações</string>
+    <string name="todo_item_activity"></string>
+    <string name="action_delete">Deletar</string>
+    <string name="action_edit">Editar</string>
+    <string name="task_deleted">Tarefa deletada</string>
+    <string name="undo">Desfazer</string>
+    <string name="where">Onde</string>
+    <string name="priority">Prioridade</string>
+    <string name="add_new_task">Adicionar Nova Tarefa</string>
+    <string name="select_priority">Seleciona a Prioridade</string>
+    <string name="priority_high">Alta</string>
+    <string name="priority_normal">Normal</string>
+    <string name="priority_low">Baixa</string>
+    <string name="todo_item_added">Tarefa adicionada com sucesso</string>
+    <string name="todo_item_edited">Todo Item edited</string>
+    <string name="edit_task">Editar tarefa</string>
+    <string name="delete_confirmation_dialog_title">Confirmação</string>
+    <string name="delete_confirmation_dialog_message">Você ira aparar essa tarefa. Tem certeza ?</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="password">Senha</string>
+    <string name="email">Email</string>
+    <string name="first_name">Primeiro Nome</string>
+    <string name="sign_up">Cadastrar</string>
+    <string name="invalid_email">Email Invalido</string>
+    <string name="invalid_password">A senha deve ter pelo menos 3 caracteres</string>
+    <string name="invalid_username">Nome não pode ser vazio</string>
+    <string name="creating_account">Criando conta...</string>
+    <string name="sign_in">Entrar</string>
+    <string name="signed_in">Entrou com sucesso</string>
+    <string name="empty_email">Email não deve ser vazio</string>
+    <string name="empty_password">Senha não pode ser vazia</string>
+    <string name="log_in">Entrando...</string>
+
+    <plurals name="pending_task">
+        <item quantity="one">Você tem %d tarefa pendente para hoje</item>
+        <item quantity="other">Você tem %d tarefas pendentes para hoje</item>
+    </plurals>
+
+    <string name="zero_tasks">0 Tarefas</string>
+
+    <plurals name="number_of_tasks">
+        <item quantity="zero">0 Tarefas</item>
+        <item quantity="one">1 Tarefa</item>
+        <item quantity="other">%d Tarefas</item>
+        <item quantity="many">%d Tarefas</item>
+        <item quantity="few">%d Tarefas</item>
+    </plurals>
+
+    <plurals name="delete_tag_message">
+        <item quantity="one">Tem certeza ? Se você apagar a etiqueta %1$s, %2$d tarefa serão deletadas também.</item>
+        <item quantity="other">Tem certeza ? Se você apagar a etiqueta %1$s, %2$d tarefas serão deletadas também.</item>
+    </plurals>
+
+    <string name="closeDrawer">Close Drawer</string>
+    <string name="openDrawer">Open Drawer</string>
+    <string name="sign_out">Sair</string>
+    <string name="sign_in_link">Já possui conta ? <a href="">Entrar</a></string>
+    <string name="create_account">Criar Conta</string>
+
+    <string name="facebook_app_id">815432791890253</string>
+    <string name="sign_up_link">Não possui conta? <a href="">Cadastre-se</a></string>
+    <string name="greetings">Olá</string>
+    <string name="settings">Configurações</string>
+    <string name="tags">Etiquetas</string>
+    <string name="congratulation">Parabéns, você completou todas as tarefas</string>
+    <string name="first_time">Não existem tarefas na sua lista.</string>
+    <string name="add_your_first_task">Aperte o botão para adicinar sua primeira tarefa !</string>
+    <string name="login_with_facebook">ENTRAR COM FACEBOOK</string>
+    <string name="logout">SAIR</string>
+    <string name="login_with_email">ENTRAR COM EMAIL</string>
+    <string name="create_account_with_facebook">CADASTRAR COM FACEBOOK</string>
+    <string name="create_account_with_email">CADASTRAR COM EMAIL</string>
+    <string name="notifications">Notificações</string>
+    <string name="enable_notifications">Habilitar notificações</string>
+    <string name="notification_time">Exisbir notificações às</string>
+    <string name="settings_activity">Configurações</string>
+    <string name="action_save">Salvar</string>
+    <string name="settings_saved">Configurações salvas</string>
+    <string name="login_activity">Entrar</string>
+    <string name="create_account_activity">Criar Conta</string>
+    <string name="all_tasks">Todas Tarefas</string>
+    <string name="tasksByTag">Etiqueta</string>
+    <string name="select_tag">Seleciona uma etiqueta</string>
+    <string name="no_tag">Nenhuma Etiqueta</string>
+    <string name="create_tag">Criar nova etiqueta</string>
+    <string name="tags_activity">Etiquetas</string>
+    <string name="close">Fechar</string>
+    <string name="manage_tags">Gerenciar Etiquetas</string>
+    <string name="edit_tag">Editar Etiqueta</string>
+    <string name="add_tag">Adicionar Etiqueta</string>
+    <string name="add">Adicionar</string>
+    <string name="edit">Editar</string>
+    <string name="tag_name">Nome da Etiqueta</string>
+    <string name="tag_added">Adicionar Etiqueta</string>
+    <string name="tag_deleted">Etiqueta deletada</string>
+    <string name="tag_not_edited">A Etiqueta não foi editada</string>
+    <string name="tag_edited">Etiqueta editada</string>
+    <string name="delete_tag">Etiqueta deletada</string>
+
+    <string-array name="initial_tags">
+        <item>Caixa de Entrada</item>
+        <item>Pessoal</item>
+        <item>Trabalho</item>
+        <item>Estudo</item>
+    </string-array>
+</resources>

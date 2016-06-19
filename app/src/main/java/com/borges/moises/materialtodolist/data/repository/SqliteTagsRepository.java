@@ -126,14 +126,20 @@ public class SqliteTagsRepository implements TagsRepository {
     private List<TasksByTag> consolidateTasksByTag(List<TasksByTag> tasksByTags, List<Tag> tags) {
         List<TasksByTag> consolidateTasksByTag = new ArrayList<>();
         int pos = 0;
-        for (int i = 0; i < tags.size(); i++) {
-            final Tag tag = tags.get(i);
-            final TasksByTag tasksByTag = tasksByTags.get(pos);
-            if (tag.getId() == tasksByTag.getTag().getId()) {
-                consolidateTasksByTag.add(tasksByTag);
-                pos += tasksByTags.size() - 1 > pos ? 1 : 0;
-            } else {
-                consolidateTasksByTag.add(new TasksByTag(tag, 0));
+        if (tasksByTags.size() > 0) {
+            for (int i = 0; i < tags.size(); i++) {
+                final Tag tag = tags.get(i);
+                final TasksByTag tasksByTag = tasksByTags.get(pos);
+                if (tag.getId() == tasksByTag.getTag().getId()) {
+                    consolidateTasksByTag.add(tasksByTag);
+                    pos += tasksByTags.size() - 1 > pos ? 1 : 0;
+                } else {
+                    consolidateTasksByTag.add(new TasksByTag(tag, 0));
+                }
+            }
+        } else {
+            for (Tag tag : tags) {
+                consolidateTasksByTag.add(new TasksByTag(tag,0));
             }
         }
         return consolidateTasksByTag;

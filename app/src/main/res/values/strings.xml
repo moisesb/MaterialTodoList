@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Material Todo List</string>
+    <string name="app_name">Task Manager</string>
     <string name="action_settings">Settings</string>
-    <string name="none_todo_item_found">There\'s no todo item in this list</string>
+    <string name="none_todo_item_found">There\'s no tasks in this list</string>
     <string name="add_todo_item_activity"></string>
     <string name="done_todo_item_text">Done</string>
     <string name="delete_todo_item_text">Delete</string>
@@ -28,10 +28,10 @@
     <string name="priority_normal">Normal</string>
     <string name="priority_low">Low</string>
     <string name="todo_item_added">Task added successfully</string>
-    <string name="todo_item_edited">Todo Item edited</string>
+    <string name="todo_item_edited">Task edited</string>
     <string name="edit_task">Edit Task</string>
     <string name="delete_confirmation_dialog_title">Confirmation</string>
-    <string name="delete_confirmation_dialog_message">I will delete this task. Are you sure ?</string>
+    <string name="delete_confirmation_dialog_message">You will delete this task. Are you sure ?</string>
     <string name="action_cancel">Cancel</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
@@ -117,5 +117,6 @@
         <item>Inbox</item>
         <item>Personal</item>
         <item>Work</item>
+        <item>Study</item>
     </string-array>
 </resources>

@@ -238,9 +238,9 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
 
         private String numOfTasksMessage(Context context, int numOfTasks) {
             if (numOfTasks > 0) {
-                 return context.getResources()
-                         .getQuantityString(R.plurals.number_of_tasks,numOfTasks,numOfTasks);
-            }else {
+                return context.getResources()
+                        .getQuantityString(R.plurals.number_of_tasks, numOfTasks, numOfTasks);
+            } else {
                 return context.getResources()
                         .getString(R.string.zero_tasks);
             }
