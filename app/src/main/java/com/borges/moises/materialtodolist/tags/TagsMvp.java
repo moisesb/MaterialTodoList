@@ -23,6 +23,8 @@ public interface TagsMvp {
 
         void showTagNotEditedError();
 
+        void showAskToDeleteTagDialog(TasksByTag tasksByTag);
+
         void updateTag(TasksByTag tasksByTag);
     }
 
@@ -31,8 +33,10 @@ public interface TagsMvp {
 
         void addTag(String tagName);
 
-        void deleteTag(TasksByTag tasksByTag);
+        void askOrDeleteTag(TasksByTag tasksByTag);
 
         void renameTag(TasksByTag tasksByTag, String newTagName);
+
+        void deleteTag(TasksByTag tasksByTag);
     }
 }

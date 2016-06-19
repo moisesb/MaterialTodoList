@@ -4,6 +4,7 @@ import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemsRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemsRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpec;
+import com.borges.moises.materialtodolist.data.repository.specification.Specification;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,12 @@ public class TodoItemService {
     public Observable<List<TodoItem>> getTodoItems() {
         return Observable.just(getTodoItemsFromDb());
     }
+
+    public Observable<List<TodoItem>> getTodoItems(Specification specification) {
+        return Observable.just(getTodoItemsFromDb(specification));
+    }
+
+
 
     public void addTodoItem(TodoItem todoItem) {
         final Date currentTime = getCurrentTime();
@@ -91,6 +98,10 @@ public class TodoItemService {
 
     private List<TodoItem> getTodoItemsFromDb() {
         return mRepository.query(new QueryAllTodoItemsSqlSpec());
+    }
+
+    private List<TodoItem> getTodoItemsFromDb(Specification specification) {
+        return mRepository.query(specification);
     }
 
     private Date getCurrentTime() {

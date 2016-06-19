@@ -1,10 +1,22 @@
 package com.borges.moises.materialtodolist.tags;
 
+import android.support.annotation.NonNull;
+
 import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.data.model.TasksByTag;
+import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.TagsRepository;
+import com.borges.moises.materialtodolist.data.repository.TodoItemsRepository;
+import com.borges.moises.materialtodolist.data.repository.specification.QueryTodoItemsByTag;
+import com.borges.moises.materialtodolist.data.services.TodoItemService;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by moises.anjos on 14/06/2016.
@@ -13,10 +25,13 @@ import java.util.List;
 public class TagsPresenter implements TagsMvp.Presenter {
 
     private final TagsRepository mTagsRepository;
+    private final TodoItemService mTodoItemService;
     private TagsMvp.View mView;
 
-    public TagsPresenter(TagsRepository tagsRepository) {
+    public TagsPresenter(@NonNull TagsRepository tagsRepository,
+                         @NonNull TodoItemService todoItemService) {
         mTagsRepository = tagsRepository;
+        mTodoItemService = todoItemService;
     }
 
     @Override
@@ -52,11 +67,13 @@ public class TagsPresenter implements TagsMvp.Presenter {
     }
 
     @Override
-    public void deleteTag(TasksByTag tasksByTag) {
+    public void askOrDeleteTag(TasksByTag tasksByTag) {
         checkView();
-        final Tag tag = tasksByTag.getTag();
-        mTagsRepository.deleteTag(tag);
-        mView.showTagDeleted(tasksByTag);
+        if (tasksByTag.getNumOfTasks() > 0) {
+            mView.showAskToDeleteTagDialog(tasksByTag);
+        }else {
+            deleteTag(tasksByTag);
+        }
     }
 
     @Override
@@ -69,6 +86,39 @@ public class TagsPresenter implements TagsMvp.Presenter {
         tag.setName(newTagName);
         mTagsRepository.updateTag(tag);
         mView.updateTag(tasksByTag);
+    }
+
+    @Override
+    public void deleteTag(TasksByTag tasksByTag) {
+        checkView();
+        final Tag tag = tasksByTag.getTag();
+        mTagsRepository.deleteTag(tag);
+        mView.showTagDeleted(tasksByTag);
+        mTodoItemService.getTodoItems(new QueryTodoItemsByTag(tag))
+                .observeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.computation())
+                .flatMap(new Func1<List<TodoItem>, Observable<TodoItem>>() {
+                    @Override
+                    public Observable<TodoItem> call(List<TodoItem> todoItems) {
+                        return Observable.from(todoItems);
+                    }
+                })
+                .subscribe(new Subscriber<TodoItem>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(TodoItem todoItem) {
+                        mTodoItemService.deleteTodoItem(todoItem);
+                    }
+                });
     }
 
     @Override

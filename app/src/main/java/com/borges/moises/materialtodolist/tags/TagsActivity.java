@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +20,8 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.data.model.TasksByTag;
 import com.borges.moises.materialtodolist.data.repository.SqliteTagsRepository;
+import com.borges.moises.materialtodolist.data.services.TodoItemService;
+import com.borges.moises.materialtodolist.dialogs.DeleteTagDialog;
 import com.borges.moises.materialtodolist.dialogs.TagDialog;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
             new DeleteCallback() {
                 @Override
                 public void onDeleteTag(TasksByTag tasksByTag) {
-                    mPresenter.deleteTag(tasksByTag);
+                    mPresenter.askOrDeleteTag(tasksByTag);
                 }
             },
             new EditCallback() {
@@ -71,7 +71,7 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
         ButterKnife.bind(this);
         setupToolbar();
         initRecyclerView();
-        mPresenter = new TagsPresenter(SqliteTagsRepository.getInstance());
+        mPresenter = new TagsPresenter(SqliteTagsRepository.getInstance(), new TodoItemService());
         mPresenter.bindView(this);
     }
 
@@ -151,6 +151,16 @@ public class TagsActivity extends AppCompatActivity implements TagsMvp.View {
     @Override
     public void showTagNotEditedError() {
         Toast.makeText(this, R.string.tag_not_edited, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showAskToDeleteTagDialog(TasksByTag tasksByTag) {
+        DeleteTagDialog.show(getSupportFragmentManager(), tasksByTag, new DeleteTagDialog.DeleteTagCallback() {
+            @Override
+            public void onDeleteTag(TasksByTag tasksByTag) {
+                mPresenter.deleteTag(tasksByTag);
+            }
+        });
     }
 
     @Override
