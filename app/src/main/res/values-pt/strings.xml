@@ -56,7 +56,7 @@
 
     <plurals name="number_of_tasks">
         <item quantity="zero">0 Tarefas</item>
-        <item quantity="one">1 Tarefa</item>
+        <item quantity="one">%d Tarefa</item>
         <item quantity="other">%d Tarefas</item>
         <item quantity="many">%d Tarefas</item>
         <item quantity="few">%d Tarefas</item>
@@ -72,8 +72,6 @@
     <string name="sign_out">Sair</string>
     <string name="sign_in_link">Já possui conta ? <a href="">Entrar</a></string>
     <string name="create_account">Criar Conta</string>
-
-    <string name="facebook_app_id">815432791890253</string>
     <string name="sign_up_link">Não possui conta? <a href="">Cadastre-se</a></string>
     <string name="greetings">Olá</string>
     <string name="settings">Configurações</string>

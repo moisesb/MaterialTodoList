@@ -73,7 +73,7 @@
     <string name="sign_in_link">Already have a account ? <a href="">Sign in</a></string>
     <string name="create_account">Create Account</string>
 
-    <string name="facebook_app_id">815432791890253</string>
+    <string name="facebook_app_id" translatable="false">815432791890253</string>
     <string name="sign_up_link">Don\'t have an Account ? <a href="">Sign up</a></string>
     <string name="greetings">Hello</string>
     <string name="settings">Settings</string>
