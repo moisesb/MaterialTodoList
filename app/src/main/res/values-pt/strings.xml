@@ -28,7 +28,7 @@
     <string name="priority_normal">Normal</string>
     <string name="priority_low">Baixa</string>
     <string name="todo_item_added">Tarefa adicionada com sucesso</string>
-    <string name="todo_item_edited">Todo Item edited</string>
+    <string name="todo_item_edited">Tarefa editada</string>
     <string name="edit_task">Editar tarefa</string>
     <string name="delete_confirmation_dialog_title">Confirmação</string>
     <string name="delete_confirmation_dialog_message">Você ira aparar essa tarefa. Tem certeza ?</string>
@@ -110,6 +110,7 @@
     <string name="tag_not_edited">A Etiqueta não foi editada</string>
     <string name="tag_edited">Etiqueta editada</string>
     <string name="delete_tag">Etiqueta deletada</string>
+    <string name="tasks_for_today">Tarefas para hoje</string>
 
     <string-array name="initial_tags">
         <item>Caixa de Entrada</item>

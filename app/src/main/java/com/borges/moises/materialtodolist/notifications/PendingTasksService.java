@@ -41,7 +41,7 @@ public class PendingTasksService extends IntentService {
         Date today = calendar.getTime();
         List<TodoItem> pendingItems = new ArrayList<>();
         for (TodoItem todoItem : todoItems) {
-            if (todoItem.getDate() != null && today.after(todoItem.getDate())) {
+            if (todoItem.getDate() != null && today.after(todoItem.getDate()) && !todoItem.isDeleted()) {
                 pendingItems.add(todoItem);
             }
         }
@@ -59,10 +59,12 @@ public class PendingTasksService extends IntentService {
             Intent intent = new Intent(this, TodoItemsActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
 
+            final String title = resources.getString(R.string.tasks_for_today);
+
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(getApplicationContext())
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("Tasks for today")
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(title)
                     .setContentText(contentText)
                     .setContentIntent(pendingIntent);
 
