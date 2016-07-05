@@ -136,7 +136,9 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
     @Override
     public void doneTodoItem(TodoItem todoItem, boolean done) {
+        checkView();
         mService.markTodoItemAsDone(todoItem, done);
+        mView.updateTodoItem(todoItem);
     }
 
     @Override

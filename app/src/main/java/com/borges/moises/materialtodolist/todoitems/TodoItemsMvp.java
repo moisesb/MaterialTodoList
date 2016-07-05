@@ -26,6 +26,8 @@ public interface TodoItemsMvp {
         void showProgress(boolean loading);
 
         void clearTodoItems();
+
+        void updateTodoItem(TodoItem todoItem);
     }
 
     interface Presenter extends MvpPresenter<View> {

@@ -54,6 +54,7 @@ public class PendingTasksService extends IntentService {
 
             Resources resources = getResources();
             final int size = pendingItems.size();
+            final int backgroundColor = resources.getColor(R.color.primary);
             String contentText = resources.getQuantityString(R.plurals.pending_task, size, size);
 
             Intent intent = new Intent(this, TodoItemsActivity.class);
@@ -64,6 +65,7 @@ public class PendingTasksService extends IntentService {
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(backgroundColor)
                     .setContentTitle(title)
                     .setContentText(contentText)
                     .setContentIntent(pendingIntent);

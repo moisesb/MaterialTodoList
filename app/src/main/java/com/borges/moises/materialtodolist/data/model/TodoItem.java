@@ -170,4 +170,9 @@ public class TodoItem {
     public void incrementVersion(){
         this.version++;
     }
+
+    @Override
+    public String toString() {
+        return "TodoItem: " + id + " title: " + title + " done:" + done + " updatedAt " + updatedAt;
+    }
 }

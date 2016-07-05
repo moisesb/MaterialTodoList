@@ -293,6 +293,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdapter.clearTodoItems();
     }
 
+    @Override
+    public void updateTodoItem(TodoItem todoItem) {
+        mTodoItemsAdapter.updateTodoItem(todoItem);
+    }
+
     public interface OnCheckBoxClickListener {
         void onClick(TodoItem todoItem, boolean done);
     }
@@ -319,6 +324,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             int position = getTodoItemPosition(todoItem);
             mTodoItems.remove(position);
             notifyItemRemoved(position);
+        }
+
+        public void updateTodoItem(TodoItem todoItem) {
+            int position = getTodoItemPosition(todoItem);
+            notifyItemChanged(position);
         }
 
         public void clearTodoItems() {
@@ -348,10 +358,69 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            TodoItem todoItem = mTodoItems.get(position);
-            holder.bind(todoItem, mOnCheckBoxClickListener, mOnTodoItemClickListener);
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            final TodoItem todoItem = mTodoItems.get(position);
+            Context context = holder.mContext;
+
+            if (todoItem.getDate() == null) {
+                holder.mDateTextView.setVisibility(View.GONE);
+            } else {
+                holder.mDateTextView.setText(DateUtils.dateToUiString(todoItem.getDate()));
+                holder.mDateTextView.setVisibility(View.VISIBLE);
+            }
+
+            if (todoItem.isDone()) {
+                holder.mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.grey));
+                holder.mDateTextView.setTextColor(ContextCompat.getColor(context, R.color.grey));
+                SpannableString spanTitle = new SpannableString(todoItem.getTitle());
+                spanTitle.setSpan(new StrikethroughSpan(), 0, spanTitle.length(), 0);
+                holder.mTitleTextView.setText(spanTitle);
+            } else {
+                holder.mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                holder.mDateTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+                holder.mTitleTextView.setText(todoItem.getTitle());
+            }
+
+            if (holder.mDoneCheckBox.isChecked() != todoItem.isDone()) {
+                holder.mDoneCheckBox.setChecked(todoItem.isDone());
+            }
+
+            switch (todoItem.getPriority()) {
+                case HIGH:
+                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.red), holder);
+                    break;
+                case NORMAL:
+                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.blue), holder);
+                    break;
+                case LOW:
+                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.green), holder);
+                    break;
+            }
+
+            holder.mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (buttonView.isPressed()) {
+                        mOnCheckBoxClickListener.onClick(todoItem, isChecked);
+                    }
+                }
+            });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnTodoItemClickListener.onClick(todoItem);
+                }
+            });
         }
+
+        private void setPriorityStripBackground(Drawable drawable, ViewHolder holder) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                holder.mPriorityStripeView.setBackground(drawable);
+            } else {
+                holder.mPriorityStripeView.setBackgroundDrawable(drawable);
+            }
+        }
+
 
         @Override
         public int getItemCount() {
@@ -368,12 +437,12 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
 
-            private final View mView;
-            private final TextView mTitleTextView;
-            private final TextView mDateTextView;
-            private final CheckBox mDoneCheckBox;
-            private final View mPriorityStripeView;
-            private Context mContext;
+            final View mView;
+            final TextView mTitleTextView;
+            final TextView mDateTextView;
+            final CheckBox mDoneCheckBox;
+            final View mPriorityStripeView;
+            Context mContext;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -383,73 +452,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 mDateTextView = (TextView) itemView.findViewById(R.id.todo_item_date);
                 mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
                 mPriorityStripeView = itemView.findViewById(R.id.todo_item_priority);
-
-
             }
 
-            public void bind(final TodoItem todoItem,
-                             final OnCheckBoxClickListener onCheckBoxClickListener,
-                             final OnTodoItemClickListener onTodoItemClickListener) {
-                updateViewHolder(todoItem);
-                mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        onCheckBoxClickListener.onClick(todoItem, isChecked);
-                        updateViewHolder(todoItem);
-                    }
-                });
-                mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onTodoItemClickListener.onClick(todoItem);
-                    }
-                });
-            }
 
-            private void updateViewHolder(final TodoItem todoItem) {
-                if (todoItem.getDate() == null) {
-                    mDateTextView.setVisibility(View.GONE);
-                } else {
-                    mDateTextView.setText(DateUtils.dateToUiString(todoItem.getDate()));
-                    mDateTextView.setVisibility(View.VISIBLE);
-                }
-
-                if (todoItem.isDone()) {
-                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-                    mDateTextView.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-                    SpannableString spanTitle = new SpannableString(todoItem.getTitle());
-                    spanTitle.setSpan(new StrikethroughSpan(), 0, spanTitle.length(), 0);
-                    mTitleTextView.setText(spanTitle);
-                } else {
-                    mTitleTextView.setTextColor(ContextCompat.getColor(mContext, android.R.color.black));
-                    mDateTextView.setTextColor(ContextCompat.getColor(mContext, R.color.red));
-                    mTitleTextView.setText(todoItem.getTitle());
-                }
-
-                if (mDoneCheckBox.isChecked() != todoItem.isDone()) {
-                    mDoneCheckBox.setChecked(todoItem.isDone());
-                }
-
-                switch (todoItem.getPriority()) {
-                    case HIGH:
-                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.red));
-                        break;
-                    case NORMAL:
-                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.blue));
-                        break;
-                    case LOW:
-                        setPriorityStripBackground(ContextCompat.getDrawable(mContext, R.color.green));
-                        break;
-                }
-            }
-
-            private void setPriorityStripBackground(Drawable drawable) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mPriorityStripeView.setBackground(drawable);
-                } else {
-                    mPriorityStripeView.setBackgroundDrawable(drawable);
-                }
-            }
         }
     }
 }
