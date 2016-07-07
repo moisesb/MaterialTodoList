@@ -6,7 +6,7 @@ import com.borges.moises.materialtodolist.R;
  * Created by Moisés on 11/04/2016.
  */
 public enum Priority {
-    LOW(R.string.priority_low) ,NORMAL(R.string.priority_normal), HIGH(R.string.priority_high);
+    NORMAL(R.string.priority_normal), HIGH(R.string.priority_high);
 
     private final int mResId;
 

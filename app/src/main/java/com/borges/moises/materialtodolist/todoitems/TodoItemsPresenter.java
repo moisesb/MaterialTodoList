@@ -130,6 +130,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
     @Override
     public void undoDelete(TodoItem todoItem) {
+        checkView();
         mService.recycleTodoItem(todoItem);
         mView.showTodoItem(todoItem);
     }
@@ -138,6 +139,13 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     public void doneTodoItem(TodoItem todoItem, boolean done) {
         checkView();
         mService.markTodoItemAsDone(todoItem, done);
+        mView.updateTodoItem(todoItem);
+    }
+
+    @Override
+    public void changeStarred(TodoItem todoItem) {
+        checkView();
+        mService.changeStarredStatus(todoItem);
         mView.updateTodoItem(todoItem);
     }
 

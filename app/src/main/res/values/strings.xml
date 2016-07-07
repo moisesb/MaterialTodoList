@@ -26,7 +26,6 @@
     <string name="select_priority">Select Priority</string>
     <string name="priority_high">High</string>
     <string name="priority_normal">Normal</string>
-    <string name="priority_low">Low</string>
     <string name="todo_item_added">Task added successfully</string>
     <string name="todo_item_edited">Task edited</string>
     <string name="edit_task">Edit Task</string>

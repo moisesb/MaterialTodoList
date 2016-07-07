@@ -1,5 +1,6 @@
 package com.borges.moises.materialtodolist.data.services;
 
+import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemsRepository;
 import com.borges.moises.materialtodolist.data.repository.TodoItemsRepository;
@@ -75,7 +76,12 @@ public class TodoItemService {
         final Date currentTime = getCurrentTime();
         todoItem.setDone(done);
         todoItem.setDoneAt(done ? currentTime : null);
-        updateTodoItemInDb(todoItem, "Todo item was not deleted from database");
+        updateTodoItemInDb(todoItem, "Todo item was not updated from database");
+    }
+
+    public void changeStarredStatus(TodoItem todoItem) {
+        todoItem.setPriority(todoItem.getPriority() == Priority.NORMAL ? Priority.HIGH : Priority.NORMAL);
+        updateTodoItemInDb(todoItem, "Todo item was not updated from database");
     }
 
     public void deleteTodoItem(TodoItem todoItem) {
@@ -113,4 +119,5 @@ public class TodoItemService {
             throw new IllegalStateException("could not delete todo item from database");
         }
     }
+
 }

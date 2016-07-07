@@ -39,6 +39,8 @@ public interface TodoItemsMvp {
 
         void doneTodoItem(TodoItem todoItem, boolean done);
 
+        void changeStarred(TodoItem todoItem);
+
         void addNewTodoItem();
 
         void openTodoItem(TodoItem todoItem);

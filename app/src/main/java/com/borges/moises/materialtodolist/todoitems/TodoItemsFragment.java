@@ -1,14 +1,13 @@
 package com.borges.moises.materialtodolist.todoitems;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,16 +23,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
+import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
+import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
 import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.sync.SyncService;
-import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
+import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnCheckBoxClickListener;
+import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnStarClickListener;
+import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnTodoItemClickListener;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -89,6 +93,13 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
     };
 
+    private OnStarClickListener mOnStarClickListener = new OnStarClickListener() {
+        @Override
+        public void onClick(TodoItem todoItem) {
+            mPresenter.changeStarred(todoItem);
+        }
+    };
+
     private ItemTouchHelper.SimpleCallback mItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -107,7 +118,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     private TodoItemsAdapter mTodoItemsAdapter = new TodoItemsAdapter(new ArrayList<TodoItem>(0),
             mCheckBoxClickListener,
-            mTodoItemClickListener);
+            mTodoItemClickListener,
+            mOnStarClickListener);
 
     private TodoItemsMvp.Presenter mPresenter;
 
@@ -298,26 +310,22 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdapter.updateTodoItem(todoItem);
     }
 
-    public interface OnCheckBoxClickListener {
-        void onClick(TodoItem todoItem, boolean done);
-    }
-
-    public interface OnTodoItemClickListener {
-        void onClick(TodoItem todoItem);
-    }
 
     public static class TodoItemsAdapter extends RecyclerView.Adapter<TodoItemsAdapter.ViewHolder> {
 
+        private final OnStarClickListener mOnStartClickListener;
         private List<TodoItem> mTodoItems;
-        private OnCheckBoxClickListener mOnCheckBoxClickListener;
-        private OnTodoItemClickListener mOnTodoItemClickListener;
+        private final OnCheckBoxClickListener mOnCheckBoxClickListener;
+        private final OnTodoItemClickListener mOnTodoItemClickListener;
 
         public TodoItemsAdapter(List<TodoItem> todoItems,
                                 @NonNull OnCheckBoxClickListener onCheckBoxClickListener,
-                                @NonNull OnTodoItemClickListener onTodoItemClickListener) {
+                                @NonNull OnTodoItemClickListener onTodoItemClickListener,
+                                @NonNull OnStarClickListener onStarClickListener) {
             mTodoItems = todoItems;
             mOnCheckBoxClickListener = onCheckBoxClickListener;
             mOnTodoItemClickListener = onTodoItemClickListener;
+            mOnStartClickListener = onStarClickListener;
         }
 
         public void deleteTodoItem(TodoItem todoItem) {
@@ -329,6 +337,14 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         public void updateTodoItem(TodoItem todoItem) {
             int position = getTodoItemPosition(todoItem);
             notifyItemChanged(position);
+        }
+
+        public void addTodoItem(TodoItem todoItem) {
+            if (!mTodoItems.contains(todoItem)) {
+                mTodoItems.add(todoItem);
+                final int position = mTodoItems.indexOf(todoItem);
+                notifyItemInserted(position);
+            }
         }
 
         public void clearTodoItems() {
@@ -385,17 +401,17 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 holder.mDoneCheckBox.setChecked(todoItem.isDone());
             }
 
-            switch (todoItem.getPriority()) {
-                case HIGH:
-                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.red), holder);
-                    break;
-                case NORMAL:
-                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.blue), holder);
-                    break;
-                case LOW:
-                    setPriorityStripBackground(ContextCompat.getDrawable(context, R.color.green), holder);
-                    break;
-            }
+            VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat
+                    .create(context.getResources(),
+                            todoItem.getPriority() == Priority.HIGH ? R.drawable.ic_star_black_24px : R.drawable.ic_star_border_black_24px,
+                            null);
+            holder.mStarImage.setImageDrawable(vectorDrawableCompat.mutate());
+            holder.mStarImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnStartClickListener.onClick(todoItem);
+                }
+            });
 
             holder.mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -413,27 +429,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             });
         }
 
-        private void setPriorityStripBackground(Drawable drawable, ViewHolder holder) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                holder.mPriorityStripeView.setBackground(drawable);
-            } else {
-                holder.mPriorityStripeView.setBackgroundDrawable(drawable);
-            }
-        }
-
-
         @Override
         public int getItemCount() {
             return mTodoItems.size();
         }
 
-        public void addTodoItem(TodoItem todoItem) {
-            if (!mTodoItems.contains(todoItem)) {
-                mTodoItems.add(todoItem);
-                final int position = mTodoItems.indexOf(todoItem);
-                notifyItemInserted(position);
-            }
-        }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -441,7 +441,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             final TextView mTitleTextView;
             final TextView mDateTextView;
             final CheckBox mDoneCheckBox;
-            final View mPriorityStripeView;
+            final ImageView mStarImage;
             Context mContext;
 
             public ViewHolder(View itemView) {
@@ -451,10 +451,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 mTitleTextView = (TextView) itemView.findViewById(R.id.todo_item_title);
                 mDateTextView = (TextView) itemView.findViewById(R.id.todo_item_date);
                 mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
-                mPriorityStripeView = itemView.findViewById(R.id.todo_item_priority);
+                mStarImage = (ImageView) itemView.findViewById(R.id.todo_item_stared);
             }
+        }
 
+        public interface OnCheckBoxClickListener {
+            void onClick(TodoItem todoItem, boolean done);
+        }
 
+        public interface OnTodoItemClickListener {
+            void onClick(TodoItem todoItem);
+        }
+
+        public interface OnStarClickListener {
+            void onClick(TodoItem todoItem);
         }
     }
 }
