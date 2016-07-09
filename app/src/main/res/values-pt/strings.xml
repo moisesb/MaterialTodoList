@@ -26,7 +26,6 @@
     <string name="select_priority">Seleciona a Prioridade</string>
     <string name="priority_high">Alta</string>
     <string name="priority_normal">Normal</string>
-    <string name="priority_low">Baixa</string>
     <string name="todo_item_added">Tarefa adicionada com sucesso</string>
     <string name="todo_item_edited">Tarefa editada</string>
     <string name="edit_task">Editar tarefa</string>
@@ -77,8 +76,7 @@
     <string name="settings">Configurações</string>
     <string name="tags">Etiquetas</string>
     <string name="congratulation">Parabéns, você completou todas as tarefas</string>
-    <string name="first_time">Não existem tarefas na sua lista.</string>
-    <string name="add_your_first_task">Aperte o botão para adicinar sua primeira tarefa !</string>
+    <string name="first_time">Não existem tarefas na sua lista. Adicione sua primeira tarefa !</string>
     <string name="login_with_facebook">ENTRAR COM FACEBOOK</string>
     <string name="logout">SAIR</string>
     <string name="login_with_email">ENTRAR COM EMAIL</string>
