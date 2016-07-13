@@ -41,7 +41,7 @@ public class TodoItem {
     }
 
     public String getTitle() {
-        return title;
+        return title != null ? title : null;
     }
 
     public void setTitle(String title) {
@@ -49,7 +49,7 @@ public class TodoItem {
     }
 
     public String getDescription() {
-        return description;
+        return description != null ? description.trim() : null;
     }
 
     public void setDescription(String description) {

@@ -33,7 +33,6 @@ public class TodoItemService {
     }
 
 
-
     public void addTodoItem(TodoItem todoItem) {
         final Date currentTime = getCurrentTime();
         todoItem.setCreatedAt(currentTime);
@@ -119,5 +118,4 @@ public class TodoItemService {
             throw new IllegalStateException("could not delete todo item from database");
         }
     }
-
 }
