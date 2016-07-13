@@ -40,6 +40,7 @@
             android:layout_marginEnd="40dp"
             android:layout_marginRight="40dp"
             android:layout_marginTop="8dp"
+            android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/todo_item_done"
             android:layout_toRightOf="@+id/todo_item_done"
             android:textColor="@android:color/black"
@@ -56,18 +57,6 @@
             android:background="?android:selectableItemBackground"
             android:padding="16dp"
             app:srcCompat="@drawable/ic_star_border_black_24px"/>
-
-        <TextView
-            android:id="@+id/todo_item_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/todo_item_title"
-            android:layout_alignStart="@+id/todo_item_title"
-            android:layout_marginBottom="8dp"
-            android:layout_below="@+id/todo_item_title"
-            android:textColor="@color/red"
-            android:textSize="12sp"
-            tools:text="12/12/2016 3:00pm"/>
 
 
     </RelativeLayout>

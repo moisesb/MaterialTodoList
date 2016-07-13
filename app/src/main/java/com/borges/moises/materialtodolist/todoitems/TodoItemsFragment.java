@@ -27,6 +27,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.addtodoitem.AddTodoItemActivity;
 import com.borges.moises.materialtodolist.data.model.Priority;
@@ -35,10 +39,6 @@ import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
 import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.sync.SyncService;
-import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnCheckBoxClickListener;
-import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnStarClickListener;
-import com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnTodoItemClickListener;
-import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +49,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.*;
 
 /**
  * Created by Moisés on 11/04/2016.
@@ -110,8 +112,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
-                TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
-                mPresenter.deleteTodoItem(todoItem);
+                //TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
+                //mPresenter.deleteTodoItem(todoItem);
+                // FIXME: 13/07/2016 implemente this for ExplandableRecyclerView
             }
         }
     };
@@ -310,22 +313,48 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdapter.updateTodoItem(todoItem);
     }
 
+    public static class TodoItemsGroup implements ParentListItem {
 
-    public static class TodoItemsAdapter extends RecyclerView.Adapter<TodoItemsAdapter.ViewHolder> {
+        private final List<TodoItem> mTodoItems;
 
-        private final OnStarClickListener mOnStartClickListener;
-        private List<TodoItem> mTodoItems;
+        public TodoItemsGroup(List<TodoItem> todoItems) {
+            mTodoItems = todoItems;
+        }
+
+        @Override
+        public List<TodoItem> getChildItemList() {
+            return mTodoItems;
+        }
+
+        @Override
+        public boolean isInitiallyExpanded() {
+            return false;
+        }
+    }
+
+    public static class TodoItemsAdapter extends ExpandableRecyclerAdapter<TodoItemsAdapter.GroupViewHolder,TodoItemsAdapter.TodoItemViewHolder> {
+
+        private final OnStarClickListener mOnStarClickListener;
         private final OnCheckBoxClickListener mOnCheckBoxClickListener;
         private final OnTodoItemClickListener mOnTodoItemClickListener;
-
-        public TodoItemsAdapter(List<TodoItem> todoItems,
+        /**
+         * Primary constructor. Sets up {@link #mParentItemList} and {@link #mItemList}.
+         * <p>
+         * Changes to {@link #mParentItemList} should be made through add/remove methods in
+         * {@link ExpandableRecyclerAdapter}
+         *
+         * @param parentItemList List of all {@link ParentListItem} objects to be
+         *                       displayed in the RecyclerView that this
+         *                       adapter is linked to
+         */
+        public TodoItemsAdapter(@NonNull List<TodoItemsGroup> parentItemList,
                                 @NonNull OnCheckBoxClickListener onCheckBoxClickListener,
                                 @NonNull OnTodoItemClickListener onTodoItemClickListener,
                                 @NonNull OnStarClickListener onStarClickListener) {
-            mTodoItems = todoItems;
+            super(parentItemList);
             mOnCheckBoxClickListener = onCheckBoxClickListener;
             mOnTodoItemClickListener = onTodoItemClickListener;
-            mOnStartClickListener = onStarClickListener;
+            mOnStarClickListener = onStarClickListener;
         }
 
         public void deleteTodoItem(TodoItem todoItem) {
@@ -366,54 +395,54 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.cardview_todo_item, parent, false);
-
-            return new ViewHolder(view);
+        public GroupViewHolder onCreateParentViewHolder(ViewGroup parentViewGroup) {
+            return null;
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            final TodoItem todoItem = mTodoItems.get(position);
-            Context context = holder.mContext;
+        public TodoItemViewHolder onCreateChildViewHolder(ViewGroup childViewGroup) {
+            View layout = LayoutInflater.from(childViewGroup.getContext())
+                    .inflate(R.layout.cardview_todo_item, childViewGroup, false);
+            return new TodoItemViewHolder(layout);
+        }
 
-            if (todoItem.getDate() == null) {
-                holder.mDateTextView.setVisibility(View.GONE);
-            } else {
-                holder.mDateTextView.setText(DateUtils.dateToUiString(todoItem.getDate()));
-                holder.mDateTextView.setVisibility(View.VISIBLE);
-            }
+        @Override
+        public void onBindParentViewHolder(GroupViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
+
+        }
+
+        @Override
+        public void onBindChildViewHolder(TodoItemViewHolder childViewHolder, int position, Object childListItem) {
+            final TodoItem todoItem = (TodoItem) childListItem;
+            Context context = childViewHolder.mContext;
 
             if (todoItem.isDone()) {
-                holder.mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.grey));
-                holder.mDateTextView.setTextColor(ContextCompat.getColor(context, R.color.grey));
+                childViewHolder.mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.grey));
                 SpannableString spanTitle = new SpannableString(todoItem.getTitle());
                 spanTitle.setSpan(new StrikethroughSpan(), 0, spanTitle.length(), 0);
-                holder.mTitleTextView.setText(spanTitle);
+                childViewHolder.mTitleTextView.setText(spanTitle);
             } else {
-                holder.mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black));
-                holder.mDateTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
-                holder.mTitleTextView.setText(todoItem.getTitle());
+                childViewHolder.mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                childViewHolder.mTitleTextView.setText(todoItem.getTitle());
             }
 
-            if (holder.mDoneCheckBox.isChecked() != todoItem.isDone()) {
-                holder.mDoneCheckBox.setChecked(todoItem.isDone());
+            if (childViewHolder.mDoneCheckBox.isChecked() != todoItem.isDone()) {
+                childViewHolder.mDoneCheckBox.setChecked(todoItem.isDone());
             }
 
             VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat
                     .create(context.getResources(),
                             todoItem.getPriority() == Priority.HIGH ? R.drawable.ic_star_black_24px : R.drawable.ic_star_border_black_24px,
                             null);
-            holder.mStarImage.setImageDrawable(vectorDrawableCompat.mutate());
-            holder.mStarImage.setOnClickListener(new View.OnClickListener() {
+            childViewHolder.mStarImage.setImageDrawable(vectorDrawableCompat.mutate());
+            childViewHolder.mStarImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnStartClickListener.onClick(todoItem);
+                    mOnStarClickListener.onClick(todoItem);
                 }
             });
 
-            holder.mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            childViewHolder.mDoneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (buttonView.isPressed()) {
@@ -421,7 +450,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                     }
                 }
             });
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            childViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnTodoItemClickListener.onClick(todoItem);
@@ -429,27 +458,38 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             });
         }
 
-        @Override
-        public int getItemCount() {
-            return mTodoItems.size();
+        public class GroupViewHolder extends ParentViewHolder {
+            /**
+             * Default constructor.
+             *
+             * @param itemView The {@link View} being hosted in this ViewHolder
+             */
+            public GroupViewHolder(View itemView) {
+                super(itemView);
+            }
+
+            @Override
+            public boolean shouldItemViewClickToggleExpansion() {
+                return true;
+            }
         }
 
+        public class TodoItemViewHolder extends ChildViewHolder {
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-
-            final View mView;
             final TextView mTitleTextView;
-            final TextView mDateTextView;
             final CheckBox mDoneCheckBox;
             final ImageView mStarImage;
             Context mContext;
 
-            public ViewHolder(View itemView) {
+            /**
+             * Default constructor.
+             *
+             * @param itemView The {@link View} being hosted in this ViewHolder
+             */
+            public TodoItemViewHolder(View itemView) {
                 super(itemView);
                 mContext = itemView.getContext();
-                mView = itemView;
                 mTitleTextView = (TextView) itemView.findViewById(R.id.todo_item_title);
-                mDateTextView = (TextView) itemView.findViewById(R.id.todo_item_date);
                 mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
                 mStarImage = (ImageView) itemView.findViewById(R.id.todo_item_stared);
             }
