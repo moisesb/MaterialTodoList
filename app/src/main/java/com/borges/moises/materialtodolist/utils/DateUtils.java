@@ -1,5 +1,6 @@
 package com.borges.moises.materialtodolist.utils;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import java.text.DateFormat;
@@ -15,13 +16,13 @@ import java.util.Locale;
 public class DateUtils {
 
     private static final String PATTERN = "yyyy-MM-dd HH:mm";
-    private static DateFormat DB_DATE_FORMAT = new SimpleDateFormat(PATTERN,Locale.getDefault());
+    private static DateFormat DB_DATE_FORMAT = new SimpleDateFormat(PATTERN, Locale.getDefault());
     private static DateFormat UI_DATE_FORMAT = SimpleDateFormat.getInstance();
 
     public static String dateToDbString(Date date) {
         try {
             return DB_DATE_FORMAT.format(date);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -40,14 +41,14 @@ public class DateUtils {
     public static String dateToUiString(Date date) {
         try {
             return UI_DATE_FORMAT.format(date).split(" ")[0];
-        }catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     public static Date getDate(int year, int monthOfYear, int dayOfMonth) {
         final Calendar calendar = Calendar.getInstance();
-        calendar.set(year,monthOfYear,dayOfMonth);
+        calendar.set(year, monthOfYear, dayOfMonth);
         return calendar.getTime();
     }
 
@@ -58,9 +59,9 @@ public class DateUtils {
         }
 
         if (hourOfDay < 0 || minute < 0) {
-            calendar.set(year,monthOfYear,dayOfMonth);
-        }else {
-            calendar.set(year,monthOfYear,dayOfMonth,hourOfDay,minute);
+            calendar.set(year, monthOfYear, dayOfMonth);
+        } else {
+            calendar.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
         }
 
         return calendar.getTime();
@@ -74,5 +75,27 @@ public class DateUtils {
         final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         return format.format(calendar.getTime());
     }
+
+    /***
+     * @param date
+     * @return -1 if date in before today, 0 if date is today and 1 if date if after today
+     */
+    @IntRange(from = -1, to = 1)
+    public static int compareDateWithToday(@NonNull Date date) {
+        Calendar today = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int todayYear = today.get(Calendar.YEAR);
+        int dateYear = calendar.get(Calendar.YEAR);
+        int todayDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        int dateDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        if (dateYear == todayYear) {
+            return dateDayOfYear == todayDayOfYear ? 0 : dateDayOfYear > todayDayOfYear ? 1 : -1;
+        } else {
+            return dateYear > todayYear ? 1 : -1;
+        }
+    }
+
 
 }

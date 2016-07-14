@@ -5,6 +5,7 @@ import android.util.Log;
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -55,12 +56,14 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
                     }
                 })
                 .subscribe(new Subscriber<TodoItem>() {
-                    private boolean hasTodoItems = false;
+                    private List<TodoItem> mTodoItems = new ArrayList<TodoItem>();
 
                     @Override
                     public void onCompleted() {
-                        if (!hasTodoItems) {
+                        if (mTodoItems.size() == 0) {
                             mView.showNoTodoItemMessage();
+                        }else {
+                            mView.showTodoItems(mTodoItems);
                         }
                         mView.showProgress(false);
                     }
@@ -72,9 +75,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
                     @Override
                     public void onNext(TodoItem todoItem) {
-                        Log.d("TodoItemsPresenter", "showing " + todoItem.getTitle());
-                        mView.showTodoItem(todoItem);
-                        hasTodoItems = true;
+                        mTodoItems.add(todoItem);
                     }
                 });
     }

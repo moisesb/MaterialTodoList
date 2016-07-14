@@ -111,6 +111,9 @@
     <string name="tag_edited">Tag edited</string>
     <string name="delete_tag">Delete Tag</string>
     <string name="tasks_for_today">Tasks for Today</string>
+    <string name="late_tasks_group">Late</string>
+    <string name="today_tasks_group">Today</string>
+    <string name="future_tasks_group">Future</string>
 
     <string-array name="initial_tags">
         <item>Inbox</item>

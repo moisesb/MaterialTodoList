@@ -28,6 +28,8 @@ public interface TodoItemsMvp {
         void clearTodoItems();
 
         void updateTodoItem(TodoItem todoItem);
+
+        void showTodoItems(List<TodoItem> todoItems);
     }
 
     interface Presenter extends MvpPresenter<View> {

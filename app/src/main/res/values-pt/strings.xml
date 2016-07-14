@@ -116,4 +116,7 @@
         <item>Trabalho</item>
         <item>Estudo</item>
     </string-array>
+    <string name="today_tasks_group">Hoje</string>
+    <string name="future_tasks_group">Futuras</string>
+    <string name="late_tasks_group">Atrasadas</string>
 </resources>

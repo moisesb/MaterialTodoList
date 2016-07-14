@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,6 +40,7 @@ import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemActivity;
 import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.sync.SyncService;
+import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -112,7 +114,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
-                //TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
+                TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
                 //mPresenter.deleteTodoItem(todoItem);
                 // FIXME: 13/07/2016 implemente this for ExplandableRecyclerView
             }
@@ -313,13 +315,19 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mTodoItemsAdapter.updateTodoItem(todoItem);
     }
 
+    @Override
+    public void showTodoItems(List<TodoItem> todoItems) {
+        mTodoItemsAdapter.replaceData(todoItems);
+    }
+
     public static class TodoItemsGroup implements ParentListItem {
 
         private final List<TodoItem> mTodoItems;
-        private String mName;
+        private int mName;
 
-        public TodoItemsGroup(List<TodoItem> todoItems) {
+        public TodoItemsGroup(List<TodoItem> todoItems, @StringRes int name) {
             mTodoItems = todoItems;
+            mName = name;
         }
 
         @Override
@@ -332,16 +340,27 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             return false;
         }
 
-        public String getName() {
+        @StringRes
+        public int getName() {
             return mName;
+        }
+
+        public int indexOf(TodoItem todoItem) {
+            return mTodoItems.indexOf(todoItem);
         }
     }
 
-    public static class TodoItemsAdapter extends ExpandableRecyclerAdapter<TodoItemsAdapter.GroupViewHolder,TodoItemsAdapter.TodoItemViewHolder> {
+    public static class TodoItemsAdapter extends ExpandableRecyclerAdapter<TodoItemsAdapter.GroupViewHolder, TodoItemsAdapter.TodoItemViewHolder> {
+
+        private List<TodoItemsGroup> mTodoItemsGroups;
+        private TodoItemsGroup mLateGroup;
+        private TodoItemsGroup mTodayGroup;
+        private TodoItemsGroup mFutureGroup;
 
         private final OnStarClickListener mOnStarClickListener;
         private final OnCheckBoxClickListener mOnCheckBoxClickListener;
         private final OnTodoItemClickListener mOnTodoItemClickListener;
+
         /**
          * Primary constructor. Sets up {@link #mParentItemList} and {@link #mItemList}.
          * <p>
@@ -357,59 +376,137 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                                 @NonNull OnTodoItemClickListener onTodoItemClickListener,
                                 @NonNull OnStarClickListener onStarClickListener) {
             super(parentItemList);
+            mTodoItemsGroups = parentItemList;
             mOnCheckBoxClickListener = onCheckBoxClickListener;
             mOnTodoItemClickListener = onTodoItemClickListener;
             mOnStarClickListener = onStarClickListener;
         }
 
         public void deleteTodoItem(TodoItem todoItem) {
-            int position = getTodoItemPosition(todoItem);
-            mTodoItems.remove(position);
-            notifyItemRemoved(position);
+            Position position = getTodoItemPosition(todoItem);
+            notifyChildItemRemoved(position.parentPos(), position.childPos());
         }
 
         public void updateTodoItem(TodoItem todoItem) {
-            int position = getTodoItemPosition(todoItem);
-            notifyItemChanged(position);
+            Position position = getTodoItemPosition(todoItem);
+            notifyChildItemChanged(position.parentPos(), position.childPos());
         }
 
         public void addTodoItem(TodoItem todoItem) {
-            if (!mTodoItems.contains(todoItem)) {
-                mTodoItems.add(todoItem);
-                final int position = mTodoItems.indexOf(todoItem);
-                notifyItemInserted(position);
+            if (todoItem.getDate() == null) {
+                mFutureGroup.getChildItemList().add(todoItem);
+            }
+            switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
+                case -1:
+                    mLateGroup.getChildItemList().add(todoItem);
+                    break;
+                case 0:
+                    mTodayGroup.getChildItemList().add(todoItem);
+                    break;
+                case 1:
+                    mFutureGroup.getChildItemList().add(todoItem);
+                    break;
+            }
+            Position position = getTodoItemPosition(todoItem);
+            notifyChildItemInserted(position.parentPos(), position.childPos());
+
+        }
+
+        public void replaceData(List<TodoItem> todoItems) {
+            List<TodoItem> lateTasks = new ArrayList<>();
+            List<TodoItem> todayTasks = new ArrayList<>();
+            List<TodoItem> futureTasks = new ArrayList<>();
+
+            for (TodoItem todoItem : todoItems) {
+                if (todoItem.getDate() == null) {
+                    futureTasks.add(todoItem);
+                    continue;
+                }
+                switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
+                    case -1:
+                        lateTasks.add(todoItem);
+                        break;
+                    case 0:
+                        todayTasks.add(todoItem);
+                        break;
+                    case 1:
+                        futureTasks.add(todoItem);
+                        break;
+                }
+            }
+
+            int sizeBefore = mTodoItemsGroups.size();
+
+            mTodoItemsGroups.clear();
+            mLateGroup = new TodoItemsGroup(lateTasks, R.string.late_tasks_group);
+            mTodayGroup = new TodoItemsGroup(todayTasks, R.string.today_tasks_group);
+            mFutureGroup = new TodoItemsGroup(futureTasks, R.string.future_tasks_group);
+
+            mTodoItemsGroups.add(mLateGroup);
+            mTodoItemsGroups.add(mTodayGroup);
+            mTodoItemsGroups.add(mFutureGroup);
+
+            if (sizeBefore > 0) {
+                notifyParentItemRangeChanged(0, mTodoItemsGroups.size());
+            } else {
+                notifyParentItemRangeInserted(0, mTodoItemsGroups.size());
             }
         }
 
         public void clearTodoItems() {
-            mTodoItems.clear();
-            notifyDataSetChanged();
+            for (int parentPos = 0; parentPos < mTodoItemsGroups.size(); parentPos++) {
+                TodoItemsGroup todoItemsGroup = mTodoItemsGroups.get(parentPos);
+                for (int childPos = todoItemsGroup.getChildItemList().size() - 1; childPos >= 0; childPos--) {
+                    notifyChildItemRemoved(parentPos, childPos);
+                }
+            }
         }
 
-        private int getTodoItemPosition(TodoItem todoItem) {
-            int position = mTodoItems.indexOf(todoItem);
-            if (position >= 0) {
-                return position;
+        private Position getTodoItemPosition(TodoItem todoItem) {
+            int childPosition = mLateGroup.indexOf(todoItem);
+            int parentPosition;
+            if (childPosition >= 0) {
+                parentPosition = mTodoItemsGroups.indexOf(mLateGroup);
+                return new Position(parentPosition, childPosition);
+            }
+            childPosition = mTodayGroup.indexOf(todoItem);
+            if (childPosition >= 0) {
+                parentPosition = mTodoItemsGroups.indexOf(mTodayGroup);
+                return new Position(parentPosition, childPosition);
+            }
+            childPosition = mFutureGroup.indexOf(todoItem);
+            if (childPosition >= 0) {
+                parentPosition = mTodoItemsGroups.indexOf(mFutureGroup);
+                return new Position(parentPosition, childPosition);
             } else {
                 throw new IllegalArgumentException("Todo item is not in the adapter");
             }
         }
 
         public TodoItem getTodoItem(int position) {
-            return mTodoItems.size() > position ? mTodoItems.get(position) : null;
+            // FIXME: 14/07/2016 thowing array index out of bounds exception
+            for (TodoItemsGroup todoItemsGroup : mTodoItemsGroups) {
+                position -= 2;
+                if (todoItemsGroup.getChildItemList().size() > position) {
+                    return todoItemsGroup.getChildItemList().get(position);
+                }else {
+                    position -= todoItemsGroup.getChildItemList().size();
+                }
+            }
+            return null;
         }
 
         @Override
         public GroupViewHolder onCreateParentViewHolder(ViewGroup parentViewGroup) {
             View layout = LayoutInflater.from(parentViewGroup.getContext())
-                    .inflate(R.layout.view_todo_item_group,parentViewGroup,false);
+                    .inflate(R.layout.view_todo_item_group, parentViewGroup, false);
             return new GroupViewHolder(layout);
         }
 
         @Override
         public TodoItemViewHolder onCreateChildViewHolder(ViewGroup childViewGroup) {
             View layout = LayoutInflater.from(childViewGroup.getContext())
-                    .inflate(R.layout.cardview_todo_item, childViewGroup, false);
+                    .inflate(R.layout.view_todo_item, childViewGroup, false);
             return new TodoItemViewHolder(layout);
         }
 
@@ -417,6 +514,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         public void onBindParentViewHolder(GroupViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
             final TodoItemsGroup todoItemGroup = (TodoItemsGroup) parentListItem;
             parentViewHolder.mTodoItemGroupNameView.setText(todoItemGroup.getName());
+            parentViewHolder.mExpandImageView.setImageResource(parentViewHolder.isExpanded() ?
+                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
+            parentViewHolder.mNumOfTasksTextView.setText(String.valueOf(todoItemGroup.mTodoItems.size()));
         }
 
         @Override
@@ -468,6 +568,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         public class GroupViewHolder extends ParentViewHolder {
             final TextView mTodoItemGroupNameView;
+            final ImageView mExpandImageView;
+            final TextView mNumOfTasksTextView;
+
             /**
              * Default constructor.
              *
@@ -476,11 +579,34 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             public GroupViewHolder(View itemView) {
                 super(itemView);
                 mTodoItemGroupNameView = (TextView) itemView.findViewById(R.id.todo_item_group_name_text_view);
+                mExpandImageView = (ImageView) itemView.findViewById(R.id.expand_tasks_image);
+                mNumOfTasksTextView = (TextView) itemView.findViewById(R.id.num_of_tasks_text_view);
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isExpanded()) {
+                            collapseView();
+                            turnExpandIcon(-180);
+                        } else {
+                            expandView();
+                            turnExpandIcon(180);
+                        }
+
+                    }
+                });
+            }
+
+            private void turnExpandIcon(int value) {
+                mExpandImageView.animate()
+                        .rotationBy(value)
+                        .setDuration(300)
+                        .start();
             }
 
             @Override
             public boolean shouldItemViewClickToggleExpansion() {
-                return true;
+                return false;
             }
         }
 
@@ -502,6 +628,24 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 mTitleTextView = (TextView) itemView.findViewById(R.id.todo_item_title);
                 mDoneCheckBox = (CheckBox) itemView.findViewById(R.id.todo_item_done);
                 mStarImage = (ImageView) itemView.findViewById(R.id.todo_item_stared);
+            }
+        }
+
+        private class Position {
+            private final int parentPos;
+            private final int childPos;
+
+            public Position(int parentPos, int childPos) {
+                this.parentPos = parentPos;
+                this.childPos = childPos;
+            }
+
+            public int parentPos() {
+                return parentPos;
+            }
+
+            public int childPos() {
+                return childPos;
             }
         }
 
