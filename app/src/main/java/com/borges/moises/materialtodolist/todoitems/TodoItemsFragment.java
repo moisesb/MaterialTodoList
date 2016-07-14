@@ -119,7 +119,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
     };
 
-    private TodoItemsAdapter mTodoItemsAdapter = new TodoItemsAdapter(new ArrayList<TodoItem>(0),
+    private TodoItemsAdapter mTodoItemsAdapter = new TodoItemsAdapter(new ArrayList<TodoItemsGroup>(0),
             mCheckBoxClickListener,
             mTodoItemClickListener,
             mOnStarClickListener);
@@ -316,6 +316,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public static class TodoItemsGroup implements ParentListItem {
 
         private final List<TodoItem> mTodoItems;
+        private String mName;
 
         public TodoItemsGroup(List<TodoItem> todoItems) {
             mTodoItems = todoItems;
@@ -329,6 +330,10 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         @Override
         public boolean isInitiallyExpanded() {
             return false;
+        }
+
+        public String getName() {
+            return mName;
         }
     }
 
@@ -396,7 +401,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         @Override
         public GroupViewHolder onCreateParentViewHolder(ViewGroup parentViewGroup) {
-            return null;
+            View layout = LayoutInflater.from(parentViewGroup.getContext())
+                    .inflate(R.layout.view_todo_item_group,parentViewGroup,false);
+            return new GroupViewHolder(layout);
         }
 
         @Override
@@ -408,7 +415,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         @Override
         public void onBindParentViewHolder(GroupViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
-
+            final TodoItemsGroup todoItemGroup = (TodoItemsGroup) parentListItem;
+            parentViewHolder.mTodoItemGroupNameView.setText(todoItemGroup.getName());
         }
 
         @Override
@@ -459,6 +467,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         public class GroupViewHolder extends ParentViewHolder {
+            final TextView mTodoItemGroupNameView;
             /**
              * Default constructor.
              *
@@ -466,6 +475,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
              */
             public GroupViewHolder(View itemView) {
                 super(itemView);
+                mTodoItemGroupNameView = (TextView) itemView.findViewById(R.id.todo_item_group_name_text_view);
             }
 
             @Override
