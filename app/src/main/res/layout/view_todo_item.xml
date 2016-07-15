@@ -24,13 +24,13 @@
         android:id="@+id/todo_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/todo_item_stared"
-        android:layout_alignRight="@+id/todo_item_stared"
+        android:layout_toLeftOf="@+id/todo_item_stared"
+        android:layout_toStartOf="@+id/todo_item_stared"
         android:layout_centerVertical="true"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="64dp"
         android:layout_marginTop="8dp"
         android:textColor="@android:color/black"
@@ -48,10 +48,5 @@
         android:padding="16dp"
         app:srcCompat="@drawable/ic_star_border_black_24px"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/darker_gray"/>
 
 </RelativeLayout>

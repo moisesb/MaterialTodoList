@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.todoitems;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -189,6 +190,18 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mPresenter.onDestroy();
         unregisterForEvents();
         super.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mTodoItemsAdapter.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mTodoItemsAdapter.onRestoreInstanceState(savedInstanceState);
     }
 
     @OnClick(R.id.add_todo_item_button)
@@ -489,7 +502,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 position -= 2;
                 if (todoItemsGroup.getChildItemList().size() > position) {
                     return todoItemsGroup.getChildItemList().get(position);
-                }else {
+                } else {
                     position -= todoItemsGroup.getChildItemList().size();
                 }
             }
@@ -538,10 +551,12 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 childViewHolder.mDoneCheckBox.setChecked(todoItem.isDone());
             }
 
+            final Resources resources = context.getResources();
             VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat
-                    .create(context.getResources(),
+                    .create(resources,
                             todoItem.getPriority() == Priority.HIGH ? R.drawable.ic_star_black_24px : R.drawable.ic_star_border_black_24px,
                             null);
+            vectorDrawableCompat.setTint(resources.getColor(todoItem.getPriority() == Priority.HIGH ? R.color.gold : android.R.color.black));
             childViewHolder.mStarImage.setImageDrawable(vectorDrawableCompat.mutate());
             childViewHolder.mStarImage.setOnClickListener(new View.OnClickListener() {
                 @Override
