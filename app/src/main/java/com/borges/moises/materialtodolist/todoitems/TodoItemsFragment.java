@@ -1,6 +1,7 @@
 package com.borges.moises.materialtodolist.todoitems;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -106,6 +107,16 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     };
 
     private ItemTouchHelper.SimpleCallback mItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            if (viewHolder instanceof TodoItemsAdapter.GroupViewHolder) {
+                return makeMovementFlags(0, 0);
+            } else {
+                return super.getMovementFlags(recyclerView, viewHolder);
+            }
+        }
+
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             Log.d("Test", "from " + viewHolder.getAdapterPosition() + "to " + target.getAdapterPosition());
@@ -116,8 +127,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
                 TodoItem todoItem = mTodoItemsAdapter.getTodoItem(viewHolder.getAdapterPosition());
-                //mPresenter.deleteTodoItem(todoItem);
-                // FIXME: 13/07/2016 implemente this for ExplandableRecyclerView
+                mPresenter.deleteTodoItem(todoItem);
             }
         }
     };
@@ -129,6 +139,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     private TodoItemsMvp.Presenter mPresenter;
 
+    private boolean mTodoItemsLoaded = false;
 
     public TodoItemsFragment() {
     }
@@ -167,6 +178,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPresenter = new TodoItemsPresenter();
+        mPresenter.onRestoreInstanceState(savedInstanceState);
         mPresenter.bindView(this);
         startServicesOnFirstRun();
     }
@@ -175,7 +187,10 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public void onResume() {
         super.onResume();
         registerForEvents();
-        mPresenter.loadTodoItems(mTag);
+        if (!mTodoItemsLoaded) {
+            mPresenter.loadTodoItems(mTag);
+            mTodoItemsLoaded = true;
+        }
     }
 
     private void registerForEvents() {
@@ -195,6 +210,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        mPresenter.onSaveInstanceState(outState);
         mTodoItemsAdapter.onSaveInstanceState(outState);
     }
 
@@ -202,6 +218,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         mTodoItemsAdapter.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @OnClick(R.id.add_todo_item_button)
@@ -408,18 +429,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         public void addTodoItem(TodoItem todoItem) {
             if (todoItem.getDate() == null) {
                 mFutureGroup.getChildItemList().add(todoItem);
+            } else {
+                switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
+                    case -1:
+                        mLateGroup.getChildItemList().add(todoItem);
+                        break;
+                    case 0:
+                        mTodayGroup.getChildItemList().add(todoItem);
+                        break;
+                    case 1:
+                        mFutureGroup.getChildItemList().add(todoItem);
+                        break;
+                }
             }
-            switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
-                case -1:
-                    mLateGroup.getChildItemList().add(todoItem);
-                    break;
-                case 0:
-                    mTodayGroup.getChildItemList().add(todoItem);
-                    break;
-                case 1:
-                    mFutureGroup.getChildItemList().add(todoItem);
-                    break;
-            }
+
             Position position = getTodoItemPosition(todoItem);
             notifyChildItemInserted(position.parentPos(), position.childPos());
 
@@ -448,8 +471,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 }
             }
 
-            int sizeBefore = mTodoItemsGroups.size();
-
             mTodoItemsGroups.clear();
             mLateGroup = new TodoItemsGroup(lateTasks, R.string.late_tasks_group);
             mTodayGroup = new TodoItemsGroup(todayTasks, R.string.today_tasks_group);
@@ -459,11 +480,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             mTodoItemsGroups.add(mTodayGroup);
             mTodoItemsGroups.add(mFutureGroup);
 
-            if (sizeBefore > 0) {
-                notifyParentItemRangeChanged(0, mTodoItemsGroups.size());
-            } else {
-                notifyParentItemRangeInserted(0, mTodoItemsGroups.size());
-            }
+            notifyParentItemRangeInserted(0, mTodoItemsGroups.size());
         }
 
         public void clearTodoItems() {
@@ -496,10 +513,10 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             }
         }
 
+        @Nullable
         public TodoItem getTodoItem(int position) {
-            // FIXME: 14/07/2016 thowing array index out of bounds exception
             for (TodoItemsGroup todoItemsGroup : mTodoItemsGroups) {
-                position -= 2;
+                position -= 1;
                 if (todoItemsGroup.getChildItemList().size() > position) {
                     return todoItemsGroup.getChildItemList().get(position);
                 } else {

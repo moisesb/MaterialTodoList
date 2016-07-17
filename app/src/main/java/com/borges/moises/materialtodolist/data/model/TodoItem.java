@@ -3,12 +3,14 @@ package com.borges.moises.materialtodolist.data.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by Moisés on 11/04/2016.
  */
-public class TodoItem {
+public class TodoItem implements Serializable {
     private long id;
     private String title;
     private String description;
@@ -167,12 +169,21 @@ public class TodoItem {
     }
 
     @JsonIgnore
-    public void incrementVersion(){
+    public void incrementVersion() {
         this.version++;
     }
 
     @Override
     public String toString() {
         return "TodoItem: " + id + " title: " + title + " done:" + done + " updatedAt " + updatedAt;
+    }
+
+    public static Comparator<TodoItem> comparator() {
+        return new Comparator<TodoItem>() {
+            @Override
+            public int compare(TodoItem lhs, TodoItem rhs) {
+                return lhs.getId() > rhs.getId() ? -1 : lhs.getId() == rhs.getId() ? 0 : 1;
+            }
+        };
     }
 }

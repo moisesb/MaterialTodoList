@@ -88,7 +88,7 @@ public class DateUtils {
 
         int todayYear = today.get(Calendar.YEAR);
         int dateYear = calendar.get(Calendar.YEAR);
-        int todayDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        int todayDayOfYear = today.get(Calendar.DAY_OF_YEAR);
         int dateDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         if (dateYear == todayYear) {
             return dateDayOfYear == todayDayOfYear ? 0 : dateDayOfYear > todayDayOfYear ? 1 : -1;

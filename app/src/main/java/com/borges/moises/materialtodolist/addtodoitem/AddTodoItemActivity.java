@@ -21,6 +21,8 @@ import butterknife.ButterKnife;
  */
 public class AddTodoItemActivity extends AppCompatActivity {
 
+
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
