@@ -182,7 +182,7 @@ public class TodoItem implements Serializable {
         return new Comparator<TodoItem>() {
             @Override
             public int compare(TodoItem lhs, TodoItem rhs) {
-                return lhs.getId() > rhs.getId() ? -1 : lhs.getId() == rhs.getId() ? 0 : 1;
+                return lhs.getId() < rhs.getId() ? -1 : lhs.getId() == rhs.getId() ? 0 : 1;
             }
         };
     }

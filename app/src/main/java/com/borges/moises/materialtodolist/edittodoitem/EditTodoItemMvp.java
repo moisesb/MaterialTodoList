@@ -1,5 +1,7 @@
 package com.borges.moises.materialtodolist.edittodoitem;
 
+import android.support.annotation.NonNull;
+
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.mvp.MvpPresenter;
@@ -12,7 +14,9 @@ import java.util.List;
  * Created by Moisés on 28/05/2016.
  */
 public interface EditTodoItemMvp {
-
+    enum Operation {
+        EDITED, DELETED
+    }
     interface View extends MvpView {
         void showTitle(String title);
 
@@ -26,7 +30,8 @@ public interface EditTodoItemMvp {
 
         void showMissingTitle();
 
-        void close();
+        void openTodoItems(long todoItemId,
+                           @NonNull Operation operation);
 
         void showTodoItemEdited();
 

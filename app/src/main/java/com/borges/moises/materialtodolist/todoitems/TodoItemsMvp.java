@@ -1,7 +1,5 @@
 package com.borges.moises.materialtodolist.todoitems;
 
-import android.os.Bundle;
-
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.mvp.MvpPresenter;
 import com.borges.moises.materialtodolist.mvp.MvpView;
@@ -12,6 +10,7 @@ import java.util.List;
  * Created by moises.anjos on 24/05/2016.
  */
 public interface TodoItemsMvp {
+
     interface View extends MvpView {
         void showTodoItem(TodoItem todoItem);
 
@@ -51,8 +50,10 @@ public interface TodoItemsMvp {
 
         void onDestroy();
 
-        void onSaveInstanceState(Bundle outState);
+        void deleteTodoItem(long taskId);
 
-        void onRestoreInstanceState(Bundle savedInstanceState);
+        void loadTodoItem(long todoItemId);
+
+        void updateTodoItem(long todoItemId);
     }
 }

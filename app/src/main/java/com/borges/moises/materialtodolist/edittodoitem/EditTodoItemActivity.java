@@ -1,5 +1,6 @@
 package com.borges.moises.materialtodolist.edittodoitem;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -22,6 +23,10 @@ import butterknife.ButterKnife;
 public class EditTodoItemActivity extends AppCompatActivity {
 
     public static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.todoItemId";
+    public static final int REQUEST_CODE = 2;
+    public static final int EDITED_RESULT_CODE = 200;
+    public static final int DELETED_RESULT_CODE = 300;
+    public static final String TODO_ITEM_ID = "todo_item_id";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -74,9 +79,9 @@ public class EditTodoItemActivity extends AppCompatActivity {
         }
     }
 
-    public static void start(Context context, long todoItemId) {
-        Intent intent = new Intent(context, EditTodoItemActivity.class);
+    public static void start(Activity activity, long todoItemId) {
+        Intent intent = new Intent(activity, EditTodoItemActivity.class);
         intent.putExtra(ARG_TODO_ITEM_ID, todoItemId);
-        context.startActivity(intent);
+        activity.startActivityForResult(intent, REQUEST_CODE);
     }
 }

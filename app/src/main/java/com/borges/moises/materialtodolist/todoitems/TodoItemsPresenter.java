@@ -1,14 +1,9 @@
 package com.borges.moises.materialtodolist.todoitems;
 
-import android.os.Bundle;
-
 import com.borges.moises.materialtodolist.data.model.TodoItem;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import rx.Observable;
@@ -28,7 +23,6 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     private TodoItemService mService;
     private Subscription mTodoItemsSubscription;
     private Subscription mRemainingTodoItemsSubscription;
-    private List<TodoItem> mTodoItems;
 
     public TodoItemsPresenter() {
         mService = new TodoItemService();
@@ -65,14 +59,10 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
                     @Override
                     public void onCompleted() {
-                        if (mTodoItems == null) {
-                            if (todoItems.size() == 0) {
-                                mView.showNoTodoItemMessage();
-                            } else {
-                                mView.showTodoItems(todoItems);
-                                mTodoItems = todoItems;
-                                Collections.sort(mTodoItems,TodoItem.comparator());
-                            }
+                        if (todoItems.size() == 0) {
+                            mView.showNoTodoItemMessage();
+                        } else {
+                            mView.showTodoItems(todoItems);
                         }
 
                         mView.showProgress(false);
@@ -85,29 +75,7 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
                     @Override
                     public void onNext(TodoItem todoItem) {
-                        if (mTodoItems != null) {
-                            int pos = Collections.binarySearch(mTodoItems,todoItem,TodoItem.comparator());
-                            if (pos < 0) {
-                                mTodoItems.add(todoItem);
-                                mView.showTodoItem(todoItem);
-                                Collections.sort(mTodoItems,TodoItem.comparator());
-                            }else {
-                                if (todoItem.isDeleted() && todoItem.getVersion() > mTodoItems.get(pos).getVersion()){
-                                    mView.removeTodoItem(todoItem);
-                                    replaceTodoItem(todoItem, pos);
-                                }else if (todoItem.getVersion() > mTodoItems.get(pos).getVersion()){
-                                    mView.updateTodoItem(todoItem);
-                                    replaceTodoItem(todoItem,pos);
-                                }
-                            }
-                        } else {
-                            todoItems.add(todoItem);
-                        }
-                    }
-
-                    private void replaceTodoItem(TodoItem todoItem, int pos) {
-                        mTodoItems.remove(pos);
-                        mTodoItems.add(pos,todoItem);
+                        todoItems.add(todoItem);
                     }
                 });
     }
@@ -121,6 +89,10 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     @Override
     public void deleteTodoItem(final TodoItem todoItem) {
         mService.deleteTodoItem(todoItem);
+        removeTodoItemFromView(todoItem);
+    }
+
+    private void removeTodoItemFromView(TodoItem todoItem) {
         mView.removeTodoItem(todoItem);
         mView.showUndoDeleteOption(todoItem);
 
@@ -198,14 +170,26 @@ public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(ARGS_TODO_ITEMS, (Serializable) mTodoItems);
+    public void deleteTodoItem(long taskId) {
+        final TodoItem todoItem = mService.getTodoItem(taskId);
+        if (todoItem != null) {
+            removeTodoItemFromView(todoItem);
+        }
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mTodoItems = (List<TodoItem>) savedInstanceState.getSerializable(ARGS_TODO_ITEMS);
+    public void loadTodoItem(long todoItemId) {
+        final TodoItem todoItem = mService.getTodoItem(todoItemId);
+        if (todoItem != null) {
+            mView.showTodoItem(todoItem);
+        }
+    }
+
+    @Override
+    public void updateTodoItem(long todoItemId) {
+        final TodoItem todoItem = mService.getTodoItem(todoItemId);
+        if (todoItem != null) {
+            mView.updateTodoItem(todoItem);
         }
     }
 

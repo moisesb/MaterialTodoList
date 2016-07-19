@@ -1,5 +1,6 @@
 package com.borges.moises.materialtodolist.addtodoitem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,7 +40,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_add_todo_item,menu);
+        inflater.inflate(R.menu.menu_add_todo_item, menu);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         final String title = mTitleEditText.getText().toString();
         final String description = mDescriptionEditText.getText().toString();
         final String location = mLocationEditText.getText().toString();
-        mPresenter.addTodoItem(title,description,mPriority,location,mYear,mMonthOfYear,mDayOfMonth,mHourOfDay,mMinute, mTag);
+        mPresenter.addTodoItem(title, description, mPriority, location, mYear, mMonthOfYear, mDayOfMonth, mHourOfDay, mMinute, mTag);
     }
 
     @Override
@@ -76,13 +77,16 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
     }
 
     @Override
-    public void close() {
+    public void openTodoItems(long todoItemId) {
+        Intent data = new Intent();
+        data.putExtra(AddTodoItemActivity.TODO_ITEM_ID, todoItemId);
+        getActivity().setResult(AddTodoItemActivity.ADDED_RESULT_CODE, data);
         getActivity().finish();
     }
 
     @Override
     public void showTodoItemAdded() {
-        Toast.makeText(getContext(),R.string.todo_item_added,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.todo_item_added, Toast.LENGTH_SHORT).show();
     }
 
     @Override

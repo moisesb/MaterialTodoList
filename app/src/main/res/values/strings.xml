@@ -114,6 +114,8 @@
     <string name="late_tasks_group">Late</string>
     <string name="today_tasks_group">Today</string>
     <string name="future_tasks_group">Future</string>
+    <string name="task_added">Task added</string>
+    <string name="task_edited">Task edited</string>
 
     <string-array name="initial_tags">
         <item>Inbox</item>

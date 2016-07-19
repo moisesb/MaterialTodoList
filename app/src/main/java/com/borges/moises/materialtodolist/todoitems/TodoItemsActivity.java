@@ -1,5 +1,6 @@
 package com.borges.moises.materialtodolist.todoitems;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -66,6 +67,16 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         setupToolbar();
         setupDrawer();
         showTodoItems(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null) {
+                fragment.onActivityResult(requestCode,resultCode,data);
+            }
+        }
     }
 
     @Override

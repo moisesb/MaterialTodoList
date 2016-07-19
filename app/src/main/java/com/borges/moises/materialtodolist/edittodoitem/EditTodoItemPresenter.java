@@ -10,12 +10,14 @@ import com.borges.moises.materialtodolist.data.repository.TagsRepository;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
+import static com.borges.moises.materialtodolist.edittodoitem.EditTodoItemMvp.*;
+
 /**
  * Created by Moisés on 24/04/2016.
  */
-public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
+public class EditTodoItemPresenter implements Presenter {
 
-    private EditTodoItemMvp.View mView;
+    private View mView;
     private TodoItemService mService;
     private TagsRepository mTagsRepository;
 
@@ -52,7 +54,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
         if (mService.isTodoItemValid(todoItem)) {
             mService.editTodoItem(todoItem);
             mView.showTodoItemEdited();
-            mView.close();
+            mView.openTodoItems(todoItemId, Operation.EDITED);
         }else {
             mView.showMissingTitle();
         }
@@ -69,7 +71,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
 
         TodoItem todoItem = mService.getTodoItem(todoItemId);
         mService.deleteTodoItem(todoItem);
-        mView.close();
+        mView.openTodoItems(todoItemId, Operation.DELETED);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class EditTodoItemPresenter implements EditTodoItemMvp.Presenter {
 
 
     @Override
-    public void bindView(@NonNull EditTodoItemMvp.View view) {
+    public void bindView(@NonNull View view) {
         mView = view;
     }
 

@@ -42,7 +42,7 @@ public class AddTodoItemPresenter implements AddTodoItemMvp.Presenter {
         if (mService.isTodoItemValid(todoItem)) {
             mService.addTodoItem(todoItem);
             mView.showTodoItemAdded();
-            mView.close();
+            mView.openTodoItems(todoItem.getId());
         }else {
             mView.showMissingTitle();
         }

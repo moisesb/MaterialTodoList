@@ -18,7 +18,7 @@ public interface AddTodoItemMvp {
 
         void addTags(List<Tag> tags);
 
-        void close();
+        void openTodoItems(long todoItemId);
     }
 
     interface Presenter extends MvpPresenter<View> {

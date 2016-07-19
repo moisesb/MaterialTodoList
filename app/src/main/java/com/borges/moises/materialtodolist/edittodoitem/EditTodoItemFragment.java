@@ -3,6 +3,7 @@ package com.borges.moises.materialtodolist.edittodoitem;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemMvp.Operation;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
 import java.util.Calendar;
@@ -149,7 +151,13 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     }
 
     @Override
-    public void close() {
+    public void openTodoItems(long todoItemId, Operation operation) {
+        Intent data = new Intent();
+        data.putExtra(EditTodoItemActivity.TODO_ITEM_ID,todoItemId);
+        getActivity().setResult(Operation.EDITED == operation?
+                EditTodoItemActivity.EDITED_RESULT_CODE :
+                EditTodoItemActivity.DELETED_RESULT_CODE,
+                data);
         getActivity().finish();
     }
 
