@@ -12,6 +12,8 @@ import android.transition.Fade;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -27,6 +29,8 @@ public class EditTodoItemActivity extends AppCompatActivity {
     public static final int EDITED_RESULT_CODE = 200;
     public static final int DELETED_RESULT_CODE = 300;
     public static final String TODO_ITEM_ID = "todo_item_id";
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -47,6 +51,8 @@ public class EditTodoItemActivity extends AppCompatActivity {
 
         setupToolbar();
         initFragment();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     private void setupWindowAnimations() {

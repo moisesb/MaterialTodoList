@@ -43,6 +43,8 @@ import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
 import com.borges.moises.materialtodolist.notifications.ServiceScheduler;
 import com.borges.moises.materialtodolist.sync.SyncService;
 import com.borges.moises.materialtodolist.utils.DateUtils;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -84,6 +86,8 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     private Long mTag = null;
 
     private boolean mFirstRun = false;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private CoordinatorLayout mCoordinatorLayout;
 
@@ -173,6 +177,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         });
 
         setupRecyclerView();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         return view;
     }
 
@@ -320,16 +327,19 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Override
     public void removeTodoItem(TodoItem todoItem) {
         mTodoItemsAdapter.deleteTodoItem(todoItem);
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"remove_todo_item_from_list");
     }
 
     @Override
     public void openTodoItemDetails(long todoItemId) {
         EditTodoItemActivity.start(getActivity(), todoItemId);
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"edit_todo_item");
     }
 
     @Override
     public void openNewTodoItem() {
         AddTodoItemActivity.start(getActivity());
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"add_new_todo_item");
     }
 
     @Override

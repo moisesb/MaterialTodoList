@@ -21,6 +21,8 @@ import com.borges.moises.materialtodolist.data.model.Priority;
 import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.edittodoitem.EditTodoItemMvp.Operation;
 import com.borges.moises.materialtodolist.utils.DateUtils;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +36,8 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     private static final String ARG_TODO_ITEM_ID = "com.borges.moises.materialtodolist.todoitemdetails.EditTodoItemFragment.todoItemId";
     private long mTodoItemId;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private EditTodoItemMvp.Presenter mPresenter;
 
     @Override
@@ -43,6 +47,8 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
         if (getArguments() != null) {
             mTodoItemId = getArguments().getLong(ARG_TODO_ITEM_ID, -1);
         }
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Override
@@ -76,9 +82,11 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
         switch (item.getItemId()) {
             case R.id.action_delete:
                 deleteTodoItem();
+                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"delete_task_clicked");
                 return true;
             case R.id.action_edit:
                 editTodoItem();
+                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"edit_task_clicked");
                 return true;
             default:
             return super.onOptionsItemSelected(item);

@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.util.Patterns;
 
 import com.borges.moises.materialtodolist.data.model.User;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
 import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
  * Created by moises.anjos on 11/05/2016.
@@ -26,6 +28,8 @@ public class UserService {
 
     private final Firebase ref = new Firebase(ENDPOINT);
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private Context mContext;
     private SessionManager mSessionManager;
 
@@ -35,6 +39,8 @@ public class UserService {
         }
         mSessionManager = SessionManager.getInstance();
         mContext = context;
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
     public boolean isUserNameValid(String userName) {
@@ -51,7 +57,9 @@ public class UserService {
 
     @Nullable
     public User getSignedInUser() {
-        return mSessionManager.getLoggedUser();
+        User loggedUser = mSessionManager.getLoggedUser();
+        FirebaseAnalyticsHelper.setUserData(mFirebaseAnalytics,loggedUser);
+        return loggedUser;
     }
 
     public void createUser(final String email, final String password, final String userName, final CreateAccountListener listener) {

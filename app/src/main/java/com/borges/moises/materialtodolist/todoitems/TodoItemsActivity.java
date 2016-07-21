@@ -117,11 +117,11 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                 switch (item.getItemId()) {
                     case R.id.sign_in_menu:
                         mPresenter.openLoginOrCreateAccount();
-                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"sign_in_menu");
+                        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"sign_in_menu_clicked");
                         break;
                     case R.id.sign_out_menu:
                         mPresenter.logout();
-                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"sign_out_menu");
+                        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"sign_out_menu_clicked");
                         break;
                     /*
                     case R.id.settings_menu:
@@ -130,7 +130,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                     */
                     case R.id.tags_menu:
                         mPresenter.openTags();
-                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"tags_menu");
+                        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"tags_menu_clicked");
                         break;
                     default:
                         //onTagClick(item);
@@ -229,7 +229,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         mPresenter.openFilterTodoItemsByTag(tag);
-                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"open_tag_" + tag.getName());
+                        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"open_tag_" + tag.getName());
                         return false;
                     }
                 });

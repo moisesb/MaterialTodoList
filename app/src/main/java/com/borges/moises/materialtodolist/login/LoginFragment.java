@@ -17,12 +17,14 @@ import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.createaccount.CreateAccountActivity;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -58,6 +60,8 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
     @BindView(R.id.facebook_login_button)
     LoginButton mFacebookLoginButton;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private ProgressDialog mProgressDialog;
 
     private LoginMvp.Presenter mPresenter;
@@ -78,6 +82,8 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
 
         mPresenter = new LoginPresenter(getContext());
         mPresenter.bindView(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
         return view;
     }
@@ -105,6 +111,7 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
                 if(loginResult.getAccessToken() != null){
                     final String authToken = loginResult.getAccessToken().getToken();
                     mPresenter.loginWithFacebook(authToken);
+                    FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"login_with_facebook");
                 }else {
                     mPresenter.loginWithFacebook(null);
                 }
@@ -133,6 +140,7 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
         final String email = mEmailEditText.getText().toString();
         final String password = mPasswordEditText.getText().toString();
         mPresenter.login(email, password);
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "login_with_email");
     }
 
     @OnClick(R.id.sign_up_link_text_view) void onSignUpLinkClick(){

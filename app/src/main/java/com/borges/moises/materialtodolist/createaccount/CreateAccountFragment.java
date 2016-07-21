@@ -17,12 +17,14 @@ import android.widget.LinearLayout;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.login.LoginActivity;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -64,6 +66,8 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     @BindView(R.id.facebook_login_button)
     LoginButton mFacebookLoginButton;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
     private ProgressDialog mProgressDialog;
@@ -81,6 +85,9 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
         initProgressDialog();
         mPresenter = new CreateAccountPresenter(getContext());
         mPresenter.bindView(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         return view;
     }
 
@@ -101,6 +108,7 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
                 if(loginResult.getAccessToken() != null){
                     final String authToken = loginResult.getAccessToken().getToken();
                     mPresenter.createAccountWithFacebook(authToken);
+                    FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "account_created_with_facebook");
                 }else {
                     mPresenter.createAccountWithFacebook(null);
                 }
@@ -136,6 +144,7 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
         final String password = mPasswordEditText.getText().toString();
         final String userName = mNameEditText.getText().toString();
         mPresenter.createAccount(email, password, userName);
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"account_created_with_email");
     }
 
     @OnClick(R.id.sign_up_link_text_view) void onSignInLinkClick(){

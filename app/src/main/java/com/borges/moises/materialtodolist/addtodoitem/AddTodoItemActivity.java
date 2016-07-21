@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.borges.moises.materialtodolist.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 import butterknife.BindString;
@@ -26,6 +27,8 @@ public class AddTodoItemActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 1;
     public static final int ADDED_RESULT_CODE = 100;
     public static final String TODO_ITEM_ID = "todo_item_id";
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -47,6 +50,8 @@ public class AddTodoItemActivity extends AppCompatActivity {
 
         setupToolbar();
         initFragment();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     private void initFragment() {

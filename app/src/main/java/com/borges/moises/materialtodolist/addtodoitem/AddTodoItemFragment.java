@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
@@ -19,6 +21,8 @@ import java.util.List;
  * Created by Moisés on 14/04/2016.
  */
 public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodoItemMvp.View {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     protected AddTodoItemMvp.Presenter mPresenter;
 
@@ -30,6 +34,8 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         super.onActivityCreated(savedInstanceState);
         mPresenter = new AddTodoItemPresenter();
         mPresenter.bindView(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Override
@@ -48,6 +54,7 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         switch (item.getItemId()) {
             case R.id.action_add:
                 addTodoItem();
+                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"add_todo_item_clicked");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
