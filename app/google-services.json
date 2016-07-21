@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "771485056893",
+    "firebase_url": "https://material-todo-list.firebaseio.com",
+    "project_id": "material-todo-list",
+    "storage_bucket": "material-todo-list.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771485056893:android:83b81955d1dd38ff",
+        "android_client_info": {
+          "package_name": "com.borges.moises.materialtodolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771485056893-e218nt8lgsjqalbpvfn2rdjccd25p4pb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjZ87y0ybTT_u06dz0Kwjk2V2ZvzSZu-w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

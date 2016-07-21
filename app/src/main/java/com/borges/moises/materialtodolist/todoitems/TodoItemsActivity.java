@@ -27,6 +27,8 @@ import com.borges.moises.materialtodolist.menu.MenuMvp;
 import com.borges.moises.materialtodolist.menu.MenuPresenter;
 import com.borges.moises.materialtodolist.settings.SettingsActivity;
 import com.borges.moises.materialtodolist.tags.TagsActivity;
+import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 
@@ -48,6 +50,8 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private SubMenu mTagsSubmenu;
     private MenuItem mPreviousMenuItemSelected = null;
 
@@ -62,6 +66,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
         setContentView(R.layout.activity_todo_items);
         ButterKnife.bind(this);
         setupWindowAnimations();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mPresenter = new MenuPresenter(new UserService(this), SqliteTagsRepository.getInstance());
         mPresenter.bindView(this);
         setupToolbar();
@@ -112,9 +117,11 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                 switch (item.getItemId()) {
                     case R.id.sign_in_menu:
                         mPresenter.openLoginOrCreateAccount();
+                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"sign_in_menu");
                         break;
                     case R.id.sign_out_menu:
                         mPresenter.logout();
+                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"sign_out_menu");
                         break;
                     /*
                     case R.id.settings_menu:
@@ -123,6 +130,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                     */
                     case R.id.tags_menu:
                         mPresenter.openTags();
+                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"tags_menu");
                         break;
                     default:
                         //onTagClick(item);
@@ -221,6 +229,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         mPresenter.openFilterTodoItemsByTag(tag);
+                        FirebaseAnalyticsHelper.notifyClickEvent(mFirebaseAnalytics,"open_tag_" + tag.getName());
                         return false;
                     }
                 });
