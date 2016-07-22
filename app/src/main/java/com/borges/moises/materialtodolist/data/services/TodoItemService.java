@@ -6,6 +6,7 @@ import com.borges.moises.materialtodolist.data.repository.SqliteTodoItemsReposit
 import com.borges.moises.materialtodolist.data.repository.TodoItemsRepository;
 import com.borges.moises.materialtodolist.data.repository.specification.QueryAllTodoItemsSqlSpec;
 import com.borges.moises.materialtodolist.data.repository.specification.Specification;
+import com.borges.moises.materialtodolist.utils.LogHelper;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -38,22 +39,27 @@ public class TodoItemService {
         todoItem.setCreatedAt(currentTime);
         todoItem.setUpdatedAt(currentTime);
         if (!mRepository.addTodoItem(todoItem)) {
-            throw new IllegalStateException("Todo item was not added in the database");
+            reportError("Todo item was not added in the database");
         }
+    }
+
+    private void reportError(String detailMessage) {
+        LogHelper.report(detailMessage);
+        throw new IllegalStateException(detailMessage);
     }
 
     public void setTodoItemSynchronized(TodoItem todoItem, String serverId) {
         todoItem.setServerId(serverId);
         todoItem.setDirty(false);
         if (!mRepository.updateTodoItem(todoItem)) {
-            throw new IllegalStateException("could not add server id");
+            reportError("could not add server id");
         }
     }
 
     public void setTodoItemSynchronized(TodoItem todoItem) {
         todoItem.setDirty(false);
         if (!mRepository.updateTodoItem(todoItem)) {
-            throw new IllegalStateException("could synchronize");
+            reportError("could synchronize");
         }
     }
 
@@ -67,7 +73,7 @@ public class TodoItemService {
         todoItem.incrementVersion();
         todoItem.setDirty(true);
         if (!mRepository.updateTodoItem(todoItem)) {
-            throw new IllegalStateException(detailMessage);
+            reportError(detailMessage);
         }
     }
 
@@ -115,7 +121,7 @@ public class TodoItemService {
 
     public void removeTodoItemFromDb(TodoItem todoItem) {
         if (!mRepository.removeTodoItem(todoItem)){
-            throw new IllegalStateException("could not delete todo item from database");
+            reportError("could not delete todo item from database");
         }
     }
 }

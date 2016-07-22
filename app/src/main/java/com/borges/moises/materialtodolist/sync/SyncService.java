@@ -11,6 +11,7 @@ import com.borges.moises.materialtodolist.data.model.User;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 import com.borges.moises.materialtodolist.data.services.UserService;
 import com.borges.moises.materialtodolist.events.TodoItemsListUpdateEvent;
+import com.borges.moises.materialtodolist.utils.LogHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -106,12 +107,11 @@ public class SyncService extends IntentService {
                         if (listUpdated) {
                             EventBus.getDefault().post(new TodoItemsListUpdateEvent());
                         }
-                        Log.d(NAME,"conflicts solved");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(NAME,"Error on solve conflicts between todo items from server and local todo items");
+                        LogHelper.log(NAME,"Error on solve conflicts between todo items from server and local todo items");
                     }
 
                     @Override
@@ -167,12 +167,11 @@ public class SyncService extends IntentService {
                 .subscribe(new Subscriber<TodoItem>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(NAME,"todo items sent to server");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(NAME,"Error on sending todo items to server");
+                        LogHelper.log(NAME,"Error on sending todo items to server");
                     }
 
                     @Override

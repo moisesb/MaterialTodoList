@@ -116,6 +116,10 @@
     <string name="future_tasks_group">Future</string>
     <string name="task_added">Task added</string>
     <string name="task_edited">Task edited</string>
+    <string name="account_created">Account created</string>
+    <string name="count_not_create_account">Error, could not create account</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="invalid_email_and_password">Invalid email or password</string>
 
     <string-array name="initial_tags">
         <item>Inbox</item>

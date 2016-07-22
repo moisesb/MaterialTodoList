@@ -20,7 +20,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.SpannableString;
 import android.text.style.StrikethroughSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +57,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.*;
+import static com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnCheckBoxClickListener;
+import static com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnStarClickListener;
+import static com.borges.moises.materialtodolist.todoitems.TodoItemsFragment.TodoItemsAdapter.OnTodoItemClickListener;
 
 /**
  * Created by Moisés on 11/04/2016.
@@ -125,7 +126,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            Log.d("Test", "from " + viewHolder.getAdapterPosition() + "to " + target.getAdapterPosition());
             return false;
         }
 
@@ -229,7 +229,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("ResultCode", "request " + requestCode + " result " + resultCode);
         switch (requestCode) {
             case AddTodoItemActivity.REQUEST_CODE:
                 if (resultCode == AddTodoItemActivity.ADDED_RESULT_CODE) {

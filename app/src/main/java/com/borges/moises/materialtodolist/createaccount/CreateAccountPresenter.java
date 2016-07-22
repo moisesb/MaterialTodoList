@@ -71,7 +71,6 @@ public class CreateAccountPresenter implements CreateAccountMvp.Presenter {
 
     @Override
     public void createAccountWithFacebook(String authToken) {
-        Log.d("CreateAccount", "create account for token " + authToken);
         checkView();
 
         mView.showProgress(true);

@@ -194,12 +194,14 @@ public class LoginFragment extends Fragment implements LoginMvp.View{
 
     @Override
     public void showInvalidEmailAndPassword() {
-        Log.d("SignIn", "invalid email and password");
+        Toast.makeText(getContext(),R.string.invalid_email_and_password, Toast.LENGTH_LONG)
+                .show();
     }
 
     @Override
     public void showNoInternetConnection() {
-        Log.d("SignIn", "no internet connection");
+        Toast.makeText(getContext(),R.string.no_internet_connection, Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override

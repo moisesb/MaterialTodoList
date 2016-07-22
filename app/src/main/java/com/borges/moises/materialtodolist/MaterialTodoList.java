@@ -13,6 +13,7 @@ import com.borges.moises.materialtodolist.data.services.SessionManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Created by Moisés on 14/04/2016.

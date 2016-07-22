@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.FrameLayout;
 
 import com.borges.moises.materialtodolist.R;
 
@@ -36,7 +35,7 @@ public class CreateAccountActivity extends AppCompatActivity{
     }
 
     private void addFragment() {
-        Fragment fragment = CreateAccountFragment.newInstace();
+        Fragment fragment = CreateAccountFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame_layout,fragment)
                 .commit();

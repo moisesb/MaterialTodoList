@@ -139,9 +139,7 @@ public abstract class BaseTodoItemFragment extends Fragment implements PriorityP
 
     @Override
     public void onCreateNewTagSelected() {
-        Log.d("Tags", "create new tag");
         TagsActivity.start(getContext());
-        // TODO: 15/06/2016 should update the tags list after on resume
     }
 
     @Override

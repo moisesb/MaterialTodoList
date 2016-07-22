@@ -119,4 +119,10 @@
     <string name="today_tasks_group">Hoje</string>
     <string name="future_tasks_group">Futuras</string>
     <string name="late_tasks_group">Atrasadas</string>
+    <string name="account_created">Conta criada</string>
+    <string name="count_not_create_account">Erro, não foi possível criar a conta</string>
+    <string name="invalid_email_and_password">Email ou senha invalidos</string>
+    <string name="no_internet_connection">Sem conexão de internet</string>
+    <string name="task_added">Tarefa adicionada</string>
+    <string name="task_edited">Tarefa editada</string>
 </resources>

@@ -8,6 +8,7 @@ import android.util.Patterns;
 
 import com.borges.moises.materialtodolist.data.model.User;
 import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.borges.moises.materialtodolist.utils.LogHelper;
 import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
@@ -25,6 +26,7 @@ public class UserService {
     private static final String ENDPOINT = "https://material-todo-list.firebaseio.com/";
     private static final String USERS = "users";
     public static final String FACEBOOK_PROVIDER = "facebook";
+    public static final String NETWORK_ERROR = "network_error";
 
     private final Firebase ref = new Firebase(ENDPOINT);
 
@@ -98,15 +100,19 @@ public class UserService {
         switch (firebaseError.getCode()) {
             case FirebaseError.EMAIL_TAKEN:
                 listener.onEmailTaken();
+                LogHelper.report("email_taken");
                 break;
             case FirebaseError.NETWORK_ERROR:
                 listener.onNetworkError();
+                LogHelper.report(NETWORK_ERROR);
                 break;
             case FirebaseError.INVALID_EMAIL:
                 listener.onEmailInvalid();
+                LogHelper.report("invalid_email");
                 break;
             default:
                 listener.onNetworkError();
+                LogHelper.report(NETWORK_ERROR);
         }
     }
 
@@ -187,8 +193,10 @@ public class UserService {
                 switch (firebaseError.getCode()) {
                     case FirebaseError.NETWORK_ERROR:
                         listener.onNetworkError();
+                        LogHelper.report(NETWORK_ERROR);
                     default:
                         listener.onError();
+                        LogHelper.report("authenticate_error");
                 }
             }
         });
@@ -216,9 +224,11 @@ public class UserService {
         switch (firebaseError.getCode()) {
             case FirebaseError.NETWORK_ERROR:
                 listener.onNetworkError();
+                LogHelper.report(NETWORK_ERROR);
                 break;
             default:
                 listener.onError();
+                LogHelper.report("error");
         }
     }
 

@@ -88,7 +88,6 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     protected void onResume() {
         super.onResume();
         mPresenter.loadMenu();
-        Log.d("Menu", "loadMenu");
     }
 
     @Override

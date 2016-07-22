@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.login.LoginActivity;
 import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
+import com.borges.moises.materialtodolist.utils.LogHelper;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -153,7 +155,8 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
 
     @Override
     public void showAccountCreated() {
-        Log.d("Login", "Account created");
+        Toast.makeText(getContext(),R.string.account_created, Toast.LENGTH_LONG)
+            .show();
     }
 
     @Override
@@ -173,7 +176,8 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
 
     @Override
     public void showError() {
-        Log.d("Login", "could not createAccount");
+        Toast.makeText(getContext(),R.string.count_not_create_account, Toast.LENGTH_LONG)
+                .show();
     }
 
     @Override
@@ -223,7 +227,8 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
 
     @Override
     public void showNoInternet() {
-        Log.d("Login", "no internte connection!");
+        Toast.makeText(getContext(),R.string.no_internet_connection, Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -233,7 +238,7 @@ public class CreateAccountFragment extends Fragment implements CreateAccountMvp.
     }
 
     @NonNull
-    public static Fragment newInstace() {
+    public static Fragment newInstance() {
         return new CreateAccountFragment();
     }
 }
