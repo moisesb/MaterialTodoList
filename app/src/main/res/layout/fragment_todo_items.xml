@@ -26,7 +26,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:id="@+id/first_time_layout"
+        android:id="@+id/no_items_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -52,7 +52,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="?attr/colorAccent"
-            android:enabled="false"
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:text="@string/add_new_task"
@@ -63,26 +62,5 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/no_todo_items_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/message_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/congratulation"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
 
 </FrameLayout>

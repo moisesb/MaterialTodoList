@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -154,7 +153,7 @@ public class TodoItemsActivity extends AppCompatActivity implements MenuMvp.View
     }
 
     private void showTodoItems(Long tagId) {
-        Fragment contentFragment = TodoItemsFragment.newInstace(tagId);
+        Fragment contentFragment = TodoItemsFragment.newInstance(tagId);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.framelayout, contentFragment)
                 .commit();

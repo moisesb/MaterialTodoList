@@ -5,6 +5,7 @@ import com.borges.moises.materialtodolist.data.model.Tag;
 import com.borges.moises.materialtodolist.mvp.MvpPresenter;
 import com.borges.moises.materialtodolist.mvp.MvpView;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ public interface AddTodoItemMvp {
         void addTags(List<Tag> tags);
 
         void openTodoItems(long todoItemId);
+
+        void showTodayDate(Date date);
     }
 
     interface Presenter extends MvpPresenter<View> {

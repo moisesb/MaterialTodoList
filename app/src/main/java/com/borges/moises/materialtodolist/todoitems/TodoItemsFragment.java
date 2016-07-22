@@ -14,7 +14,6 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -44,6 +43,7 @@ import com.borges.moises.materialtodolist.sync.SyncService;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.transitionseverywhere.TransitionManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -72,17 +72,11 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @BindView(R.id.todo_items_recyclerview)
     RecyclerView mTodoItemsRecyclerView;
 
-    @BindView(R.id.no_todo_items_layout)
-    LinearLayout mNoTodoItemsLayout;
-
-    @BindView(R.id.first_time_layout)
-    LinearLayout mFirstTimeLayout;
+    @BindView(R.id.no_items_layout)
+    LinearLayout mNoItemsLayout;
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-
-    @BindView(R.id.add_todo_item_button)
-    AppCompatButton mAddTodoItemButton;
 
     private Long mTag = null;
 
@@ -277,7 +271,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         mPresenter.loadTodoItems(mTag);
     }
 
-    public static Fragment newInstace(Long tagId) {
+    public static Fragment newInstance(Long tagId) {
         final TodoItemsFragment fragment = new TodoItemsFragment();
         if (tagId != null) {
             Bundle bundle = new Bundle();
@@ -318,8 +312,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     @Override
     public void showTodoItem(final TodoItem todoItem) {
-        mNoTodoItemsLayout.setVisibility(View.GONE);
+        TransitionManager.beginDelayedTransition(mTodoItemsRecyclerView);
         mTodoItemsRecyclerView.setVisibility(View.VISIBLE);
+        mNoItemsLayout.setVisibility(View.GONE);
         mTodoItemsAdapter.addTodoItem(todoItem);
     }
 
@@ -343,14 +338,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
     @Override
     public void showNoTodoItemMessage() {
+        TransitionManager.beginDelayedTransition(mNoItemsLayout);
+        mNoItemsLayout.setVisibility(View.VISIBLE);
         mTodoItemsRecyclerView.setVisibility(View.GONE);
-        mNoTodoItemsLayout.setVisibility(mFirstRun ? View.GONE : View.VISIBLE);
-        mFirstTimeLayout.setVisibility(mFirstRun ? View.VISIBLE : View.GONE);
-
-        if (mFirstRun) {
-            mAddTodoItemButton.setEnabled(true);
-        }
-
     }
 
     @Override
@@ -469,26 +459,31 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         public void addTodoItem(TodoItem todoItem) {
-            if (todoItem.getDate() == null) {
-                mFutureGroup.getChildItemList().add(todoItem);
-            } else {
-                switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
-                    case -1:
-                        mLateGroup.getChildItemList().add(todoItem);
-                        break;
-                    case 0:
-                        mTodayGroup.getChildItemList().add(todoItem);
-                        break;
-                    case 1:
-                        mFutureGroup.getChildItemList().add(todoItem);
-                        break;
+            try {
+                if (todoItem.getDate() == null) {
+                    mFutureGroup.getChildItemList().add(todoItem);
+                } else {
+                    switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
+                        case -1:
+                            mLateGroup.getChildItemList().add(todoItem);
+                            break;
+                        case 0:
+                            mTodayGroup.getChildItemList().add(todoItem);
+                            break;
+                        case 1:
+                            mFutureGroup.getChildItemList().add(todoItem);
+                            break;
+                    }
                 }
+
+                Position position = getTodoItemPosition(todoItem);
+                notifyChildItemInserted(position.parentPos(), position.childPos());
+                notifyParentItemChanged(position.parentPos());
+
+            }catch (NullPointerException e) {
+                replaceData(new ArrayList<TodoItem>(0));
+                addTodoItem(todoItem);
             }
-
-            Position position = getTodoItemPosition(todoItem);
-            notifyChildItemInserted(position.parentPos(), position.childPos());
-            notifyParentItemChanged(position.parentPos());
-
         }
 
         public void replaceData(List<TodoItem> todoItems) {

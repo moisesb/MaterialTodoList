@@ -74,7 +74,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_todo_item_details,menu);
+        inflater.inflate(R.menu.menu_todo_item_details, menu);
     }
 
     @Override
@@ -82,14 +82,14 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
         switch (item.getItemId()) {
             case R.id.action_delete:
                 deleteTodoItem();
-                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"delete_task_clicked");
+                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "delete_task_clicked");
                 return true;
             case R.id.action_edit:
                 editTodoItem();
-                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"edit_task_clicked");
+                FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "edit_task_clicked");
                 return true;
             default:
-            return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -107,7 +107,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     public static Fragment newInstance(long todoItemId) {
         Fragment fragment = new EditTodoItemFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(ARG_TODO_ITEM_ID,todoItemId);
+        bundle.putLong(ARG_TODO_ITEM_ID, todoItemId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -124,7 +124,7 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
 
     @Override
     public void showDate(Date date) {
-         if (date == null) {
+        if (date == null) {
             return;
         }
         Calendar calendar = Calendar.getInstance();
@@ -133,11 +133,11 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
         mYear = calendar.get(Calendar.YEAR);
         mMonthOfYear = calendar.get(Calendar.MONTH);
         mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        mDateEditText.setText(getDate(mYear,mMonthOfYear,mDayOfMonth));
+        mDateEditText.setText(getDate(mYear, mMonthOfYear, mDayOfMonth));
 
         mHourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         mMinute = calendar.get(Calendar.MINUTE);
-        mTimeEditText.setText(DateUtils.getTime(mHourOfDay,mMinute));
+        mTimeEditText.setText(DateUtils.getTime(mHourOfDay, mMinute));
 
     }
 
@@ -161,17 +161,17 @@ public class EditTodoItemFragment extends BaseTodoItemFragment implements EditTo
     @Override
     public void openTodoItems(long todoItemId, Operation operation) {
         Intent data = new Intent();
-        data.putExtra(EditTodoItemActivity.TODO_ITEM_ID,todoItemId);
-        getActivity().setResult(Operation.EDITED == operation?
-                EditTodoItemActivity.EDITED_RESULT_CODE :
-                EditTodoItemActivity.DELETED_RESULT_CODE,
+        data.putExtra(EditTodoItemActivity.TODO_ITEM_ID, todoItemId);
+        getActivity().setResult(Operation.EDITED == operation ?
+                        EditTodoItemActivity.EDITED_RESULT_CODE :
+                        EditTodoItemActivity.DELETED_RESULT_CODE,
                 data);
         getActivity().finish();
     }
 
     @Override
     public void showTodoItemEdited() {
-        Toast.makeText(getContext(),R.string.todo_item_edited,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.todo_item_edited, Toast.LENGTH_SHORT).show();
     }
 
     @Override

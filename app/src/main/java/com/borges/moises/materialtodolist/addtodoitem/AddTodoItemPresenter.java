@@ -8,6 +8,9 @@ import com.borges.moises.materialtodolist.data.repository.TagsRepository;
 import com.borges.moises.materialtodolist.data.services.TodoItemService;
 import com.borges.moises.materialtodolist.utils.DateUtils;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Moisés on 14/04/2016.
  */
@@ -57,6 +60,13 @@ public class AddTodoItemPresenter implements AddTodoItemMvp.Presenter {
     @Override
     public void bindView(AddTodoItemMvp.View view) {
         mView = view;
+        showDate();
+    }
+
+    private void showDate() {
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime();
+        mView.showTodayDate(today);
     }
 
     @Override

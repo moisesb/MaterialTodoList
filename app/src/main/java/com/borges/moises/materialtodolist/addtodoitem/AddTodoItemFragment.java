@@ -12,9 +12,12 @@ import android.widget.Toast;
 import com.borges.moises.materialtodolist.R;
 import com.borges.moises.materialtodolist.baseui.BaseTodoItemFragment;
 import com.borges.moises.materialtodolist.data.model.Tag;
+import com.borges.moises.materialtodolist.utils.DateUtils;
 import com.borges.moises.materialtodolist.utils.FirebaseAnalyticsHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,6 +92,20 @@ public class AddTodoItemFragment extends BaseTodoItemFragment implements AddTodo
         data.putExtra(AddTodoItemActivity.TODO_ITEM_ID, todoItemId);
         getActivity().setResult(AddTodoItemActivity.ADDED_RESULT_CODE, data);
         getActivity().finish();
+    }
+
+    @Override
+    public void showTodayDate(Date date) {
+        if (date == null) {
+            return;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        mYear = calendar.get(Calendar.YEAR);
+        mMonthOfYear = calendar.get(Calendar.MONTH);
+        mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        mDateEditText.setText(getDate(mYear, mMonthOfYear, mDayOfMonth));
     }
 
     @Override
