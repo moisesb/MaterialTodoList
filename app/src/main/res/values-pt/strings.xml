@@ -125,4 +125,5 @@
     <string name="no_internet_connection">Sem conexão de internet</string>
     <string name="task_added">Tarefa adicionada</string>
     <string name="task_edited">Tarefa editada</string>
+    <string name="done_tasks_group">Concluídas</string>
 </resources>

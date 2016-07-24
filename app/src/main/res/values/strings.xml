@@ -120,6 +120,7 @@
     <string name="count_not_create_account">Error, could not create account</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="invalid_email_and_password">Invalid email or password</string>
+    <string name="done_tasks_group">Done</string>
 
     <string-array name="initial_tags">
         <item>Inbox</item>

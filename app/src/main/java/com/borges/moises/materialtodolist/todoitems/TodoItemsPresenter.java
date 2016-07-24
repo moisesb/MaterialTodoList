@@ -18,7 +18,6 @@ import rx.schedulers.Schedulers;
  */
 public class TodoItemsPresenter implements TodoItemsMvp.Presenter {
 
-    public static final String ARGS_TODO_ITEMS = "TodoItemsPresenter.mTodoItems";
     private TodoItemsMvp.View mView;
     private TodoItemService mService;
     private Subscription mTodoItemsSubscription;

@@ -321,19 +321,19 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
     @Override
     public void removeTodoItem(TodoItem todoItem) {
         mTodoItemsAdapter.deleteTodoItem(todoItem);
-        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"remove_todo_item_from_list");
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "remove_todo_item_from_list");
     }
 
     @Override
     public void openTodoItemDetails(long todoItemId) {
         EditTodoItemActivity.start(getActivity(), todoItemId);
-        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"edit_todo_item");
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "edit_todo_item");
     }
 
     @Override
     public void openNewTodoItem() {
         AddTodoItemActivity.start(getActivity());
-        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics,"add_new_todo_item");
+        FirebaseAnalyticsHelper.notifyActionPerformed(mFirebaseAnalytics, "add_new_todo_item");
     }
 
     @Override
@@ -414,6 +414,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         private TodoItemsGroup mLateGroup;
         private TodoItemsGroup mTodayGroup;
         private TodoItemsGroup mFutureGroup;
+        private TodoItemsGroup mDoneGroup;
 
         private final OnStarClickListener mOnStarClickListener;
         private final OnCheckBoxClickListener mOnCheckBoxClickListener;
@@ -460,7 +461,9 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         public void addTodoItem(TodoItem todoItem) {
             try {
-                if (todoItem.getDate() == null) {
+                if (todoItem.isDone()) {
+                    mDoneGroup.getChildItemList().add(todoItem);
+                } else if (todoItem.getDate() == null) {
                     mFutureGroup.getChildItemList().add(todoItem);
                 } else {
                     switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
@@ -480,7 +483,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 notifyChildItemInserted(position.parentPos(), position.childPos());
                 notifyParentItemChanged(position.parentPos());
 
-            }catch (NullPointerException e) {
+            } catch (NullPointerException e) {
                 replaceData(new ArrayList<TodoItem>(0));
                 addTodoItem(todoItem);
             }
@@ -490,8 +493,13 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             List<TodoItem> lateTasks = new ArrayList<>();
             List<TodoItem> todayTasks = new ArrayList<>();
             List<TodoItem> futureTasks = new ArrayList<>();
+            List<TodoItem> doneTasks = new ArrayList<>();
 
             for (TodoItem todoItem : todoItems) {
+                if (todoItem.isDone()) {
+                    doneTasks.add(todoItem);
+                    continue;
+                }
                 if (todoItem.getDate() == null) {
                     futureTasks.add(todoItem);
                     continue;
@@ -513,10 +521,12 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             mLateGroup = new TodoItemsGroup(lateTasks, R.string.late_tasks_group);
             mTodayGroup = new TodoItemsGroup(todayTasks, R.string.today_tasks_group);
             mFutureGroup = new TodoItemsGroup(futureTasks, R.string.future_tasks_group);
+            mDoneGroup = new TodoItemsGroup(doneTasks, R.string.done_tasks_group);
 
             mTodoItemsGroups.add(mLateGroup);
             mTodoItemsGroups.add(mTodayGroup);
             mTodoItemsGroups.add(mFutureGroup);
+            mTodoItemsGroups.add(mDoneGroup);
 
             notifyParentItemRangeInserted(0, mTodoItemsGroups.size());
         }
@@ -539,6 +549,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 parentPosition = mTodoItemsGroups.indexOf(mLateGroup);
                 return new Position(parentPosition, childPosition);
             }
+
             childPosition = Collections.binarySearch(mTodayGroup.getChildItemList(),
                     todoItem,
                     TodoItem.comparator());
@@ -546,11 +557,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 parentPosition = mTodoItemsGroups.indexOf(mTodayGroup);
                 return new Position(parentPosition, childPosition);
             }
+
             childPosition = Collections.binarySearch(mFutureGroup.getChildItemList(),
                     todoItem,
                     TodoItem.comparator());
             if (childPosition >= 0) {
                 parentPosition = mTodoItemsGroups.indexOf(mFutureGroup);
+                return new Position(parentPosition, childPosition);
+            }
+
+            childPosition = Collections.binarySearch(mDoneGroup.getChildItemList(),
+                    todoItem,
+                    TodoItem.comparator());
+            if (childPosition >= 0) {
+                parentPosition = mTodoItemsGroups.indexOf(mDoneGroup);
                 return new Position(parentPosition, childPosition);
             } else {
                 throw new IllegalArgumentException("Todo item is not in the adapter");
