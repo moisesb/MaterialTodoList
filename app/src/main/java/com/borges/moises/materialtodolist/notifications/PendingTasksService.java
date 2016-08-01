@@ -41,12 +41,17 @@ public class PendingTasksService extends IntentService {
         Date today = calendar.getTime();
         List<TodoItem> pendingItems = new ArrayList<>();
         for (TodoItem todoItem : todoItems) {
-            if (todoItem.getDate() != null && today.after(todoItem.getDate()) && !todoItem.isDeleted()) {
+            if (isPending(today, todoItem)) {
                 pendingItems.add(todoItem);
             }
         }
 
         notifyPendingTasks(pendingItems);
+    }
+
+    private boolean isPending(Date today, TodoItem todoItem) {
+        return todoItem.getDate() != null && today.after(todoItem.getDate())
+                && !todoItem.isDeleted() && !todoItem.isDone();
     }
 
     private void notifyPendingTasks(List<TodoItem> pendingItems) {
