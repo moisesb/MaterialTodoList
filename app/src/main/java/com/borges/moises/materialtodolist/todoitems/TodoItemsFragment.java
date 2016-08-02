@@ -398,7 +398,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         @Override
         public boolean isInitiallyExpanded() {
-            return false;
+            return true;
         }
 
         @StringRes
@@ -443,11 +443,15 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         public void deleteTodoItem(TodoItem todoItem) {
             Position position = getTodoItemPosition(todoItem);
-            mTodoItemsGroups.get(position.parentPos())
-                    .getChildItemList()
+            final TodoItemsGroup todoItemsGroup = mTodoItemsGroups.get(position.parentPos());
+            todoItemsGroup.getChildItemList()
                     .remove(position.childPos());
-            notifyChildItemRemoved(position.parentPos(), position.childPos());
-            notifyParentItemChanged(position.parentPos());
+            if (todoItemsGroup.getChildItemList().size() > 0) {
+                notifyChildItemRemoved(position.parentPos(), position.childPos());
+            }else {
+                notifyChildItemRemoved(position.parentPos(), position.childPos());
+                notifyParentItemRemoved(position.parentPos());
+            }
         }
 
         public void updateTodoItem(TodoItem todoItem) {
@@ -460,33 +464,68 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         }
 
         public void addTodoItem(TodoItem todoItem) {
+            boolean parentInserted = false;
             try {
                 if (todoItem.isDone()) {
                     mDoneGroup.getChildItemList().add(todoItem);
+                    parentInserted = insertGroup(mDoneGroup);
                 } else if (todoItem.getDate() == null) {
                     mFutureGroup.getChildItemList().add(todoItem);
+                    parentInserted = insertGroup(mFutureGroup);
                 } else {
                     switch (DateUtils.compareDateWithToday(todoItem.getDate())) {
                         case -1:
                             mLateGroup.getChildItemList().add(todoItem);
+                            parentInserted = insertGroup(mLateGroup);
                             break;
                         case 0:
                             mTodayGroup.getChildItemList().add(todoItem);
+                            parentInserted = insertGroup(mTodayGroup);
                             break;
                         case 1:
                             mFutureGroup.getChildItemList().add(todoItem);
+                            parentInserted = insertGroup(mFutureGroup);
                             break;
                     }
                 }
 
                 Position position = getTodoItemPosition(todoItem);
-                notifyChildItemInserted(position.parentPos(), position.childPos());
-                notifyParentItemChanged(position.parentPos());
+                if (parentInserted) {
+                    notifyParentItemInserted(position.parentPos());
+                }else {
+                    notifyChildItemInserted(position.parentPos(), position.childPos());
+                }
 
             } catch (NullPointerException e) {
                 replaceData(new ArrayList<TodoItem>(0));
                 addTodoItem(todoItem);
             }
+        }
+
+        private boolean insertGroup(TodoItemsGroup group) {
+            if (!mTodoItemsGroups.contains(group)) {
+                int position = groupPosition(group);
+                mTodoItemsGroups.add(position,group);
+                return true;
+            }
+            return false;
+        }
+
+        private int groupPosition(TodoItemsGroup group) {
+            if (group.equals(mLateGroup)) {
+                return 0;
+            }
+            if (group.equals(mDoneGroup)) {
+                return mTodoItemsGroups.size();
+            }
+            if (group.equals(mTodayGroup)) {
+                return mTodoItemsGroups.contains(mLateGroup) ? 1 : 0;
+            }
+            if (group.equals(mFutureGroup)) {
+                return mTodoItemsGroups.contains(mDoneGroup) ? mTodoItemsGroups.size() - 1
+                        : mTodoItemsGroups.size();
+            }
+            throw new IllegalStateException("group not supported");
         }
 
         public void replaceData(List<TodoItem> todoItems) {
@@ -523,10 +562,18 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             mFutureGroup = new TodoItemsGroup(futureTasks, R.string.future_tasks_group);
             mDoneGroup = new TodoItemsGroup(doneTasks, R.string.done_tasks_group);
 
-            mTodoItemsGroups.add(mLateGroup);
-            mTodoItemsGroups.add(mTodayGroup);
-            mTodoItemsGroups.add(mFutureGroup);
-            mTodoItemsGroups.add(mDoneGroup);
+            if (lateTasks.size() > 0) {
+                mTodoItemsGroups.add(mLateGroup);
+            }
+            if (todayTasks.size() > 0) {
+                mTodoItemsGroups.add(mTodayGroup);
+            }
+            if (futureTasks.size() > 0) {
+                mTodoItemsGroups.add(mFutureGroup);
+            }
+            if (doneTasks.size() > 0) {
+                mTodoItemsGroups.add(mDoneGroup);
+            }
 
             notifyParentItemRangeInserted(0, mTodoItemsGroups.size());
         }
@@ -666,7 +713,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                 mTodoItemGroupNameView = (TextView) itemView.findViewById(R.id.todo_item_group_name_text_view);
                 mExpandImageView = (ImageView) itemView.findViewById(R.id.expand_tasks_image);
                 mNumOfTasksTextView = (TextView) itemView.findViewById(R.id.num_of_tasks_text_view);
-
+                /*
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -679,6 +726,7 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
                         }
                     }
                 });
+                */
             }
 
             private void turnExpandIcon(int value) {
