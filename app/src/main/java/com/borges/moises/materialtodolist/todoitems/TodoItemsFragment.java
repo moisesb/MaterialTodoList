@@ -51,6 +51,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -449,18 +450,20 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             if (todoItemsGroup.getChildItemList().size() > 0) {
                 notifyChildItemRemoved(position.parentPos(), position.childPos());
             }else {
+                mTodoItemsGroups.remove(position.parentPos());
                 notifyChildItemRemoved(position.parentPos(), position.childPos());
                 notifyParentItemRemoved(position.parentPos());
             }
         }
 
         public void updateTodoItem(TodoItem todoItem) {
-            Position position = getTodoItemPosition(todoItem);
-            final List<TodoItem> childItemList = mTodoItemsGroups.get(position.parentPos())
+            Position lastPosition = getTodoItemPosition(todoItem);
+            final List<TodoItem> childItemList = mTodoItemsGroups.get(lastPosition.parentPos())
                     .getChildItemList();
-            childItemList.remove(position.childPos());
-            childItemList.add(position.childPos(), todoItem);
-            notifyChildItemChanged(position.parentPos(), position.childPos());
+            TodoItem oldTodoItem = childItemList.get(lastPosition.childPos());
+            childItemList.remove(lastPosition.childPos());
+            childItemList.add(lastPosition.childPos(), todoItem);
+            notifyChildItemChanged(lastPosition.parentPos(), lastPosition.childPos());
         }
 
         public void addTodoItem(TodoItem todoItem) {
@@ -643,9 +646,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
         public void onBindParentViewHolder(GroupViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
             final TodoItemsGroup todoItemGroup = (TodoItemsGroup) parentListItem;
             parentViewHolder.mTodoItemGroupNameView.setText(todoItemGroup.getName());
-            parentViewHolder.mExpandImageView.setImageResource(parentViewHolder.isExpanded() ?
-                    R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp);
-            parentViewHolder.mNumOfTasksTextView.setText(String.valueOf(todoItemGroup.mTodoItems.size()));
         }
 
         @Override
@@ -700,8 +700,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
 
         public class GroupViewHolder extends ParentViewHolder {
             final TextView mTodoItemGroupNameView;
-            final ImageView mExpandImageView;
-            final TextView mNumOfTasksTextView;
 
             /**
              * Default constructor.
@@ -711,29 +709,6 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             public GroupViewHolder(View itemView) {
                 super(itemView);
                 mTodoItemGroupNameView = (TextView) itemView.findViewById(R.id.todo_item_group_name_text_view);
-                mExpandImageView = (ImageView) itemView.findViewById(R.id.expand_tasks_image);
-                mNumOfTasksTextView = (TextView) itemView.findViewById(R.id.num_of_tasks_text_view);
-                /*
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (isExpanded()) {
-                            collapseView();
-                            turnExpandIcon(-180);
-                        } else {
-                            expandView();
-                            turnExpandIcon(180);
-                        }
-                    }
-                });
-                */
-            }
-
-            private void turnExpandIcon(int value) {
-                mExpandImageView.animate()
-                        .rotationBy(value)
-                        .setDuration(300)
-                        .start();
             }
 
             @Override
