@@ -51,7 +51,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -461,9 +460,18 @@ public class TodoItemsFragment extends Fragment implements TodoItemsMvp.View {
             final List<TodoItem> childItemList = mTodoItemsGroups.get(lastPosition.parentPos())
                     .getChildItemList();
             TodoItem oldTodoItem = childItemList.get(lastPosition.childPos());
-            childItemList.remove(lastPosition.childPos());
-            childItemList.add(lastPosition.childPos(), todoItem);
-            notifyChildItemChanged(lastPosition.parentPos(), lastPosition.childPos());
+
+            int newGroupIdentifyer = DateUtils.compareDateWithToday(todoItem.getDate());
+            int oldGroupIdentifyer = DateUtils.compareDateWithToday(oldTodoItem.getDate());
+
+            if (newGroupIdentifyer == oldGroupIdentifyer) {
+                childItemList.remove(lastPosition.childPos());
+                childItemList.add(lastPosition.childPos(), todoItem);
+                notifyChildItemChanged(lastPosition.parentPos(), lastPosition.childPos());
+            }else {
+                deleteTodoItem(oldTodoItem);
+                addTodoItem(todoItem);
+            }
         }
 
         public void addTodoItem(TodoItem todoItem) {

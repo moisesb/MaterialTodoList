@@ -78,7 +78,7 @@ public class DateUtils {
 
     /***
      * @param date
-     * @return -1 if date in before today, 0 if date is today and 1 if date if after today
+     * @return -1 if date is before today, 0 if date is today and 1 if date if after today
      */
     @IntRange(from = -1, to = 1)
     public static int compareDateWithToday(@NonNull Date date) {
@@ -96,6 +96,5 @@ public class DateUtils {
             return dateYear > todayYear ? 1 : -1;
         }
     }
-
 
 }
